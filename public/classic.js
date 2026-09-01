@@ -65,15 +65,15 @@ const BASE_QUESTIONS = [
   { category: "Astronomy", difficulty: 1, source: "Phases of Venus", prompt: "Galileo's observation of the full set of Venusian phases contradicted which arrangement?", answers: ["Venus always orbiting between Earth and the Sun", "Elliptical planetary orbits", "Earth rotating daily", "Planets reflecting sunlight"], correct: 0, explanation: "A nearly full Venus must pass beyond the Sun, which the standard Ptolemaic arrangement did not allow." },
   { category: "Technology", difficulty: 1, source: "World Wide Web", prompt: "Which trio formed the original technical foundation of the World Wide Web?", answers: ["HTML, HTTP, and URLs", "TCP, Java, and DNS", "C, FTP, and Ethernet", "XML, SMTP, and IP"], correct: 0, explanation: "The early Web combined HTML documents, HTTP transfer, and URL/URI identifiers." },
   { category: "History", difficulty: 2, source: "Treaty of Tordesillas", prompt: "The 1494 Treaty of Tordesillas divided newly encountered lands primarily between which kingdoms?", answers: ["France and England", "Spain and Portugal", "Venice and Genoa", "Denmark and Sweden"], correct: 1, explanation: "Spain and Portugal divided lands outside Europe along a meridian west of Cape Verde." },
-  { category: "Biology", difficulty: 2, source: "Endosymbiont", prompt: "Which evidence directly supports the endosymbiotic origin of mitochondria?", answers: ["They occur only in animals", "They contain circular DNA and bacterial-like ribosomes", "The Golgi assembles them", "They share the nuclear membrane"], correct: 1, explanation: "Mitochondria retain circular genomes and bacterial-type ribosomes." },
+  { category: "Biology", difficulty: 2, source: "Mitochondrion", prompt: "Which evidence directly supports the endosymbiotic origin of mitochondria?", answers: ["They occur only in animals", "They contain circular DNA and bacterial-like ribosomes", "The Golgi assembles them", "They share the nuclear membrane"], correct: 1, explanation: "Mitochondria retain circular genomes and bacterial-type ribosomes." },
   { category: "Physics", difficulty: 2, source: "Foucault pendulum", prompt: "A Foucault pendulum provides a direct visible demonstration of what?", answers: ["Earth's rotation", "Earth's orbit", "The speed of sound", "Gravitational time dilation"], correct: 0, explanation: "Its swing plane stays nearly fixed while Earth rotates beneath it." },
   { category: "Literature", difficulty: 2, source: "Frame story", prompt: "Which work uses a pilgrimage to Canterbury as the frame for a collection of tales?", answers: ["The Decameron", "The Canterbury Tales", "The Divine Comedy", "Le Morte d'Arthur"], correct: 1, explanation: "Chaucer's pilgrims tell stories while traveling to the shrine of Thomas Becket." },
   { category: "Geography", difficulty: 2, source: "Salar de Uyuni", prompt: "Salar de Uyuni, the world's largest salt flat, lies in which country?", answers: ["Chile", "Argentina", "Bolivia", "Peru"], correct: 2, explanation: "The salar occupies part of Bolivia's Altiplano." },
-  { category: "Music", difficulty: 2, source: "Well temperament", prompt: "What did well temperament make practical for keyboard instruments?", answers: ["Playing only in unison", "Playing in every major and minor key without retuning", "Producing notes without strings", "Holding absolute pitch through temperature changes"], correct: 1, explanation: "Well-tempered systems distributed tuning discrepancies so every key remained usable." },
+  { category: "Music", difficulty: 2, source: "Well temperament", prompt: "What did well temperament make practical for keyboard instruments?", answers: ["Playing only in unison", "Playing in all major and minor keys", "Producing notes without strings", "Holding absolute pitch through temperature changes"], correct: 1, explanation: "Well-tempered systems distributed tuning discrepancies so all major and minor keys remained usable." },
   { category: "History", difficulty: 3, source: "Haitian Revolution", prompt: "Why was the Haitian Revolution historically unprecedented?", answers: ["It first used artillery", "It restored a former king", "A large-scale slave uprising founded an independent state", "It ended every American colony"], correct: 2, explanation: "Enslaved people defeated colonial armies, abolished slavery, and established Haiti." },
   { category: "Genetics", difficulty: 3, source: "Horizontal gene transfer", prompt: "Which process allows bacteria to take up free DNA directly from their environment?", answers: ["Conjugation", "Transduction", "Transformation", "Binary fission"], correct: 2, explanation: "Transformation is the uptake of extracellular DNA." },
   { category: "Astronomy", difficulty: 3, source: "Chandrasekhar limit", prompt: "What happens when a non-rotating white dwarf exceeds the Chandrasekhar limit?", answers: ["It stabilizes as a red giant", "Electron degeneracy pressure can no longer support it", "Surface hydrogen fusion begins", "It becomes less dense"], correct: 1, explanation: "Above roughly 1.4 solar masses, electron degeneracy pressure cannot maintain a stable white dwarf." },
-  { category: "Computing", difficulty: 3, source: "Byzantine fault", prompt: "Byzantine fault tolerance addresses components that may do what?", answers: ["Only stop responding", "Fail in arbitrary or contradictory ways", "Run at different clock speeds", "Use different languages"], correct: 1, explanation: "A Byzantine component can send inconsistent or malicious information." },
+  { category: "Computing", difficulty: 3, source: "Byzantine fault", prompt: "Byzantine fault tolerance addresses components that may do what?", answers: ["Only stop responding", "Present different symptoms to different observers", "Run at different clock speeds", "Use different languages"], correct: 1, explanation: "A Byzantine fault can present different, even contradictory, symptoms to different observers." },
   { category: "Arts", difficulty: 3, source: "Lost-wax casting", prompt: "In lost-wax casting, what happens to the original wax model?", answers: ["It becomes the core", "It melts out before metal is poured", "It is pressed onto the metal", "It turns into ceramic"], correct: 1, explanation: "Heating removes the wax, leaving a cavity for molten metal." },
   { category: "History", difficulty: 4, source: "Peace of Westphalia", prompt: "The Peace of Westphalia formally recognized the independence of which two republics?", answers: ["Venice and Genoa", "The Dutch Republic and Swiss Confederacy", "Ragusa and San Marino", "Poland and Lithuania"], correct: 1, explanation: "The settlements recognized Dutch and Swiss independence." },
   { category: "Physics", difficulty: 4, source: "Noether's theorem", prompt: "According to Noether's theorem, conservation of energy follows from which symmetry?", answers: ["Rotational symmetry", "Spatial translation", "Time translation", "Gauge symmetry alone"], correct: 2, explanation: "If physical laws do not change over time, energy is the associated conserved quantity." },
@@ -109,7 +109,7 @@ const BASE_QUESTIONS = [
   { category: "Geography", difficulty: 3, source: "Coriolis force", prompt: "In which direction does the Coriolis effect deflect large-scale motion in the Northern Hemisphere?", answers: ["To its right", "To its left", "Always east", "Straight upward"], correct: 0, explanation: "Relative to its direction of travel, motion is deflected right in the Northern Hemisphere." },
   { category: "Geography", difficulty: 3, source: "Karst", prompt: "Karst landscapes most commonly develop through dissolution of which rock?", answers: ["Granite", "Limestone", "Basalt", "Quartzite"], correct: 1, explanation: "Slightly acidic water dissolves soluble carbonate rock, especially limestone, forming caves and sinkholes." },
   { category: "Arts", difficulty: 3, source: "Contrapposto", prompt: "In sculpture, contrapposto describes a figure posed with what arrangement?", answers: ["Weight resting mainly on one leg", "Both arms held symmetrically overhead", "The body carved without joints", "The face shown in strict profile"], correct: 0, explanation: "The weight shift creates an asymmetrical, natural relationship among hips, shoulders, and limbs." },
-  { category: "Music", difficulty: 3, source: "Fugue", prompt: "What is the subject of a fugue?", answers: ["Its principal recurring melodic idea", "The final chord only", "A percussion pattern", "Its performance venue"], correct: 0, explanation: "Voices enter successively with the subject and develop it contrapuntally." },
+  { category: "Music", difficulty: 3, source: "Fugue", prompt: "What is the subject of a fugue?", answers: ["A musical theme that recurs", "The final chord only", "A percussion pattern", "Its performance venue"], correct: 0, explanation: "The subject is a musical theme that recurs as voices introduce and develop it contrapuntally." },
   { category: "Astronomy", difficulty: 3, source: "Redshift", prompt: "A galaxy's spectral lines shifted toward longer wavelengths generally indicate what?", answers: ["Approach toward the observer", "Recession from the observer", "The absence of hydrogen", "A lower telescope magnification"], correct: 1, explanation: "Cosmological and Doppler redshift move observed features toward longer, redder wavelengths." },
   { category: "Computing", difficulty: 3, source: "RSA cryptosystem", prompt: "The practical security of ordinary RSA most directly relies on the difficulty of what task?", answers: ["Factoring a large composite integer", "Sorting a list", "Adding prime numbers", "Compressing a text file"], correct: 0, explanation: "Recovering the private key from the public modulus is tied to factoring a product of large primes." },
   { category: "History", difficulty: 4, source: "Investiture Controversy", prompt: "The medieval Investiture Controversy centered on who could appoint which officials?", answers: ["Bishops and abbots", "Guild masters", "Roman senators", "University rectors"], correct: 0, explanation: "Popes and secular rulers contested authority to invest senior church officials." },
@@ -117,10 +117,10 @@ const BASE_QUESTIONS = [
   { category: "Biology", difficulty: 4, source: "Allosteric regulation", prompt: "An allosteric regulator changes enzyme activity by binding where?", answers: ["Only at the active site", "At a distinct regulatory site", "To the product's nucleus", "Permanently to every substrate"], correct: 1, explanation: "Binding at an allosteric site alters the enzyme's conformation and activity." },
   { category: "Genetics", difficulty: 4, source: "Hox gene", prompt: "What do Hox genes chiefly help specify during animal development?", answers: ["Body-region identity along an axis", "The exact DNA mutation rate", "Blood oxygen concentration", "Only the sex of offspring"], correct: 0, explanation: "Hox transcription factors assign positional identities to developing body regions." },
   { category: "Biology", difficulty: 4, source: "Cladistics", prompt: "In cladistics, a synapomorphy is what kind of trait?", answers: ["A shared derived character", "Any ancestral character", "A trait caused only by diet", "A feature unique to every organism"], correct: 0, explanation: "Shared derived characters provide evidence for a clade's common ancestry." },
-  { category: "Geography", difficulty: 4, source: "Isostasy", prompt: "Isostasy describes gravitational equilibrium between the crust and what underlying layer?", answers: ["The atmosphere", "The more ductile mantle", "The solid inner core", "The ocean surface"], correct: 1, explanation: "Lithosphere sits in buoyant balance on denser, deformable mantle material." },
+  { category: "Geography", difficulty: 4, source: "Isostasy", prompt: "Isostasy describes gravitational equilibrium between the crust and what underlying layer?", answers: ["The atmosphere", "The mantle", "The solid inner core", "The ocean surface"], correct: 1, explanation: "Earth's crust or lithosphere sits in gravitational balance with the mantle." },
   { category: "Geography", difficulty: 4, source: "Thermohaline circulation", prompt: "What two seawater properties chiefly drive thermohaline circulation?", answers: ["Temperature and salinity", "Color and wave height", "Latitude and longitude", "Acidity and cloud cover"], correct: 0, explanation: "Temperature and salinity control seawater density and help drive deep-ocean circulation." },
-  { category: "Literature", difficulty: 4, source: "Negative capability", prompt: "John Keats's idea of negative capability praises a writer's ability to remain in what condition?", answers: ["Uncertainty without forcing a rational resolution", "Strict obedience to classical unities", "Complete autobiographical accuracy", "Permanent political neutrality"], correct: 0, explanation: "Keats valued dwelling in uncertainties and mysteries without irritably reaching after certainty." },
-  { category: "Physics", difficulty: 4, source: "Bell's theorem", prompt: "Bell's theorem shows that quantum predictions cannot be reproduced by theories having which combined properties?", answers: ["Locality and hidden variables of the relevant classical kind", "Energy and momentum conservation", "Wave and particle descriptions", "Space and time dimensions"], correct: 0, explanation: "Violations of Bell inequalities rule out broad classes of local hidden-variable explanations." },
+  { category: "Literature", difficulty: 4, source: "Negative capability", prompt: "John Keats's idea of negative capability praises a writer's ability to remain in what condition?", answers: ["Uncertainties and mysteries without reaching after fact or reason", "Strict obedience to classical unities", "Complete autobiographical accuracy", "Permanent political neutrality"], correct: 0, explanation: "Keats valued remaining in uncertainties, mysteries, and doubts without irritably reaching after fact or reason." },
+  { category: "Physics", difficulty: 4, source: "Bell's theorem", prompt: "Bell's theorem shows quantum mechanics to be incompatible with which broad class of explanations, given its basic measurement assumptions?", answers: ["Local hidden-variable theories", "Theories conserving energy and momentum", "Wave-particle descriptions", "Theories with space and time dimensions"], correct: 0, explanation: "Bell's theorem rules out local hidden-variable theories as complete reproductions of quantum predictions, given its basic assumptions." },
   { category: "Mathematics", difficulty: 4, source: "Cantor's diagonal argument", prompt: "Cantor's diagonal argument proves that which set is uncountable?", answers: ["The integers", "The rational numbers", "The real numbers", "The prime numbers"], correct: 2, explanation: "A new real number can be constructed that differs from every entry in any proposed complete list." },
 ];
 
@@ -185,7 +185,8 @@ let socket;
 let playerId;
 let audioContext;
 let ambienceGain;
-let ambienceOn = false;
+let ambienceOn = localStorage.getItem("wikimaze-classic-sound") === "on";
+let soundCueCount = 0;
 let whisperTimer;
 let routeTimer;
 let encounterTimer;
@@ -271,6 +272,7 @@ function moveThrough(direction) {
   const next = neighbor(state.current, direction);
   if (next < 0 || !rooms[state.current].exits.has(direction)) return;
   if (isLocked(state.current, next)) { openChallenge(direction); return; }
+  playCue("door");
   state.moving = true; transitionCurtain.classList.remove("moving"); void transitionCurtain.offsetWidth; transitionCurtain.classList.add("moving");
   setTimeout(() => {
     state.history.push({ room: state.current, facing: state.facing });
@@ -281,6 +283,7 @@ function moveThrough(direction) {
 
 function returnToPrevious() {
   if (!state.history.length || state.moving) return;
+  playCue("door");
   state.moving = true; transitionCurtain.classList.remove("moving"); void transitionCurtain.offsetWidth; transitionCurtain.classList.add("moving");
   setTimeout(() => { const previous = state.history.pop(); state.current = previous.room; state.facing = previous.facing; renderRoom(); }, 220);
   setTimeout(() => { state.moving = false; transitionCurtain.classList.remove("moving"); }, 510);
@@ -297,6 +300,7 @@ function questionFor(direction) {
   return unseen[(hash(`${key}-${state.level}-${state.subject}`) + attempt) % unseen.length];
 }
 function openChallenge(direction) {
+  playCue("seal");
   const question = questionFor(direction), dialog = document.querySelector("#challenge-dialog");
   state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 96); persist();
   state.activeChallenge = { direction, question, researched: false, answered: false };
@@ -317,12 +321,14 @@ function answerQuestion(index) {
   const buttons = [...document.querySelectorAll("#question-answers button")], correct = index === challenge.question.correct;
   buttons.forEach((button, buttonIndex) => { button.disabled = true; if (buttonIndex === challenge.question.correct) button.classList.add("correct"); if (buttonIndex === index && !correct) button.classList.add("wrong"); });
   if (correct) {
+    playCue("correct");
     const target = neighbor(state.current, challenge.direction), key = edgeKey(state.current, target), reward = Math.round([0, 256, 512, 1024, 2048][challenge.question.difficulty] * (challenge.researched ? .5 : 1));
     state.unlocked.add(key); delete state.questionAttempts[key]; state.score += reward; state.solved += 1; persist(); updateHud();
     document.querySelector("#question-result").textContent = `${challenge.question.explanation} Correct! ${reward} points added to your score.`;
     if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "unlock", doorId: edgeDoorId(key) }));
     setTimeout(() => { document.querySelector("#challenge-dialog").hidden = true; state.activeChallenge = null; renderRoom(); moveThrough(challenge.direction); }, 1050);
   } else {
+    playCue("wrong");
     const target = neighbor(state.current, challenge.direction), key = edgeKey(state.current, target);
     state.questionAttempts[key] = (state.questionAttempts[key] || 0) + 1; persist();
     document.querySelector("#question-result").textContent = `${challenge.question.explanation} The seal rejects that answer and is choosing another question…`;
@@ -372,10 +378,12 @@ function openCharacter(key) {
       state.dialogueCounts[countKey] = count; persist();
       if (count > 1) {
         const irritation = Math.min(3, count - 1), lines = CHARACTER_IRRITATION[key] || ["I already answered that.", "You are repeating yourself.", "That is enough."];
+        playCue("irritated", irritation);
         speech.textContent = lines[irritation - 1]; dialog.classList.add("irritated"); dialog.dataset.irritation = String(irritation); roomScene.classList.add("dialogue-irritated"); button.classList.add("asked-again");
         document.querySelector("#room-status").textContent = `${character.name} is no longer pretending not to mind.`;
         return;
       }
+      playCue("dialogue");
       if (response.startsWith("article:")) { dialog.hidden = true; endEncounter(); setTimeout(() => openArticle(response.slice(8), `/assets/characters/${character.image}.png`, `${character.name}'s annotations crowd the margins.`, "A borrowed field notebook"), 180); } else speech.textContent = response;
     });
     actions.append(button);
@@ -385,6 +393,7 @@ function openCharacter(key) {
 
 function beginCharacterEncounter(key) {
   if (!key || !CHARACTERS[key] || state.encounter || state.moving) return;
+  playCue("person");
   const plate = roomPlate(rooms[state.current]), roomImage = document.querySelector("#room-plate-image");
   state.encounter = "person"; roomScene.classList.add("encounter-active"); roomImage.classList.add("encounter-swap");
   document.querySelector("#room-status").textContent = `${CHARACTERS[key].name} has come much closer.`;
@@ -394,6 +403,7 @@ function beginCharacterEncounter(key) {
 
 function beginObjectEncounter() {
   if (state.encounter || state.moving) return;
+  playCue("object");
   const plate = roomPlate(rooms[state.current]);
   const focusX = plate.knowledge[0] + plate.knowledge[2] / 2, focusY = plate.knowledge[1] + plate.knowledge[3] / 2;
   state.encounter = "object"; roomScene.style.setProperty("--object-focus-x", `${focusX}%`); roomScene.style.setProperty("--object-focus-y", `${focusY}%`); roomScene.classList.add("encounter-active", "object-encounter");
@@ -410,6 +420,7 @@ function endEncounter() {
 
 function revealRoute() {
   if (state.flames <= 0 || state.routeUntil > performance.now()) return;
+  playCue("match");
   state.flames -= 1; state.routeUntil = performance.now() + 8000; persist(); updateHud();
   renderMazeGrid(true);
   document.querySelector("#room-status").textContent = "The match reveals only remembered rooms and the next useful chamber.";
@@ -480,9 +491,39 @@ function renderCompany() {
 }
 function escapeHtml(value) { const node = document.createElement("span"); node.textContent = value; return node.innerHTML; }
 
+function ensureAudio() {
+  if (audioContext) { audioContext.resume(); return; }
+  const Context = window.AudioContext || window.webkitAudioContext; if (!Context) return;
+  audioContext = new Context(); ambienceGain = audioContext.createGain(); ambienceGain.gain.value = .0001; ambienceGain.connect(audioContext.destination);
+  for (const frequency of [43, 64.5]) { const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(); oscillator.frequency.value = frequency; oscillator.type = "sine"; gain.gain.value = frequency === 43 ? .36 : .12; oscillator.connect(gain).connect(ambienceGain); oscillator.start(); }
+  ambienceGain.gain.setTargetAtTime(ambienceOn ? .035 : .0001, audioContext.currentTime, .7);
+}
+function playCue(name, intensity = 1) {
+  if (!ambienceOn) return;
+  ensureAudio(); if (!audioContext) return; soundCueCount += 1;
+  const patterns = {
+    enable: [[220, 0, .08, .025, "sine"], [330, .07, .13, .02, "sine"]],
+    door: [[82, 0, .2, .035, "sawtooth"], [61, .12, .28, .025, "triangle"]],
+    seal: [[147, 0, .12, .035, "square"], [220, .1, .22, .022, "sine"]],
+    correct: [[262, 0, .11, .026, "sine"], [330, .09, .12, .026, "sine"], [392, .18, .2, .025, "sine"]],
+    wrong: [[196, 0, .15, .035, "sawtooth"], [139, .12, .28, .03, "sawtooth"]],
+    dialogue: [[174, 0, .09, .018, "triangle"]],
+    person: [[55, 0, .38, .025, "sine"], [58, .05, .38, .012, "sine"]],
+    object: [[523, 0, .08, .018, "sine"], [349, .08, .2, .014, "sine"]],
+    irritated: [[Math.max(46, 92 - intensity * 12), 0, .18 + intensity * .05, .03 + intensity * .008, "sawtooth"], [47, .08, .24, .022, "square"]],
+    match: [[740, 0, .05, .012, "sine"], [988, .04, .09, .009, "sine"]],
+  };
+  const now = audioContext.currentTime;
+  for (const [frequency, offset, duration, volume, type] of patterns[name] || []) {
+    const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(), start = now + offset;
+    oscillator.frequency.setValueAtTime(frequency, start); oscillator.type = type; gain.gain.setValueAtTime(.0001, start); gain.gain.exponentialRampToValueAtTime(volume, start + .012); gain.gain.exponentialRampToValueAtTime(.0001, start + duration); oscillator.connect(gain).connect(audioContext.destination); oscillator.start(start); oscillator.stop(start + duration + .03);
+  }
+}
 function toggleAmbience() {
-  if (!audioContext) { audioContext = new AudioContext(); ambienceGain = audioContext.createGain(); ambienceGain.gain.value = .0001; ambienceGain.connect(audioContext.destination); for (const frequency of [43, 64.5]) { const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(); oscillator.frequency.value = frequency; oscillator.type = "sine"; gain.gain.value = frequency === 43 ? .36 : .12; oscillator.connect(gain).connect(ambienceGain); oscillator.start(); } }
-  ambienceOn = !ambienceOn; ambienceGain.gain.setTargetAtTime(ambienceOn ? .035 : .0001, audioContext.currentTime, .7); document.querySelector("#ambience-button").textContent = ambienceOn ? "♫ Listening" : "♫ Sound";
+  ambienceOn = !ambienceOn; localStorage.setItem("wikimaze-classic-sound", ambienceOn ? "on" : "off"); ensureAudio();
+  if (ambienceGain) ambienceGain.gain.setTargetAtTime(ambienceOn ? .035 : .0001, audioContext.currentTime, .7);
+  document.querySelector("#ambience-button").textContent = ambienceOn ? "♫ Listening" : "♫ Sound";
+  if (ambienceOn) playCue("enable");
 }
 
 document.querySelectorAll(".door-hotspot").forEach((button) => button.addEventListener("click", () => moveThrough(Number(button.dataset.direction))));
@@ -507,7 +548,8 @@ document.querySelector("#settings-form").addEventListener("submit", (event) => {
 addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
 buildKeep(); renderRoom(); connect();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+document.querySelector("#ambience-button").textContent = ambienceOn ? "♫ Listening" : "♫ Sound";
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundCues: soundCueCount, score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {

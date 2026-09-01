@@ -18,3 +18,16 @@
 
 - Persist dialogue-choice counts by character and action so inhabitants remember repeated questions across encounters.
 - Give the first repeated press and the next two escalation tiers character-specific responses; at the highest tier, intensify the close framing and dialogue chrome without changing controls or blocking play.
+
+## 2026-09-01 — Trivia verification
+
+- Treat Wikipedia article titles as question provenance and keep the Research action attached to the cited article.
+- Provide an explicit live audit for all 400 prompts that follows Wikipedia normalization and redirects, fails on missing sources, and checks correct-answer wording against the current article text.
+- Use full article text only for lead-section misses, request those articles individually to honor the Wikipedia extracts API limit, and retry throttled requests.
+- Prefer precise, source-matching wording over potentially ambiguous geography or overly broad scientific claims.
+
+## 2026-09-01 — Classic sound
+
+- Generate the classic edition's ambience and interaction cues with Web Audio so the game does not depend on additional licensed audio assets.
+- Keep sound opt-in and persist the player's choice; audio context creation remains tied to a user interaction to respect browser autoplay rules.
+- Give navigation, seals, right and wrong answers, objects, people, dialogue, irritation escalation, and route matches distinct cues.

@@ -42,6 +42,9 @@ try {
   if (start.questions !== 400 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 95) || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   if (start.routeGridCells !== 64 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
+  await evaluate("document.querySelector('#ambience-button').click()"); await delay(80);
+  const soundStarted = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (!soundStarted.soundEnabled || soundStarted.soundCues < 1) throw new Error("The user-gated ambience and sound cue system did not start");
 
   peer = new WebSocket("ws://localhost:4173/multiplayer");
   await new Promise((resolve, reject) => { peer.once("open", resolve); peer.once("error", reject); });
@@ -124,8 +127,9 @@ try {
   await delay(1700);
   const afterAnswer = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
+  if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok sound-cues=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

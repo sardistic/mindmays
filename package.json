@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "check": "node --check server.js && node --check public/game.js && node --check public/classic.js && node scripts/question-bank-check.mjs && node --check scripts/browser-smoke.mjs && node --check scripts/classic-smoke.mjs && node --check scripts/multiplayer-smoke.mjs",
+    "check": "node --check server.js && node --check public/game.js && node --check public/classic.js && node scripts/question-bank-check.mjs && node --check scripts/audit-question-sources.mjs && node --check scripts/browser-smoke.mjs && node --check scripts/classic-smoke.mjs && node --check scripts/multiplayer-smoke.mjs",
+    "audit:questions": "node scripts/audit-question-sources.mjs",
     "smoke": "node scripts/browser-smoke.mjs",
     "smoke:classic": "node scripts/classic-smoke.mjs",
     "smoke:multiplayer": "node scripts/multiplayer-smoke.mjs"
