@@ -18,7 +18,7 @@ Open `http://localhost:4173` for the walkable edition or `http://localhost:4173/
 - A separate classic edition with 64 fixed-view chambers, fourteen original period-rendered room plates (including four entirely unoccupied object chambers), painted-door navigation, return and turn-around controls, and a compact 1990s encyclopedia-game interface
 - Every uncleared door carries a knowledge seal backed by 400 unique Wikipedia-linked prompts across four levels; a persisted 96-question memory replaces failed prompts and delays repeats, while ten inhabitants remember repeated dialogue choices and grow visibly, specifically irritated when pestered
 - `npm run audit:questions` resolves every cited Wikipedia page and checks each correct answer against the current article text; missing or weakly evidenced entries fail the audit
-- User-gated procedural sound includes low room ambience, door movement, knowledge seals, answer feedback, match strikes, object tones, close-encounter drones, and increasingly harsh irritation cues
+- User-gated procedural sound has an unmistakable activation chime, audible room ambience, occasional uneasy room tones, door movement, knowledge seals, answer feedback, match strikes, object tones, close-encounter drones, and increasingly harsh irritation cues; the control remains visible on mobile
 
 - Free-moving, textured raycast castle with keyboard and touch controls
 - Deterministic 10×10 hidden floors built from one hundred five-by-five chambers, with proper doorways and escalating difficulty

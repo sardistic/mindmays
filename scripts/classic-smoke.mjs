@@ -42,9 +42,18 @@ try {
   if (start.questions !== 400 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 95) || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   if (start.routeGridCells !== 64 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
-  await evaluate("document.querySelector('#ambience-button').click()"); await delay(80);
+  const soundButtonRect = JSON.parse(await evaluate("JSON.stringify((() => { const rect = document.querySelector('#ambience-button').getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; })())"));
+  await command("Input.dispatchMouseEvent", { type: "mousePressed", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
+  await command("Input.dispatchMouseEvent", { type: "mouseReleased", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
+  await delay(500);
   const soundStarted = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
-  if (!soundStarted.soundEnabled || soundStarted.soundCues < 1) throw new Error("The user-gated ambience and sound cue system did not start");
+  if (!soundStarted.soundSupported || !soundStarted.soundEnabled || soundStarted.audioState !== "running" || soundStarted.audioMasterLevel < .8 || soundStarted.ambienceLevel < .02 || soundStarted.soundCues < 1) throw new Error(`The user-gated audible signal path did not start: ${JSON.stringify(soundStarted)}`);
+  const soundButton = JSON.parse(await evaluate("JSON.stringify({ label: document.querySelector('#ambience-button').textContent, pressed: document.querySelector('#ambience-button').getAttribute('aria-pressed') })"));
+  if (soundButton.label !== "♫ Sound On" || soundButton.pressed !== "true") throw new Error(`Sound control state is unclear: ${JSON.stringify(soundButton)}`);
+  await command("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 1, mobile: true }); await delay(80);
+  const mobileSoundDisplay = await evaluate("getComputedStyle(document.querySelector('#ambience-button')).display");
+  await command("Emulation.clearDeviceMetricsOverride");
+  if (mobileSoundDisplay === "none") throw new Error("The Sound control is hidden in the mobile layout");
 
   peer = new WebSocket("ws://localhost:4173/multiplayer");
   await new Promise((resolve, reject) => { peer.once("open", resolve); peer.once("error", reject); });
@@ -129,7 +138,7 @@ try {
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok sound-cues=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

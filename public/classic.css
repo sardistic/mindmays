@@ -66,6 +66,6 @@ button { cursor: pointer; }
 @media (max-width: 680px) {
   .desktop { padding: 0; }.game-window { width: 100vw; height: 100dvh; aspect-ratio: auto; grid-template-rows: 28px 26px minmax(310px, 58vh) minmax(190px, 1fr); }
   .os-titlebar { font-size: 10px; }.menu-strip button, .menu-strip a { padding: 2px 4px; font-size: 9px; }.menu-strip a { display: none; }
-  .control-board { grid-template-columns: 34% 42% 24%; grid-template-rows: minmax(0, 1fr) 29px; }.interest-columns { grid-template-columns: 1fr; }.interest-columns label:nth-child(even) { display: none; }.status-line #room-status, .status-line #ambience-button { display: none; }.status-line button { flex: 1; }
+  .control-board { grid-template-columns: 34% 42% 24%; grid-template-rows: minmax(0, 1fr) 29px; }.interest-columns { grid-template-columns: 1fr; }.interest-columns label:nth-child(even) { display: none; }.status-line #room-status { display: none; }.status-line button { flex: 1; }
   .in-scene-window { width: 90%; }.question-answers { grid-template-columns: 1fr; }.article-body, .character-body { grid-template-columns: 1fr; }.article-body img, .character-body img { display: none; }
 }

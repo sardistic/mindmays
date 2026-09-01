@@ -31,3 +31,4 @@
 - Generate the classic edition's ambience and interaction cues with Web Audio so the game does not depend on additional licensed audio assets.
 - Keep sound opt-in and persist the player's choice; audio context creation remains tied to a user interaction to respect browser autoplay rules.
 - Give navigation, seals, right and wrong answers, objects, people, dialogue, irritation escalation, and route matches distinct cues.
+- Keep the Sound control visible at mobile widths, explicitly report on/off/blocked state, and test with a trusted pointer event plus running-context and nonzero-gain assertions.

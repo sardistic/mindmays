@@ -184,9 +184,11 @@ let roomDepths;
 let socket;
 let playerId;
 let audioContext;
+let audioMasterGain;
 let ambienceGain;
 let ambienceOn = localStorage.getItem("wikimaze-classic-sound") === "on";
 let soundCueCount = 0;
+let ambienceTextureTimer;
 let whisperTimer;
 let routeTimer;
 let encounterTimer;
@@ -491,39 +493,77 @@ function renderCompany() {
 }
 function escapeHtml(value) { const node = document.createElement("span"); node.textContent = value; return node.innerHTML; }
 
-function ensureAudio() {
-  if (audioContext) { audioContext.resume(); return; }
-  const Context = window.AudioContext || window.webkitAudioContext; if (!Context) return;
-  audioContext = new Context(); ambienceGain = audioContext.createGain(); ambienceGain.gain.value = .0001; ambienceGain.connect(audioContext.destination);
-  for (const frequency of [43, 64.5]) { const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(); oscillator.frequency.value = frequency; oscillator.type = "sine"; gain.gain.value = frequency === 43 ? .36 : .12; oscillator.connect(gain).connect(ambienceGain); oscillator.start(); }
-  ambienceGain.gain.setTargetAtTime(ambienceOn ? .035 : .0001, audioContext.currentTime, .7);
+function updateSoundButton(label) {
+  const button = document.querySelector("#ambience-button");
+  button.textContent = label || (ambienceOn ? "♫ Sound On" : "♫ Sound Off");
+  button.setAttribute("aria-pressed", String(ambienceOn));
+  button.title = ambienceOn ? "Sound is on. Click to mute." : "Sound is off. Click to enable ambience and effects.";
 }
-function playCue(name, intensity = 1) {
-  if (!ambienceOn) return;
-  ensureAudio(); if (!audioContext) return; soundCueCount += 1;
+async function ensureAudio() {
+  const Context = window.AudioContext || window.webkitAudioContext;
+  if (!Context) return false;
+  let created = false;
+  if (!audioContext) {
+    created = true;
+    audioContext = new Context();
+    const compressor = audioContext.createDynamicsCompressor();
+    compressor.threshold.value = -18; compressor.knee.value = 16; compressor.ratio.value = 5; compressor.attack.value = .003; compressor.release.value = .2; compressor.connect(audioContext.destination);
+    audioMasterGain = audioContext.createGain(); audioMasterGain.gain.value = .9; audioMasterGain.connect(compressor);
+    ambienceGain = audioContext.createGain(); ambienceGain.gain.value = .0001; ambienceGain.connect(audioMasterGain);
+    for (const [frequency, volume, type] of [[55, .42, "sine"], [82.5, .2, "triangle"], [110, .055, "sine"]]) {
+      const oscillator = audioContext.createOscillator(), gain = audioContext.createGain();
+      oscillator.frequency.value = frequency; oscillator.type = type; gain.gain.value = volume; oscillator.connect(gain).connect(ambienceGain); oscillator.start();
+    }
+  }
+  try { if (audioContext.state !== "running") await audioContext.resume(); } catch { return false; }
+  if (created && ambienceOn && audioContext.state === "running") {
+    ambienceGain.gain.setTargetAtTime(.075, audioContext.currentTime, .35);
+    scheduleAmbienceTexture();
+  }
+  return audioContext.state === "running";
+}
+async function playCue(name, intensity = 1) {
+  if (!ambienceOn || !await ensureAudio()) return false;
+  soundCueCount += 1;
   const patterns = {
-    enable: [[220, 0, .08, .025, "sine"], [330, .07, .13, .02, "sine"]],
-    door: [[82, 0, .2, .035, "sawtooth"], [61, .12, .28, .025, "triangle"]],
-    seal: [[147, 0, .12, .035, "square"], [220, .1, .22, .022, "sine"]],
-    correct: [[262, 0, .11, .026, "sine"], [330, .09, .12, .026, "sine"], [392, .18, .2, .025, "sine"]],
-    wrong: [[196, 0, .15, .035, "sawtooth"], [139, .12, .28, .03, "sawtooth"]],
-    dialogue: [[174, 0, .09, .018, "triangle"]],
-    person: [[55, 0, .38, .025, "sine"], [58, .05, .38, .012, "sine"]],
-    object: [[523, 0, .08, .018, "sine"], [349, .08, .2, .014, "sine"]],
-    irritated: [[Math.max(46, 92 - intensity * 12), 0, .18 + intensity * .05, .03 + intensity * .008, "sawtooth"], [47, .08, .24, .022, "square"]],
-    match: [[740, 0, .05, .012, "sine"], [988, .04, .09, .009, "sine"]],
+    enable: [[440, 0, .16, .14, "sine"], [554, .13, .18, .12, "sine"], [659, .27, .28, .11, "sine"]],
+    door: [[92, 0, .28, .12, "sawtooth"], [62, .12, .42, .09, "triangle"]],
+    seal: [[147, 0, .16, .1, "square"], [220, .12, .3, .08, "sine"]],
+    correct: [[262, 0, .14, .1, "sine"], [330, .11, .15, .1, "sine"], [392, .23, .24, .1, "sine"]],
+    wrong: [[196, 0, .2, .12, "sawtooth"], [139, .14, .34, .1, "sawtooth"]],
+    dialogue: [[174, 0, .12, .075, "triangle"]],
+    person: [[65, 0, .52, .1, "sine"], [69, .04, .52, .06, "sine"]],
+    object: [[523, 0, .1, .085, "sine"], [349, .09, .24, .07, "sine"]],
+    irritated: [[Math.max(52, 104 - intensity * 12), 0, .22 + intensity * .06, .1 + intensity * .012, "sawtooth"], [49, .08, .3, .075, "square"]],
+    match: [[740, 0, .07, .07, "sine"], [988, .05, .12, .06, "sine"]],
+    room: [[110, 0, .45, .035, "sine"], [103, .12, .58, .028, "triangle"]],
   };
   const now = audioContext.currentTime;
   for (const [frequency, offset, duration, volume, type] of patterns[name] || []) {
     const oscillator = audioContext.createOscillator(), gain = audioContext.createGain(), start = now + offset;
-    oscillator.frequency.setValueAtTime(frequency, start); oscillator.type = type; gain.gain.setValueAtTime(.0001, start); gain.gain.exponentialRampToValueAtTime(volume, start + .012); gain.gain.exponentialRampToValueAtTime(.0001, start + duration); oscillator.connect(gain).connect(audioContext.destination); oscillator.start(start); oscillator.stop(start + duration + .03);
+    oscillator.frequency.setValueAtTime(frequency, start); oscillator.type = type; gain.gain.setValueAtTime(.0001, start); gain.gain.exponentialRampToValueAtTime(volume, start + .018); gain.gain.exponentialRampToValueAtTime(.0001, start + duration); oscillator.connect(gain).connect(audioMasterGain); oscillator.start(start); oscillator.stop(start + duration + .04);
   }
+  return true;
 }
-function toggleAmbience() {
-  ambienceOn = !ambienceOn; localStorage.setItem("wikimaze-classic-sound", ambienceOn ? "on" : "off"); ensureAudio();
-  if (ambienceGain) ambienceGain.gain.setTargetAtTime(ambienceOn ? .035 : .0001, audioContext.currentTime, .7);
-  document.querySelector("#ambience-button").textContent = ambienceOn ? "♫ Listening" : "♫ Sound";
-  if (ambienceOn) playCue("enable");
+function scheduleAmbienceTexture() {
+  clearTimeout(ambienceTextureTimer);
+  if (!ambienceOn) return;
+  ambienceTextureTimer = setTimeout(async () => { await playCue("room"); scheduleAmbienceTexture(); }, 9000 + Math.floor(Math.random() * 7000));
+}
+async function toggleAmbience() {
+  if (ambienceOn) {
+    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off"); clearTimeout(ambienceTextureTimer);
+    if (ambienceGain && audioContext) ambienceGain.gain.setTargetAtTime(.0001, audioContext.currentTime, .18);
+    updateSoundButton(); document.querySelector("#room-status").textContent = "Sound muted."; return;
+  }
+  ambienceOn = true;
+  if (!await ensureAudio()) {
+    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off"); updateSoundButton("♫ Sound Blocked");
+    document.querySelector("#room-status").textContent = "The browser blocked audio. Check site permissions, then press Sound again."; return;
+  }
+  localStorage.setItem("wikimaze-classic-sound", "on"); ambienceGain.gain.setTargetAtTime(.075, audioContext.currentTime, .35);
+  updateSoundButton(); document.querySelector("#room-status").textContent = "Sound on. The keep is listening.";
+  await playCue("enable"); scheduleAmbienceTexture();
 }
 
 document.querySelectorAll(".door-hotspot").forEach((button) => button.addEventListener("click", () => moveThrough(Number(button.dataset.direction))));
@@ -547,9 +587,8 @@ document.querySelector("#identity-button").addEventListener("click", () => docum
 document.querySelector("#settings-form").addEventListener("submit", (event) => { event.preventDefault(); localStorage.setItem("wikimaze-settings", JSON.stringify(settings())); document.querySelector("#player-display").textContent = settings().name; joinKeep(); document.querySelector("#settings-dialog").close(); });
 addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
-buildKeep(); renderRoom(); connect();
-document.querySelector("#ambience-button").textContent = ambienceOn ? "♫ Listening" : "♫ Sound";
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundCues: soundCueCount, score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+buildKeep(); renderRoom(); connect(); updateSoundButton();
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {
