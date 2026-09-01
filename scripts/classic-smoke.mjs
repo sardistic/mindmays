@@ -39,7 +39,7 @@ try {
   const start = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (start.totalRooms !== 64) throw new Error(`Expected 64 classic chambers, found ${start.totalRooms}`);
   if (start.reachableRooms !== 64 || start.roomPlates < 14 || start.uniqueRoomPlates < 14 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
-  if (start.questions < 20 || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
+  if (start.questions < 64 || start.uniqueQuestions !== start.questions || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   if (start.routeGridCells !== 64 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
 
@@ -58,10 +58,18 @@ try {
   await delay(150);
   const firstQuestion = String(await evaluate("window.__wikimazeClassicDebug().activeQuestion"));
   if (!firstQuestion || firstQuestion === "null") throw new Error("The first uncleared door did not open a question");
+  const sampledQuestions = [firstQuestion];
+  for (let sample = 0; sample < 5; sample++) {
+    await evaluate("document.querySelector('#challenge-dialog [data-close-panel]').click(); document.querySelector('.door-hotspot:not([hidden]).locked').click()");
+    await delay(40);
+    sampledQuestions.push(String(await evaluate("window.__wikimazeClassicDebug().activeQuestion")));
+  }
+  if (new Set(sampledQuestions).size !== sampledQuestions.length) throw new Error(`A question repeated before the available pool was exhausted: ${JSON.stringify(sampledQuestions)}`);
+  const questionBeforeFailure = sampledQuestions.at(-1);
   await evaluate("window.__wikimazeClassicTest.answerWrong()");
   await delay(1350);
   const replacementQuestion = String(await evaluate("window.__wikimazeClassicDebug().activeQuestion"));
-  if (!replacementQuestion || replacementQuestion === firstQuestion || Number(await evaluate("window.__wikimazeClassicDebug().questionAttempts")) < 1) throw new Error("A failed seal did not replace its question");
+  if (!replacementQuestion || replacementQuestion === questionBeforeFailure || Number(await evaluate("window.__wikimazeClassicDebug().questionAttempts")) < 1 || Number(await evaluate("window.__wikimazeClassicDebug().recentQuestions")) < sampledQuestions.length + 1) throw new Error("A failed seal did not replace and remember its question");
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
   await delay(1700);
   const moved = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));

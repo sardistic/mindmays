@@ -16,7 +16,7 @@ Open `http://localhost:4173` for the walkable edition or `http://localhost:4173/
 ## Current vertical slice
 
 - A separate classic edition with 64 fixed-view chambers, fourteen original period-rendered room plates (including four entirely unoccupied object chambers), painted-door navigation, return and turn-around controls, and a compact 1990s encyclopedia-game interface
-- Every uncleared door carries a knowledge seal which replaces failed questions; Wikipedia-backed room artifacts, ten inhabitants with uncanny alternate close-up encounters, focused object examination, a normally blank route grid revealed with five matches, subject and difficulty controls, score card progress, and room-level multiplayer presence
+- Every uncleared door carries a knowledge seal backed by 64 Wikipedia-linked questions across four levels; a persisted recent-question memory replaces failed prompts and delays repeats, while room artifacts, ten inhabitants with uncanny alternate close-up encounters, focused object examination, a normally blank route grid, score card progress, and room-level multiplayer presence round out the classic edition
 
 - Free-moving, textured raycast castle with keyboard and touch controls
 - Deterministic 10×10 hidden floors built from one hundred five-by-five chambers, with proper doorways and escalating difficulty
