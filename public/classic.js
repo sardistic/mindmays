@@ -1,3 +1,5 @@
+import { EXPANDED_QUESTIONS } from "./classic-question-bank.js";
+
 const DIRECTIONS = ["north", "east", "south", "west"];
 const VECTORS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }];
 const RELATIVE_LABELS = { left: "Left passage", forward: "Passage ahead", right: "Right passage" };
@@ -42,7 +44,20 @@ const CHARACTERS = {
 const CHARACTER_ROOMS = new Map([[0, "archivist"], [10, "jester"], [21, "cartographer"], [33, "bell-widow"], [46, "brother-moth"], [59, "measurer"]]);
 const AVATAR_KEYS = ["archivist", "jester", "cartographer", "bell-widow", "brother-moth", "measurer"];
 
-const QUESTIONS = [
+const CHARACTER_IRRITATION = {
+  archivist: ["I have already indexed that answer for you.", "You are repeating yourself. The shelves noticed before you did.", "Ask once more and I shall file you under Echoes, Unhelpful."],
+  jester: ["A repeated question is only half a riddle, and not the clever half.", "Yes, yes—the same little door in your head again.", "Ask it once more. I should like to see whether your voice comes out or mine."],
+  cartographer: ["We have already stood at this coordinate in the conversation.", "You are walking the same sentence in a circle.", "There is now a small map of your persistence. It is not flattering."],
+  "bell-widow": ["That key has already turned.", "You keep asking as though the answer might die between hearings.", "The smallest key has begun to shake. I suggest you stop before it chooses a lock."],
+  "brother-moth": ["I answered. Even the moths remember.", "Your question has worn a pale groove through the page.", "Say it again and I will let the lantern answer. It has fewer manners than I do."],
+  measurer: ["The answer remains the same length.", "I measured the interval between your repetitions. It is shrinking.", "One more repetition and I shall include you in the room’s dimensions."],
+  naturalist: ["Yes. I recorded your first asking as a repetitive behavior.", "Interesting—you return to the same stimulus despite receiving an answer.", "Please continue only if you consent to being labeled as the specimen."],
+  cook: ["I heard you the first time. The covered dish heard you too.", "Questions, like onions, do not improve merely because you serve the same one again.", "Ask once more and I will lift the lid. Whatever answers is yours to clear away."],
+  tuner: ["That phrase again. Precisely the same pitch.", "You are becoming the note I warned you about.", "Repeat it once more and the room will tune itself to you. Permanently."],
+  navigator: ["We have sailed past that question already.", "Your conversation is a coast that refuses to stay behind us.", "Ask again and I will mark this spot Here Be You. Nothing returns from there improved."],
+};
+
+const BASE_QUESTIONS = [
   { category: "History", difficulty: 1, source: "Rosetta Stone", prompt: "Which three scripts appear on the Rosetta Stone?", answers: ["Greek, Demotic, and Egyptian hieroglyphs", "Latin, Greek, and Phoenician", "Cuneiform, Aramaic, and Greek", "Hieroglyphs, Latin, and Coptic"], correct: 0, explanation: "The decree appears in Ancient Greek, Demotic Egyptian, and Egyptian hieroglyphs." },
   { category: "Life Science", difficulty: 1, source: "Tardigrade", prompt: "A tardigrade survives severe environmental stress by entering which suspended state?", answers: ["Diapause", "Cryptobiosis", "Hibernation", "Estivation"], correct: 1, explanation: "In cryptobiosis, metabolic activity falls to an almost undetectable level." },
   { category: "Geography", difficulty: 1, source: "Continental divide", prompt: "What does a continental divide separate?", answers: ["Tectonic plates", "Political climates", "Drainage basins flowing toward different seas", "Continents joined by land bridges"], correct: 2, explanation: "A drainage divide directs water into river systems that ultimately reach different seas." },
@@ -109,6 +124,8 @@ const QUESTIONS = [
   { category: "Mathematics", difficulty: 4, source: "Cantor's diagonal argument", prompt: "Cantor's diagonal argument proves that which set is uncountable?", answers: ["The integers", "The rational numbers", "The real numbers", "The prime numbers"], correct: 2, explanation: "A new real number can be constructed that differs from every entry in any proposed complete list." },
 ];
 
+const QUESTIONS = [...BASE_QUESTIONS, ...EXPANDED_QUESTIONS];
+
 const UNEASY_LINES = [
   "Somewhere outside the picture, a page turns.",
   "The room appears to contain one more corner than before.",
@@ -149,6 +166,7 @@ const state = {
   articles: JSON.parse(localStorage.getItem("wikimaze-classic-articles") || "[]"),
   questionAttempts: JSON.parse(localStorage.getItem("wikimaze-classic-question-attempts") || "{}"),
   questionHistory: JSON.parse(localStorage.getItem("wikimaze-classic-question-history") || "[]"),
+  dialogueCounts: JSON.parse(localStorage.getItem("wikimaze-classic-dialogue-counts") || "{}"),
   activeChallenge: null,
   routeUntil: 0,
   moving: false,
@@ -270,7 +288,7 @@ function returnToPrevious() {
 function turnAround() { if (state.moving) return; state.facing = opposite(state.facing); renderRoom(); }
 
 function questionFor(direction) {
-  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature", "Music", "Language"], Geography: ["Geography"], Science: ["Physics", "Astronomy", "Technology", "Computing", "Mathematics"] };
+  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature", "Music", "Language"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Astronomy", "Technology", "Computing", "Mathematics"] };
   let candidates = QUESTIONS.filter((question) => question.difficulty === state.level && (state.subject === "All" || groups[state.subject]?.includes(question.category)));
   if (!candidates.length) candidates = QUESTIONS.filter((question) => question.difficulty === state.level);
   const next = neighbor(state.current, direction), key = edgeKey(state.current, next), attempt = state.questionAttempts[key] || 0;
@@ -280,7 +298,7 @@ function questionFor(direction) {
 }
 function openChallenge(direction) {
   const question = questionFor(direction), dialog = document.querySelector("#challenge-dialog");
-  state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 32); persist();
+  state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 96); persist();
   state.activeChallenge = { direction, question, researched: false, answered: false };
   document.querySelector("#question-category").textContent = question.category;
   document.querySelector("#question-rank").textContent = `Level ${question.difficulty}`;
@@ -344,9 +362,24 @@ function openCharacter(key) {
   const plate = roomPlate(rooms[state.current]), plateCharacter = document.querySelector("#dialog-character-image");
   plateCharacter.src = plate.asset; plateCharacter.alt = character.name; plateCharacter.style.objectPosition = `${plate.char[0] + plate.char[2] / 2}% ${plate.char[1] + plate.char[3] / 2}%`;
   document.querySelector("#character-role").textContent = character.role; document.querySelector("#character-name").textContent = character.name;
+  dialog.classList.remove("irritated"); dialog.dataset.irritation = "0"; roomScene.classList.remove("dialogue-irritated");
   const speech = document.querySelector("#character-speech"); speech.textContent = character.speech;
   const actions = document.querySelector("#character-actions"); actions.replaceChildren();
-  for (const [label, response] of character.actions) { const button = document.createElement("button"); button.textContent = label; button.addEventListener("click", () => { if (response.startsWith("article:")) { dialog.hidden = true; endEncounter(); setTimeout(() => openArticle(response.slice(8), `/assets/characters/${character.image}.png`, `${character.name}'s annotations crowd the margins.`, "A borrowed field notebook"), 180); } else speech.textContent = response; }); actions.append(button); }
+  character.actions.forEach(([label, response], actionIndex) => {
+    const button = document.createElement("button"); button.textContent = label;
+    button.addEventListener("click", () => {
+      const countKey = `${key}:${actionIndex}`, count = (state.dialogueCounts[countKey] || 0) + 1;
+      state.dialogueCounts[countKey] = count; persist();
+      if (count > 1) {
+        const irritation = Math.min(3, count - 1), lines = CHARACTER_IRRITATION[key] || ["I already answered that.", "You are repeating yourself.", "That is enough."];
+        speech.textContent = lines[irritation - 1]; dialog.classList.add("irritated"); dialog.dataset.irritation = String(irritation); roomScene.classList.add("dialogue-irritated"); button.classList.add("asked-again");
+        document.querySelector("#room-status").textContent = `${character.name} is no longer pretending not to mind.`;
+        return;
+      }
+      if (response.startsWith("article:")) { dialog.hidden = true; endEncounter(); setTimeout(() => openArticle(response.slice(8), `/assets/characters/${character.image}.png`, `${character.name}'s annotations crowd the margins.`, "A borrowed field notebook"), 180); } else speech.textContent = response;
+    });
+    actions.append(button);
+  });
   dialog.hidden = false;
 }
 
@@ -371,7 +404,7 @@ function beginObjectEncounter() {
 function endEncounter() {
   clearTimeout(encounterTimer); state.encounter = null;
   const plate = roomPlate(rooms[state.current]), roomImage = document.querySelector("#room-plate-image");
-  roomImage.classList.remove("encounter-swap"); roomImage.src = plate.asset; roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter");
+  roomImage.classList.remove("encounter-swap"); roomImage.src = plate.asset; roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter", "dialogue-irritated"); document.querySelector("#character-dialog").classList.remove("irritated");
   document.querySelector("#room-status").textContent = roomStatus(plate);
 }
 
@@ -411,7 +444,7 @@ function updateJournal() {
   const log = document.querySelector("#article-log"); log.replaceChildren(...(state.articles.length ? state.articles.map((title) => Object.assign(document.createElement("li"), { textContent: title })) : [Object.assign(document.createElement("li"), { textContent: "No entry yet." })]));
 }
 function persist() {
-  localStorage.setItem("wikimaze-classic-visited", JSON.stringify([...state.visited])); localStorage.setItem("wikimaze-classic-unlocked", JSON.stringify([...state.unlocked])); localStorage.setItem("wikimaze-score", String(state.score)); localStorage.setItem("wikimaze-classic-flames", String(state.flames)); localStorage.setItem("wikimaze-classic-solved", String(state.solved)); localStorage.setItem("wikimaze-classic-articles", JSON.stringify(state.articles)); localStorage.setItem("wikimaze-classic-question-attempts", JSON.stringify(state.questionAttempts)); localStorage.setItem("wikimaze-classic-question-history", JSON.stringify(state.questionHistory)); localStorage.setItem("wikimaze-classic-level", String(state.level)); localStorage.setItem("wikimaze-classic-subject", state.subject);
+  localStorage.setItem("wikimaze-classic-visited", JSON.stringify([...state.visited])); localStorage.setItem("wikimaze-classic-unlocked", JSON.stringify([...state.unlocked])); localStorage.setItem("wikimaze-score", String(state.score)); localStorage.setItem("wikimaze-classic-flames", String(state.flames)); localStorage.setItem("wikimaze-classic-solved", String(state.solved)); localStorage.setItem("wikimaze-classic-articles", JSON.stringify(state.articles)); localStorage.setItem("wikimaze-classic-question-attempts", JSON.stringify(state.questionAttempts)); localStorage.setItem("wikimaze-classic-question-history", JSON.stringify(state.questionHistory)); localStorage.setItem("wikimaze-classic-dialogue-counts", JSON.stringify(state.dialogueCounts)); localStorage.setItem("wikimaze-classic-level", String(state.level)); localStorage.setItem("wikimaze-classic-subject", state.subject);
 }
 
 function settings() {
@@ -464,7 +497,7 @@ document.querySelectorAll('input[name="subject"]').forEach((radio) => { radio.ch
 document.querySelectorAll("[data-match]").forEach((button) => button.addEventListener("click", revealRoute));
 document.querySelector("#scorecard-button").addEventListener("click", () => document.querySelector("#scorecard-dialog").showModal());
 document.querySelector("#new-game-button").addEventListener("click", () => { document.querySelector("#notice-text").textContent = "Begin a new maze? Route memory and opened seals will be cleared."; document.querySelector("#notice-window").hidden = false; });
-document.querySelector("#notice-ok").addEventListener("click", () => { state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.facing = [...rooms[0].exits][0] ?? 1; persist(); document.querySelector("#notice-window").hidden = true; renderRoom(); });
+document.querySelector("#notice-ok").addEventListener("click", () => { state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.dialogueCounts = {}; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.facing = [...rooms[0].exits][0] ?? 1; persist(); document.querySelector("#notice-window").hidden = true; renderRoom(); });
 
 const savedSettings = JSON.parse(localStorage.getItem("wikimaze-settings") || "{}");
 document.querySelector("#player-name").value = savedSettings.name || `Scholar ${Math.floor(Math.random() * 90 + 10)}`; document.querySelector("#shared-keep").value = new URLSearchParams(location.search).get("room") || savedSettings.room || "great-hall"; document.querySelector("#player-color").value = savedSettings.color || "#e9b95c";
@@ -474,7 +507,7 @@ document.querySelector("#settings-form").addEventListener("submit", (event) => {
 addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
 buildKeep(); renderRoom(); connect();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, characters: Object.keys(CHARACTERS).length, score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {

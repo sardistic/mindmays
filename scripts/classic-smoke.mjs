@@ -39,7 +39,7 @@ try {
   const start = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (start.totalRooms !== 64) throw new Error(`Expected 64 classic chambers, found ${start.totalRooms}`);
   if (start.reachableRooms !== 64 || start.roomPlates < 14 || start.uniqueRoomPlates < 14 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
-  if (start.questions < 64 || start.uniqueQuestions !== start.questions || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
+  if (start.questions !== 400 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 95) || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   if (start.routeGridCells !== 64 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
 
@@ -102,6 +102,13 @@ try {
   if (!await evaluate("!document.querySelector('#character-dialog').hidden && document.querySelector('#character-name').textContent.length > 0")) throw new Error("Starting inhabitant encounter failed");
   const personEncounter = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (personEncounter.encounter !== "person" || !personEncounter.roomImage.includes("-close.png")) throw new Error(`Inhabitant did not replace the room with an alternate close plate: ${JSON.stringify(personEncounter)}`);
+  const dialogueResponses = [];
+  for (let repeat = 0; repeat < 4; repeat++) {
+    await evaluate("document.querySelector('#character-actions button').click()");
+    dialogueResponses.push(String(await evaluate("document.querySelector('#character-speech').textContent")));
+  }
+  const irritated = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (new Set(dialogueResponses).size !== 4 || irritated.dialogueRepeats < 3 || irritated.dialogueIrritation !== 3 || !await evaluate("document.querySelector('#character-dialog').classList.contains('irritated')")) throw new Error(`Repeated dialogue did not escalate character irritation: ${JSON.stringify({ dialogueResponses, irritated })}`);
   const personScreenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
   await writeFile(new URL("../artifacts/classic-person-close.png", import.meta.url), Buffer.from(personScreenshot.data, "base64"));
   await evaluate("document.querySelector('#character-dialog [data-close-panel]').click()");
@@ -118,7 +125,7 @@ try {
   const afterAnswer = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok character-closeup=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });
