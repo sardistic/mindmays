@@ -1,0 +1,6 @@
+node_modules/
+artifacts/
+.env
+.agent/runtime/
+docs/agent/HANDOFF.md
+npm-debug.log*

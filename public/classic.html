@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d4e75" />
+    <title>WikiMaze Classic</title>
+    <link rel="stylesheet" href="/classic.css" />
+  </head>
+  <body>
+    <main class="desktop">
+      <section class="game-window" aria-label="WikiMaze classic point-and-click game">
+        <header class="os-titlebar"><span class="app-icon">W</span><strong>WIKIMAZE · THE UNWRITTEN KEEP</strong><div class="window-buttons" aria-hidden="true"><i>_</i><i>□</i><i>×</i></div></header>
+        <nav class="menu-strip">
+          <button id="new-game-button"><u>G</u>ame</button><button id="scorecard-button"><u>S</u>core Card</button><button id="identity-button"><u>C</u>ompetitors</button><a href="/">Walkable 3D</a>
+          <span id="classic-network-dot"></span><small id="classic-network-label">SOLO ARCHIVE</small>
+        </nav>
+
+        <section id="room-scene" class="room-view">
+          <img id="room-plate-image" src="/assets/classic/astronomer.png" alt="" />
+          <button id="exit-left" class="painted-hotspot door-hotspot door-left" aria-label="Take the left door"><span>LEFT DOOR</span></button>
+          <button id="exit-right" class="painted-hotspot door-hotspot door-right" aria-label="Take the right door"><span>RIGHT DOOR</span></button>
+          <button id="exit-forward" class="painted-hotspot" hidden></button>
+          <button id="character-hotspot" class="painted-hotspot character-area" aria-label="Speak to the room's inhabitant"><span>SPEAK</span></button>
+          <button id="painting-hotspot" class="painted-hotspot knowledge-area" aria-label="Examine the room"><span>ENCYCLOPEDIA</span></button>
+          <button id="prop-hotspot" class="painted-hotspot" hidden></button>
+          <div id="remote-scholars" hidden></div>
+          <div class="room-caption"><strong id="room-title">The Astronomer's Parlour</strong><span id="room-bearing">Chamber 01 · facing east</span></div>
+          <div id="scene-whisper" class="scene-whisper" hidden></div><div id="transition-curtain" class="transition-curtain"></div>
+
+          <section id="challenge-dialog" class="in-scene-window question-window" hidden aria-modal="true" role="dialog">
+            <header><span>Knowledge Seal</span><button data-close-panel aria-label="Close">×</button></header>
+            <div class="question-body"><div class="question-line"><b id="question-category">History</b><span id="question-rank">Level 1</span><strong id="question-value">256 points</strong></div><h2 id="question-prompt"></h2><div id="question-answers" class="question-answers"></div><p id="question-result"></p><div id="research-drawer" class="research-panel" hidden><b id="research-title"></b><p id="research-extract"></p><a id="research-link" target="_blank" rel="noreferrer">Read in Wikipedia ↗</a></div></div>
+            <footer><button id="research-question">Search Wikipedia</button><button data-close-panel>Cancel</button></footer>
+          </section>
+
+          <section id="article-dialog" class="in-scene-window article-window" hidden aria-modal="true" role="dialog">
+            <header><span id="article-kind">The Living Encyclopedia</span><button data-close-panel aria-label="Close">×</button></header>
+            <div class="article-body"><img id="article-image" alt="" /><div><h2 id="article-title">Opening article…</h2><p id="article-extract"></p><div id="object-note" hidden></div><a id="article-link" target="_blank" rel="noreferrer">Open the full Wikipedia article ↗</a></div></div>
+            <footer><button data-close-panel>Return to the room</button></footer>
+          </section>
+
+          <section id="character-dialog" class="in-scene-window character-window" hidden aria-modal="true" role="dialog">
+            <header><span id="character-role">Inhabitant</span><button data-close-panel aria-label="Close">×</button></header>
+            <div class="character-body"><img id="dialog-character-image" alt="" /><div><h2 id="character-name"></h2><p id="character-speech"></p><div id="character-actions"></div></div></div>
+            <footer><button data-close-panel>Goodbye</button></footer>
+          </section>
+
+          <section id="notice-window" class="notice-window" hidden><div id="notice-text"></div><button id="notice-ok">OK</button></section>
+        </section>
+
+        <section class="control-board">
+          <div class="route-console"><div class="matches" aria-label="Route matches"><button data-match="0">🔥</button><button data-match="1">🔥</button><button data-match="2">🔥</button><button data-match="3">🔥</button><button data-match="4">🔥</button></div><div id="maze-grid" class="maze-grid" aria-label="Route grid, normally hidden"></div><span class="route-label">ROUTE MEMORY</span></div>
+
+          <fieldset class="interest-panel"><legend>Choose Area of Interest</legend><div class="interest-columns"><label><input type="radio" name="subject" value="All" checked /> All Areas</label><label><input type="radio" name="subject" value="History" /> History</label><label><input type="radio" name="subject" value="Life" /> Life Science</label><label><input type="radio" name="subject" value="Arts" /> Art & Literature</label><label><input type="radio" name="subject" value="Geography" /> Geography</label><label><input type="radio" name="subject" value="Science" /> Physical Science</label></div><div class="current-player"><span>Current player</span><strong id="player-display">Scholar</strong></div></fieldset>
+
+          <section class="level-panel"><h2>Level</h2><div class="level-buttons"><button data-level="1" class="active">1</button><button data-level="2">2</button><button data-level="3">3</button><button data-level="4">4</button></div><div class="rank-letter" id="rank-letter">P</div><div class="progress-copy">Progress: <strong><span id="classic-score">0</span>/20000</strong></div><div class="progress-bar"><i id="classic-score-fill"></i></div></section>
+
+          <footer class="status-line"><button id="previous-room" disabled>◀ Previous Room</button><button id="turn-around">↶ Turn Around</button><span id="room-status">Click a door to continue your quest.</span><button id="ambience-button">♫ Sound</button><button id="route-button"><span id="flame-count">5</span> matches</button></footer>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="settings-dialog" class="system-dialog"><div class="system-title">Competitors</div><form id="settings-form"><label>Scholar name <input id="player-name" maxlength="20" /></label><label>Shared keep <input id="shared-keep" maxlength="40" /></label><label>Marker color <input id="player-color" type="color" /></label><ul id="company-list"><li>No other competitors connected.</li></ul><div><button type="submit">Join</button><button type="button" data-close>Cancel</button></div></form></dialog>
+    <dialog id="scorecard-dialog" class="system-dialog scorecard-dialog"><div class="system-title">WikiMaze Score Card</div><dl><div><dt>Rooms found</dt><dd id="journal-rooms">1 / 64</dd></div><div><dt>Seals answered</dt><dd id="journal-seals">0</dd></div><div><dt>Wikipedia articles</dt><dd id="journal-articles">0</dd></div></dl><ol id="article-log"><li>No articles opened yet.</li></ol><button data-close>OK</button></dialog>
+    <script type="module" src="/classic.js"></script>
+  </body>
+</html>
