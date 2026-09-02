@@ -32,3 +32,8 @@
 - Keep sound opt-in and persist the player's choice; audio context creation remains tied to a user interaction to respect browser autoplay rules.
 - Give navigation, seals, right and wrong answers, objects, people, dialogue, irritation escalation, and route matches distinct cues.
 - Keep the Sound control visible at mobile widths, explicitly report on/off/blocked state, and test with a trusted pointer event plus running-context and nonzero-gain assertions.
+
+## 2026-09-01 — Analytics
+
+- Track both the walkable and classic entry points as one WikiMaze property for `maze.sardistic.com` in the self-hosted Umami instance.
+- Load the tracker directly from `analytics.sardistic.com` with Cloudflare script deferral disabled so page views remain reliable behind the tunnel.
