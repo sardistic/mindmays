@@ -10,8 +10,8 @@
 ## 2026-09-01 — Classic trivia rotation
 
 - Keep the authored trivia bank client-side so every question remains inspectable and can link directly to a Wikipedia research subject; generated families live in a separate data module to keep game logic readable.
-- Maintain exactly 400 unique prompts, including a statically validated 336-question expansion balanced evenly across four levels.
-- Persist a 96-question most-recently-used history in the browser.
+- Maintain 448 unique Classic prompts, including a statically validated 384-question expansion balanced evenly across four levels.
+- Persist a 160-question most-recently-used history in the browser.
 - Prefer questions absent from that history; after a filtered subject/level pool is exhausted, recycle its least-recently asked prompt.
 
 ## 2026-09-01 — Character irritation memory
@@ -22,7 +22,7 @@
 ## 2026-09-01 — Trivia verification
 
 - Treat Wikipedia article titles as question provenance and keep the Research action attached to the cited article.
-- Provide an explicit live audit for all 400 prompts that follows Wikipedia normalization and redirects, fails on missing sources, and checks correct-answer wording against the current article text.
+- Provide an explicit live audit for all 458 prompts across Classic and Sudden Death that follows Wikipedia normalization and redirects, fails on missing sources, and checks correct-answer wording against the current article text.
 - Use full article text only for lead-section misses, request those articles individually to honor the Wikipedia extracts API limit, and retry throttled requests.
 - Prefer precise, source-matching wording over potentially ambiguous geography or overly broad scientific claims.
 
@@ -35,5 +35,13 @@
 
 ## 2026-09-01 — Analytics
 
-- Track both the walkable and classic entry points as one WikiMaze property for `maze.sardistic.com` in the self-hosted Umami instance.
+- Track the walkable, classic, and Sudden Death entry points as one WikiMaze property for `maze.sardistic.com` in the self-hosted Umami instance.
 - Load the tracker directly from `analytics.sardistic.com` with Cloudflare script deferral disabled so page views remain reliable behind the tunnel.
+
+## 2026-09-02 — Sudden Death and expanded Classic keep
+
+- Expand Classic to a deterministic, connected 10×10 keep while retaining the deliberately hidden route display and preserving four uninhabited artifact-room plates.
+- Add Earth science and language prompt families, expose twelve interest filters, and add two visually distinct inhabitants with close-camera encounters.
+- Keep Sudden Death separate from shared Classic progression: it is a linear ten-question, free-text run where a wrong answer ends the attempt without a second choice.
+- Treat the final clickable treasure chest as a gateway to Wikipedia's random-article endpoint, making the reward informational rather than an in-game currency grant.
+- Keep all ambience procedural and opt-in; Sudden Death intensifies its heartbeat interval with depth, while Classic layers filtered room air, timber movement, and distant bells.

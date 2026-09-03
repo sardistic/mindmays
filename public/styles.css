@@ -51,6 +51,7 @@ h1 { margin: 1px 0 0; color: #efd58e; font-size: clamp(25px, 3vw, 35px); line-he
 .status-cluster { display: flex; align-items: center; gap: 7px; color: #ad9c7b; font: 11px system-ui, sans-serif; }
 .classic-switch { padding: 5px 8px; color: #d4b66f; border: 1px solid #5e472b; background: #1b140d; text-decoration: none; font: 9px system-ui, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .classic-switch:hover { color: #f3d993; border-color: #a47b3f; }
+.death-switch { color: #d69a88; border-color: #69342d; }
 .network-dot { width: 7px; height: 7px; background: #655b49; border-radius: 50%; }
 .network-dot.online { background: #78b673; box-shadow: 0 0 7px #78b673; }
 .seal-button { width: 31px; height: 31px; margin-left: 6px; color: #cba65c; background: #231b12; border: 1px solid #725735; border-radius: 50%; }

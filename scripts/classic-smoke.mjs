@@ -34,14 +34,15 @@ try {
     socket.on("message", onMessage); socket.send(JSON.stringify({ id, method, params }));
   });
   const evaluate = async (expression) => { const result = await command("Runtime.evaluate", { expression, returnByValue: true }); return result.result.value; };
-  await delay(1400);
-
-  const start = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
-  if (start.totalRooms !== 64) throw new Error(`Expected 64 classic chambers, found ${start.totalRooms}`);
-  if (start.reachableRooms !== 64 || start.roomPlates < 14 || start.uniqueRoomPlates < 14 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
-  if (start.questions !== 400 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 95) || start.characters < 10) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
+  for (let attempt = 0; attempt < 60 && !await evaluate("typeof window.__wikimazeClassicDebug === 'function'"); attempt++) await delay(100);
+  const startRaw = await evaluate("typeof window.__wikimazeClassicDebug === 'function' ? JSON.stringify(window.__wikimazeClassicDebug()) : JSON.stringify({ready:document.readyState,title:document.title,scripts:[...document.scripts].map(s=>s.src),body:document.body.innerText.slice(0,120)})");
+  const start = JSON.parse(startRaw);
+  if (!("totalRooms" in start)) { const moduleError = await evaluate("import('/classic.js').then(()=>'none').catch((error)=>String(error.stack||error))"); throw new Error(`Classic module did not initialize: ${JSON.stringify(start)} MODULE ${moduleError}`); }
+  if (start.totalRooms !== 100) throw new Error(`Expected 100 classic chambers, found ${start.totalRooms}`);
+  if (start.reachableRooms !== 100 || start.roomPlates < 16 || start.uniqueRoomPlates < 16 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
+  if (start.questions !== 448 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 105) || start.characters < 12) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
-  if (start.routeGridCells !== 64 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
+  if (start.routeGridCells !== 100 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
   const soundButtonRect = JSON.parse(await evaluate("JSON.stringify((() => { const rect = document.querySelector('#ambience-button').getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; })())"));
   await command("Input.dispatchMouseEvent", { type: "mousePressed", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
   await command("Input.dispatchMouseEvent", { type: "mouseReleased", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
@@ -58,7 +59,7 @@ try {
   peer = new WebSocket("ws://localhost:4173/multiplayer");
   await new Promise((resolve, reject) => { peer.once("open", resolve); peer.once("error", reject); });
   peer.send(JSON.stringify({ type: "join", room: `classic-${keepName}`, name: "Visiting Antiquarian", color: "#78a8a2" }));
-  peer.send(JSON.stringify({ type: "state", x: start.currentRoom % 8 + .5, y: Math.floor(start.currentRoom / 8) + .5, angle: 0, score: 640 }));
+  peer.send(JSON.stringify({ type: "state", x: start.currentRoom % 10 + .5, y: Math.floor(start.currentRoom / 10) + .5, angle: 0, score: 640 }));
   await delay(450);
   const company = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (company.roomScholars < 1) throw new Error("A multiplayer scholar did not appear in the same classic chamber");
@@ -127,6 +128,12 @@ try {
   const restoredEncounter = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (restoredEncounter.encounter !== null || restoredEncounter.roomImage.includes("-close.png")) throw new Error("The room plate did not restore after closing the encounter");
 
+  await evaluate("window.__wikimazeClassicTest.visitPlate('anatomy'); document.querySelector('#character-hotspot').click()");
+  await delay(720);
+  const newInhabitant = JSON.parse(await evaluate("JSON.stringify({name:document.querySelector('#character-name').textContent,zoom:document.querySelector('#room-scene').classList.contains('zoom-close'),image:document.querySelector('#room-plate-image').getAttribute('src')})"));
+  if (newInhabitant.name !== "Doctor Vellum" || !newInhabitant.zoom || !newInhabitant.image.includes("anatomy.png")) throw new Error(`The new anatomy inhabitant lacks a grounded close encounter: ${JSON.stringify(newInhabitant)}`);
+  await evaluate("document.querySelector('#character-dialog [data-close-panel]').click()");
+
   const sealed = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
   if (!sealed || !await evaluate("!document.querySelector('#challenge-dialog').hidden && document.querySelectorAll('#question-answers button').length === 4")) throw new Error("A question-sealed passage did not open a full challenge");
   const questionScreenshot = await command("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
@@ -138,7 +145,7 @@ try {
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok new-inhabitant-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

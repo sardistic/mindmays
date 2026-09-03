@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0807" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script async defer data-cfasync="false" src="https://analytics.sardistic.com/script.js" data-website-id="362a86f4-7b10-4455-a860-3164746e841f" data-domains="maze.sardistic.com"></script>
+    <title>WikiMaze · Sudden Death</title>
+    <link rel="stylesheet" href="/sudden.css" />
+  </head>
+  <body>
+    <main id="death-game">
+      <header class="death-header">
+        <a href="/classic.html">← Return to the keep</a>
+        <div><span>WIKIMAZE</span><strong>SUDDEN DEATH</strong></div>
+        <button id="death-sound" aria-pressed="false">♫ Wake corridor</button>
+      </header>
+
+      <section id="corridor" class="corridor" aria-live="polite">
+        <div class="vault vault-10"></div><div class="vault vault-9"></div><div class="vault vault-8"></div>
+        <div class="corridor-fog"></div>
+        <ol id="path-markers" aria-label="Ten seals"></ol>
+
+        <section id="intro-panel" class="death-panel intro-panel">
+          <p class="kicker">One path. Ten seals. One life.</p>
+          <h1>The Corridor of Final Answers</h1>
+          <p>There are no choices to hide behind. Type each answer. A single mistake closes the corridor and ends the run. The questions descend from familiar knowledge into specialist terms.</p>
+          <button id="begin-run">Enter the corridor</button>
+        </section>
+
+        <section id="question-panel" class="death-panel question-panel" hidden>
+          <div class="question-meta"><span id="seal-number">Seal I of X</span><span id="depth-name">Threshold</span></div>
+          <div class="depth-meter"><i id="depth-fill"></i></div>
+          <p id="question-domain" class="kicker">General knowledge</p>
+          <h2 id="death-question"></h2>
+          <form id="answer-form" autocomplete="off">
+            <label for="typed-answer">Speak the exact answer</label>
+            <div><input id="typed-answer" name="answer" required spellcheck="false" autocomplete="off" /><button type="submit">Commit answer</button></div>
+          </form>
+          <p id="answer-status" role="status"></p>
+        </section>
+
+        <section id="failure-panel" class="death-panel failure-panel" hidden>
+          <p class="kicker">The corridor has judged you</p>
+          <h2>The path is closed.</h2>
+          <p id="failure-copy"></p>
+          <div class="panel-actions"><button id="retry-run">Begin again</button><a href="/classic.html">Return to Classic</a></div>
+        </section>
+
+        <section id="reward-panel" class="reward-panel" hidden>
+          <img src="/assets/classic/ultimate-archive.png" alt="An open treasure chest containing a glowing encyclopedia" />
+          <div class="reward-copy">
+            <p class="kicker">The tenth seal is open</p>
+            <h2>Congratulations, you now have access to the ultimate information.</h2>
+            <a id="ultimate-link" href="https://en.wikipedia.org/wiki/Special:Random" target="_blank" rel="noreferrer">
+              <span>OPEN THE TREASURE CHEST</span><small>A passage into Wikipedia ↗</small>
+            </a>
+            <button id="new-descent">Walk the corridor again</button>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/sudden.js"></script>
+  </body>
+</html>

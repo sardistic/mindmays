@@ -2,13 +2,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { EXPANDED_QUESTIONS } from "../public/classic-question-bank.js";
+import { SUDDEN_QUESTIONS } from "../public/sudden-questions.js";
 
 const classicSource = await readFile(new URL("../public/classic.js", import.meta.url), "utf8");
 const baseMatch = classicSource.match(/const BASE_QUESTIONS = (\[[\s\S]*?\n\]);\n\nconst QUESTIONS/);
 if (!baseMatch) throw new Error("Could not locate BASE_QUESTIONS in classic.js");
 const baseQuestions = Function(`"use strict"; return ${baseMatch[1]};`)();
-const questions = [...baseQuestions, ...EXPANDED_QUESTIONS];
-if (questions.length !== 400) throw new Error(`Expected 400 questions, found ${questions.length}`);
+const questions = [...baseQuestions, ...EXPANDED_QUESTIONS, ...SUDDEN_QUESTIONS];
+if (questions.length !== 458) throw new Error(`Expected 458 audited questions, found ${questions.length}`);
 
 const cachePath = join(tmpdir(), "wikimaze-question-audit-cache.json");
 let fullExtractCache = {};
@@ -21,15 +22,20 @@ for (let index = 0; index < uniqueSources.length; index += 20) batches.push(uniq
 const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 async function queryWikipedia(parameters, batchIndex) {
   for (let attempt = 0; attempt < 5; attempt++) {
-    const response = await fetch("https://en.wikipedia.org/w/api.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "WikiMazeQuestionAudit/1.0 (educational browser game)" },
-      body: parameters,
-      signal: AbortSignal.timeout(30000),
-    });
-    if (response.ok) return response.json();
-    if (response.status !== 429 || attempt === 4) throw new Error(`Wikipedia batch ${batchIndex + 1} returned ${response.status}`);
-    await delay(Math.max(1500, Number(response.headers.get("retry-after") || 0) * 1000));
+    try {
+      const response = await fetch("https://en.wikipedia.org/w/api.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "WikiMazeQuestionAudit/1.0 (educational browser game)" },
+        body: parameters,
+        signal: AbortSignal.timeout(30000),
+      });
+      if (response.ok) return response.json();
+      if (response.status !== 429 || attempt === 4) throw new Error(`Wikipedia batch ${batchIndex + 1} returned ${response.status}`);
+      await delay(Math.max(1500, Number(response.headers.get("retry-after") || 0) * 1000));
+    } catch (error) {
+      if (attempt === 4 || /^Wikipedia batch/.test(String(error?.message))) throw error;
+      await delay(1200 * (attempt + 1));
+    }
   }
 }
 
@@ -70,7 +76,8 @@ const answerIsEvidenced = (answer, page) => {
 };
 
 const missingSources = uniqueSources.filter((source) => pagesByRequestedTitle.get(source)?.missing !== undefined);
-let weakEvidence = questions.filter((question) => !answerIsEvidenced(question.answers[question.correct], pagesByRequestedTitle.get(question.source) || {}));
+const correctAnswer = (question) => question.answer || question.answers[question.correct];
+let weakEvidence = questions.filter((question) => !answerIsEvidenced(correctAnswer(question), pagesByRequestedTitle.get(question.source) || {}));
 
 // Article leads are deliberately concise. Recheck only apparent misses against the
 // complete article before treating them as unsupported.
@@ -109,9 +116,9 @@ for (let index = 0; index < fullExtractSources.length; index += 1) {
   await delay(500);
 }
 await writeFile(cachePath, JSON.stringify(fullExtractCache), "utf8");
-weakEvidence = questions.filter((question) => !answerIsEvidenced(question.answers[question.correct], pagesByRequestedTitle.get(question.source) || {}));
+weakEvidence = questions.filter((question) => !answerIsEvidenced(correctAnswer(question), pagesByRequestedTitle.get(question.source) || {}));
 
 console.log(`question-audit questions=${questions.length} sources=${uniqueSources.length} resolved=${uniqueSources.length - missingSources.length} missing=${missingSources.length} weak-evidence=${weakEvidence.length}`);
 if (missingSources.length) console.log(`MISSING\n${missingSources.join("\n")}`);
-if (weakEvidence.length) console.log(`WEAK EVIDENCE\n${weakEvidence.map((question) => `${question.source} :: ${question.answers[question.correct]} :: ${question.prompt}`).join("\n")}`);
+if (weakEvidence.length) console.log(`WEAK EVIDENCE\n${weakEvidence.map((question) => `${question.source} :: ${correctAnswer(question)} :: ${question.prompt}`).join("\n")}`);
 if (missingSources.length || weakEvidence.length) process.exitCode = 1;

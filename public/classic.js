@@ -3,7 +3,7 @@ import { EXPANDED_QUESTIONS } from "./classic-question-bank.js";
 const DIRECTIONS = ["north", "east", "south", "west"];
 const VECTORS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }];
 const RELATIVE_LABELS = { left: "Left passage", forward: "Passage ahead", right: "Right passage" };
-const GRID = 8;
+const GRID = 10;
 const ROOM_COUNT = GRID * GRID;
 
 const THEMES = [
@@ -30,7 +30,7 @@ const PAINTINGS = [
 ];
 
 const CHARACTERS = {
-  archivist: { name: "Orin Vale", role: "Keeper of the Unwritten Index", image: "archivist", speech: "You arrived with an encyclopedia in your pocket and no map in your hand. Good. This keep rewards curiosity, not certainty.", actions: [["Ask about the rooms", "There are sixty-four today. Do not be comforted by the number; yesterday there were sixty-three."], ["Ask why there is no map", "A map would make the keep an answer. It was built to remain a question."]] },
+  archivist: { name: "Orin Vale", role: "Keeper of the Unwritten Index", image: "archivist", speech: "You arrived with an encyclopedia in your pocket and no map in your hand. Good. This keep rewards curiosity, not certainty.", actions: [["Ask about the rooms", "There are one hundred today. Do not be comforted by the number; yesterday there were ninety-nine."], ["Ask why there is no map", "A map would make the keep an answer. It was built to remain a question."]] },
   jester: { name: "The Riddle Keeper", role: "Examiner of Seals", image: "jester", speech: "A closed door is merely a question that has remembered how to stand upright.", actions: [["Ask about wrong answers", "The keep forgets mistakes faster than scholars do. Return to the seal and it will ask differently."], ["Ask who writes the questions", "Some come from books. Some come from the room behind the door. Those are less polite."]] },
   cartographer: { name: "Ilex Venn", role: "Spectral Cartographer", image: "cartographer", speech: "I mapped every road, then the castle forgot them. I recommend memory in small doses and fire in emergencies.", actions: [["Ask about the flame", "It will not show you a map. Only the next useful direction. The distinction matters to the keep."], ["Ask what lies at the center", "Every route I drew placed a different room there. On the final map, the center was behind me."]] },
   "bell-widow": { name: "The Bell Widow", role: "Keeper of Hours That Did Not Happen", image: "bell-widow", speech: "I keep the keys, not the doors. A distinction the doors are very particular about.", actions: [["Ask about the cracked bell", "It rang once for someone who had not yet arrived. When you entered the Gatehouse, the crack grew wider."], ["Listen to the smallest key", "It opens the little room between one moment and the next. You would not like the dust in there."]] },
@@ -40,6 +40,8 @@ const CHARACTERS = {
   cook: { name: "Master Salter", role: "Steward of the Unserved Feast", image: "measurer", speech: "You are late. The covered dish has asked for you twice, though I never told it your name.", actions: [["Ask what is under the lid", "A course prepared for the guest who answers last. I have never had to serve it."], ["Ask why the hearth is cold", "It went out the moment the bread began breathing. Sensible fire."]] },
   tuner: { name: "Vesper Reed", role: "Examiner of Unheard Notes", image: "brother-moth", speech: "There. That frequency again. It begins whenever you think of leaving and stops when you decide not to.", actions: [["Ask about the tuning fork", "It is tuned to the room beyond the left door. The room beyond the left door insists it does not exist."], ["Ask him to strike it again", "I did not strike it the first time. Neither did you. That narrows our list only slightly."]] },
   navigator: { name: "Mara Quoin", role: "Pilot of Disputed Shores", image: "bell-widow", speech: "The compass has stopped pointing north. It points at whichever door you are least likely to choose.", actions: [["Ask about the eye patch", "The covered eye sees coastlines. The uncovered one sees what replaced them."], ["Ask where the map leads", "Back to this table, eventually. Every accurate map of the keep does."]] },
+  anatomist: { name: "Doctor Vellum", role: "Corrector of the Human Figure", image: "archivist", speech: "You are asymmetrical in three interesting places. Do not worry. The atlas is asymmetrical in four, and it has been dead for centuries.", actions: [["Ask about the skeleton", "He is not a patient. Patients complain when corrected. He merely changes pose while I sleep."], ["Ask what the calipers measure", "The distance between what a person knows and what their body remembers. Yours will not close."]] },
+  glossator: { name: "The Glossator", role: "Translator of Erased Languages", image: "brother-moth", speech: "This page has been scraped clean seven times. It still remembers every sentence, including one written in your hand.", actions: [["Ask him to translate it", "It says: do not ask the reader what comes after the tenth seal. The ink beneath it says you already did."], ["Ask about the empty shadow", "My assistant stepped away before the room was built. His shadow is punctual, even when he is not."]] },
 };
 const CHARACTER_ROOMS = new Map([[0, "archivist"], [10, "jester"], [21, "cartographer"], [33, "bell-widow"], [46, "brother-moth"], [59, "measurer"]]);
 const AVATAR_KEYS = ["archivist", "jester", "cartographer", "bell-widow", "brother-moth", "measurer"];
@@ -55,6 +57,8 @@ const CHARACTER_IRRITATION = {
   cook: ["I heard you the first time. The covered dish heard you too.", "Questions, like onions, do not improve merely because you serve the same one again.", "Ask once more and I will lift the lid. Whatever answers is yours to clear away."],
   tuner: ["That phrase again. Precisely the same pitch.", "You are becoming the note I warned you about.", "Repeat it once more and the room will tune itself to you. Permanently."],
   navigator: ["We have sailed past that question already.", "Your conversation is a coast that refuses to stay behind us.", "Ask again and I will mark this spot Here Be You. Nothing returns from there improved."],
+  anatomist: ["I heard the question. Your pulse repeated it first.", "Repetition is useful in dissection, less so in conversation.", "Ask again and I will determine whether the answer is stored behind your eyes."],
+  glossator: ["That sentence has already been translated.", "You keep returning to the same line. The line has begun returning to you.", "Ask once more and I will scrape the question from the page—and from wherever you learned it."],
 };
 
 const BASE_QUESTIONS = [
@@ -152,6 +156,8 @@ const ROOM_PLATES = [
   { id: "clock", asset: "/assets/classic/clock.png", names: ["The Thirteenth Hour", "The Contrary Clock Room", "Chamber of the Late Moon"], character: null, topic: "Astronomical clock", note: "There are thirteen marks on the dial. The pendulum's shadow swings before the pendulum does.", knowledge: [35, 8, 31, 72] },
   { id: "manuscript", asset: "/assets/classic/manuscript.png", names: ["The Book of This Room", "The Blank Scriptorium", "The Doorway Folio"], character: null, topic: "Illuminated manuscript", note: "The pages are blank except for a painted doorway identical to the one behind you.", knowledge: [31, 43, 39, 45] },
   { id: "cabinet", asset: "/assets/classic/cabinet.png", names: ["Cabinet of Quiet Species", "The Listening Shell", "Museum of Uncatalogued Shores"], character: null, topic: "Cabinet of curiosities", note: "Fingerprints cloud the inside of the bell jar. The shell's opening is warm.", knowledge: [37, 18, 27, 66] },
+  { id: "anatomy", asset: "/assets/classic/anatomy.png", close: "/assets/classic/anatomy.png", closeZoom: true, names: ["The Corrected Anatomy", "Doctor Vellum's Theatre", "The Caliper Room"], character: "anatomist", topic: "History of anatomy", note: "A new marginal figure has your posture and today's date.", char: [15, 24, 22, 67], knowledge: [47, 43, 35, 48] },
+  { id: "glossary", asset: "/assets/classic/glossary.png", close: "/assets/classic/glossary.png", closeZoom: true, names: ["The Seventh Palimpsest", "Room of Erased Languages", "The Glossator's Vigil"], character: "glossator", topic: "Palimpsest", note: "Under the erased gloss is a direction to the room you just left.", char: [62, 28, 22, 59], knowledge: [25, 33, 36, 47] },
 ];
 
 const state = {
@@ -293,7 +299,7 @@ function returnToPrevious() {
 function turnAround() { if (state.moving) return; state.facing = opposite(state.facing); renderRoom(); }
 
 function questionFor(direction) {
-  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature", "Music", "Language"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Astronomy", "Technology", "Computing", "Mathematics"] };
+  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Technology", "Earth Science"], Music: ["Music"], Computing: ["Computing", "Technology"], Mathematics: ["Mathematics"], Earth: ["Earth Science", "Geography"], Language: ["Language", "Literature"], Astronomy: ["Astronomy"] };
   let candidates = QUESTIONS.filter((question) => question.difficulty === state.level && (state.subject === "All" || groups[state.subject]?.includes(question.category)));
   if (!candidates.length) candidates = QUESTIONS.filter((question) => question.difficulty === state.level);
   const next = neighbor(state.current, direction), key = edgeKey(state.current, next), attempt = state.questionAttempts[key] || 0;
@@ -304,7 +310,7 @@ function questionFor(direction) {
 function openChallenge(direction) {
   playCue("seal");
   const question = questionFor(direction), dialog = document.querySelector("#challenge-dialog");
-  state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 96); persist();
+  state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 160); persist();
   state.activeChallenge = { direction, question, researched: false, answered: false };
   document.querySelector("#question-category").textContent = question.category;
   document.querySelector("#question-rank").textContent = `Level ${question.difficulty}`;
@@ -397,7 +403,7 @@ function beginCharacterEncounter(key) {
   if (!key || !CHARACTERS[key] || state.encounter || state.moving) return;
   playCue("person");
   const plate = roomPlate(rooms[state.current]), roomImage = document.querySelector("#room-plate-image");
-  state.encounter = "person"; roomScene.classList.add("encounter-active"); roomImage.classList.add("encounter-swap");
+  state.encounter = "person"; roomScene.classList.add("encounter-active"); roomScene.classList.toggle("zoom-close", Boolean(plate.closeZoom)); roomScene.style.setProperty("--char-focus-x", `${plate.char[0] + plate.char[2] / 2}%`); roomScene.style.setProperty("--char-focus-y", `${plate.char[1] + plate.char[3] / 2}%`); roomImage.classList.add("encounter-swap");
   document.querySelector("#room-status").textContent = `${CHARACTERS[key].name} has come much closer.`;
   encounterTimer = setTimeout(() => { roomImage.src = plate.close; roomImage.classList.remove("encounter-swap"); roomScene.classList.add("person-encounter"); }, 180);
   setTimeout(() => { if (state.encounter === "person") openCharacter(key); }, 560);
@@ -416,7 +422,7 @@ function beginObjectEncounter() {
 function endEncounter() {
   clearTimeout(encounterTimer); state.encounter = null;
   const plate = roomPlate(rooms[state.current]), roomImage = document.querySelector("#room-plate-image");
-  roomImage.classList.remove("encounter-swap"); roomImage.src = plate.asset; roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter", "dialogue-irritated"); document.querySelector("#character-dialog").classList.remove("irritated");
+  roomImage.classList.remove("encounter-swap"); roomImage.src = plate.asset; roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter", "dialogue-irritated", "zoom-close"); document.querySelector("#character-dialog").classList.remove("irritated");
   document.querySelector("#room-status").textContent = roomStatus(plate);
 }
 
@@ -514,6 +520,12 @@ async function ensureAudio() {
       const oscillator = audioContext.createOscillator(), gain = audioContext.createGain();
       oscillator.frequency.value = frequency; oscillator.type = type; gain.gain.value = volume; oscillator.connect(gain).connect(ambienceGain); oscillator.start();
     }
+    const noiseLength = audioContext.sampleRate * 4, noiseBuffer = audioContext.createBuffer(1, noiseLength, audioContext.sampleRate), noiseData = noiseBuffer.getChannelData(0);
+    let brown = 0;
+    for (let index = 0; index < noiseLength; index++) { brown = brown * .988 + (Math.random() * 2 - 1) * .012; noiseData[index] = brown; }
+    const air = audioContext.createBufferSource(), airFilter = audioContext.createBiquadFilter(), airGain = audioContext.createGain();
+    air.buffer = noiseBuffer; air.loop = true; airFilter.type = "bandpass"; airFilter.frequency.value = 240; airFilter.Q.value = .55; airGain.gain.value = .34; air.connect(airFilter).connect(airGain).connect(ambienceGain); air.start();
+    const drift = audioContext.createOscillator(), driftGain = audioContext.createGain(); drift.frequency.value = .071; driftGain.gain.value = 75; drift.connect(driftGain).connect(airFilter.frequency); drift.start();
   }
   try { if (audioContext.state !== "running") await audioContext.resume(); } catch { return false; }
   if (created && ambienceOn && audioContext.state === "running") {
@@ -537,6 +549,8 @@ async function playCue(name, intensity = 1) {
     irritated: [[Math.max(52, 104 - intensity * 12), 0, .22 + intensity * .06, .1 + intensity * .012, "sawtooth"], [49, .08, .3, .075, "square"]],
     match: [[740, 0, .07, .07, "sine"], [988, .05, .12, .06, "sine"]],
     room: [[110, 0, .45, .035, "sine"], [103, .12, .58, .028, "triangle"]],
+    timber: [[72, 0, .52, .05, "sawtooth"], [68, .28, .7, .035, "triangle"]],
+    farBell: [[392, 0, 1.4, .03, "sine"], [196, .08, 1.8, .025, "sine"]],
   };
   const now = audioContext.currentTime;
   for (const [frequency, offset, duration, volume, type] of patterns[name] || []) {
@@ -548,7 +562,7 @@ async function playCue(name, intensity = 1) {
 function scheduleAmbienceTexture() {
   clearTimeout(ambienceTextureTimer);
   if (!ambienceOn) return;
-  ambienceTextureTimer = setTimeout(async () => { await playCue("room"); scheduleAmbienceTexture(); }, 9000 + Math.floor(Math.random() * 7000));
+  ambienceTextureTimer = setTimeout(async () => { const roll = hash(`${state.current}-${Date.now() >> 12}`) % 5; await playCue(roll === 0 ? "farBell" : roll < 3 ? "timber" : "room"); scheduleAmbienceTexture(); }, 6500 + Math.floor(Math.random() * 6500));
 }
 async function toggleAmbience() {
   if (ambienceOn) {

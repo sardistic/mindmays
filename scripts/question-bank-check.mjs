@@ -1,6 +1,6 @@
 import { EXPANDED_QUESTIONS } from "../public/classic-question-bank.js";
 
-if (EXPANDED_QUESTIONS.length !== 336) throw new Error(`Expected 336 expanded questions, found ${EXPANDED_QUESTIONS.length}`);
+if (EXPANDED_QUESTIONS.length !== 384) throw new Error(`Expected 384 expanded questions, found ${EXPANDED_QUESTIONS.length}`);
 const prompts = new Set();
 for (const [index, question] of EXPANDED_QUESTIONS.entries()) {
   if (!question.prompt || !question.source || !question.explanation) throw new Error(`Question ${index} is missing required text`);
@@ -12,5 +12,5 @@ for (const [index, question] of EXPANDED_QUESTIONS.entries()) {
 }
 
 const byLevel = [1, 2, 3, 4].map((difficulty) => EXPANDED_QUESTIONS.filter((question) => question.difficulty === difficulty).length);
-if (byLevel.some((count) => count !== 84)) throw new Error(`Expanded bank is not balanced across levels: ${byLevel.join(",")}`);
+if (byLevel.some((count) => count !== 96)) throw new Error(`Expanded bank is not balanced across levels: ${byLevel.join(",")}`);
 console.log(`question-bank=ok expanded=${EXPANDED_QUESTIONS.length} levels=${byLevel.join("/")}`);
