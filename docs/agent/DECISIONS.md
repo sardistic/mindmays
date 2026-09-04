@@ -52,3 +52,9 @@
 - Match new generated plates to the established astronomer-room rendering language: simplified pre-rendered geometry, hard pixel clusters, restrained color ramps, and visible dithering.
 - Require a separately authored alternate-expression close plate for every inhabited Classic room; CSS magnification is not an acceptable substitute for the encounter image.
 - Keep full-resolution source renders out of the shipped asset set once a smaller 256-color game plate replaces them.
+
+## 2026-09-04 — Classic flame lives
+
+- Treat wrong seal answers as losses that extinguish exactly one flame while retaining the existing new-question-on-failure behavior.
+- When a wrong answer extinguishes the fifth flame, immediately reset score, opened seals, route memory, discoveries, dialogue memory, and position, then restore five flames at Chamber 1.
+- Do not apply the automatic run reset when a player voluntarily spends the final flame to reveal the route; route hints and answer losses remain distinct mechanics.

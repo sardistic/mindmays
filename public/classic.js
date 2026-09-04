@@ -338,8 +338,19 @@ function answerQuestion(index) {
   } else {
     playCue("wrong");
     const target = neighbor(state.current, challenge.direction), key = edgeKey(state.current, target);
-    state.questionAttempts[key] = (state.questionAttempts[key] || 0) + 1; persist();
-    document.querySelector("#question-result").textContent = `${challenge.question.explanation} The seal rejects that answer and is choosing another question…`;
+    state.questionAttempts[key] = (state.questionAttempts[key] || 0) + 1;
+    state.flames = Math.max(0, state.flames - 1); persist(); updateHud();
+    if (state.flames === 0) {
+      document.querySelector("#question-result").textContent = `${challenge.question.explanation} Your final flame goes out. The keep is taking everything back…`;
+      setTimeout(() => {
+        if (state.activeChallenge !== challenge) return;
+        document.querySelector("#challenge-dialog").hidden = true; state.activeChallenge = null; resetClassicGame();
+        document.querySelector("#notice-text").textContent = "All five flames are gone. Your score, opened seals, route memory, and discoveries have been reset.";
+        document.querySelector("#notice-window").hidden = false;
+      }, 1450);
+      return;
+    }
+    document.querySelector("#question-result").textContent = `${challenge.question.explanation} One flame goes out; ${state.flames} remain. The seal is choosing another question…`;
     setTimeout(() => { if (state.activeChallenge === challenge) openChallenge(challenge.direction); }, 1150);
   }
 }
@@ -464,6 +475,14 @@ function updateJournal() {
 }
 function persist() {
   localStorage.setItem("wikimaze-classic-visited", JSON.stringify([...state.visited])); localStorage.setItem("wikimaze-classic-unlocked", JSON.stringify([...state.unlocked])); localStorage.setItem("wikimaze-score", String(state.score)); localStorage.setItem("wikimaze-classic-flames", String(state.flames)); localStorage.setItem("wikimaze-classic-solved", String(state.solved)); localStorage.setItem("wikimaze-classic-articles", JSON.stringify(state.articles)); localStorage.setItem("wikimaze-classic-question-attempts", JSON.stringify(state.questionAttempts)); localStorage.setItem("wikimaze-classic-question-history", JSON.stringify(state.questionHistory)); localStorage.setItem("wikimaze-classic-dialogue-counts", JSON.stringify(state.dialogueCounts)); localStorage.setItem("wikimaze-classic-level", String(state.level)); localStorage.setItem("wikimaze-classic-subject", state.subject);
+}
+
+function resetClassicGame() {
+  clearTimeout(encounterTimer); clearInterval(routeTimer);
+  state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.dialogueCounts = {}; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.activeChallenge = null; state.routeUntil = 0; state.moving = false; state.encounter = null; state.facing = [...rooms[0].exits][0] ?? 1;
+  document.querySelectorAll(".in-scene-window").forEach((panel) => panel.hidden = true);
+  roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter", "dialogue-irritated", "zoom-close");
+  persist(); renderRoom();
 }
 
 function settings() {
@@ -592,7 +611,7 @@ document.querySelectorAll('input[name="subject"]').forEach((radio) => { radio.ch
 document.querySelectorAll("[data-match]").forEach((button) => button.addEventListener("click", revealRoute));
 document.querySelector("#scorecard-button").addEventListener("click", () => document.querySelector("#scorecard-dialog").showModal());
 document.querySelector("#new-game-button").addEventListener("click", () => { document.querySelector("#notice-text").textContent = "Begin a new maze? Route memory and opened seals will be cleared."; document.querySelector("#notice-window").hidden = false; });
-document.querySelector("#notice-ok").addEventListener("click", () => { state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.dialogueCounts = {}; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.facing = [...rooms[0].exits][0] ?? 1; persist(); document.querySelector("#notice-window").hidden = true; renderRoom(); });
+document.querySelector("#notice-ok").addEventListener("click", () => { resetClassicGame(); document.querySelector("#notice-window").hidden = true; });
 
 const savedSettings = JSON.parse(localStorage.getItem("wikimaze-settings") || "{}");
 document.querySelector("#player-name").value = savedSettings.name || `Scholar ${Math.floor(Math.random() * 90 + 10)}`; document.querySelector("#shared-keep").value = new URLSearchParams(location.search).get("room") || savedSettings.room || "great-hall"; document.querySelector("#player-color").value = savedSettings.color || "#e9b95c";
@@ -602,7 +621,7 @@ document.querySelector("#settings-form").addEventListener("submit", (event) => {
 addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
 buildKeep(); renderRoom(); connect(); updateSoundButton();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {
@@ -614,6 +633,7 @@ if (new URLSearchParams(location.search).has("debug")) {
     },
     answerCorrect() { if (state.activeChallenge) answerQuestion(state.activeChallenge.question.correct); },
     answerWrong() { if (state.activeChallenge) answerQuestion((state.activeChallenge.question.correct + 1) % state.activeChallenge.question.answers.length); },
+    setFlames(value) { state.flames = Math.max(0, Math.min(5, Number(value) || 0)); persist(); updateHud(); },
     visitPlate(id) { const room = rooms.find((candidate) => roomPlate(candidate).id === id); if (!room) return false; state.current = room.index; state.history = []; renderRoom(); return true; },
   };
 }

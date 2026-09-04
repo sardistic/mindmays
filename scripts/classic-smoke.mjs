@@ -79,10 +79,11 @@ try {
   }
   if (new Set(sampledQuestions).size !== sampledQuestions.length) throw new Error(`A question repeated before the available pool was exhausted: ${JSON.stringify(sampledQuestions)}`);
   const questionBeforeFailure = sampledQuestions.at(-1);
+  const flamesBeforeFailure = Number(await evaluate("window.__wikimazeClassicDebug().flames"));
   await evaluate("window.__wikimazeClassicTest.answerWrong()");
   await delay(1350);
-  const replacementQuestion = String(await evaluate("window.__wikimazeClassicDebug().activeQuestion"));
-  if (!replacementQuestion || replacementQuestion === questionBeforeFailure || Number(await evaluate("window.__wikimazeClassicDebug().questionAttempts")) < 1 || Number(await evaluate("window.__wikimazeClassicDebug().recentQuestions")) < sampledQuestions.length + 1) throw new Error("A failed seal did not replace and remember its question");
+  const failedAnswer = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (!failedAnswer.activeQuestion || failedAnswer.activeQuestion === questionBeforeFailure || failedAnswer.questionAttempts < 1 || failedAnswer.recentQuestions < sampledQuestions.length + 1 || failedAnswer.flames !== flamesBeforeFailure - 1) throw new Error(`A failed seal did not replace its question and extinguish exactly one flame: ${JSON.stringify(failedAnswer)}`);
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
   await delay(1700);
   const moved = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
@@ -150,7 +151,14 @@ try {
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  const fatalSeal = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
+  if (!fatalSeal) throw new Error("No locked passage remained for the final-flame reset test");
+  await evaluate("window.__wikimazeClassicTest.setFlames(1); window.__wikimazeClassicTest.answerWrong()");
+  await delay(1650);
+  const resetRun = JSON.parse(await evaluate("JSON.stringify({...window.__wikimazeClassicDebug(),noticeVisible:!document.querySelector('#notice-window').hidden,noticeText:document.querySelector('#notice-text').textContent})"));
+  if (resetRun.flames !== 5 || resetRun.score !== 0 || resetRun.solved !== 0 || resetRun.unlockedEdges !== 0 || resetRun.currentRoom !== 0 || resetRun.visitedRooms !== 1 || !resetRun.noticeVisible || !resetRun.noticeText.includes("All five flames")) throw new Error(`The fifth lost flame did not fully reset the run: ${JSON.stringify(resetRun)}`);
+
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });
