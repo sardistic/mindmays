@@ -45,3 +45,9 @@
 - Keep Sudden Death separate from shared Classic progression: it is a linear ten-question, free-text run where a wrong answer ends the attempt without a second choice.
 - Treat the final clickable treasure chest as a gateway to Wikipedia's random-article endpoint, making the reward informational rather than an in-game currency grant.
 - Keep all ambience procedural and opt-in; Sudden Death intensifies its heartbeat interval with depth, while Classic layers filtered room air, timber movement, and distant bells.
+
+## 2026-09-04 — Classic image fidelity
+
+- Treat 640×480 indexed-color output as part of the Classic art contract, not merely a CSS display effect.
+- Match new generated plates to the established astronomer-room rendering language: simplified pre-rendered geometry, hard pixel clusters, restrained color ramps, and visible dithering.
+- Keep full-resolution source renders out of the shipped asset set once a smaller 256-color game plate replaces them.

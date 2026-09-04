@@ -131,7 +131,7 @@ try {
   await evaluate("window.__wikimazeClassicTest.visitPlate('anatomy'); document.querySelector('#character-hotspot').click()");
   await delay(720);
   const newInhabitant = JSON.parse(await evaluate("JSON.stringify({name:document.querySelector('#character-name').textContent,zoom:document.querySelector('#room-scene').classList.contains('zoom-close'),image:document.querySelector('#room-plate-image').getAttribute('src')})"));
-  if (newInhabitant.name !== "Doctor Vellum" || !newInhabitant.zoom || !newInhabitant.image.includes("anatomy.png")) throw new Error(`The new anatomy inhabitant lacks a grounded close encounter: ${JSON.stringify(newInhabitant)}`);
+  if (newInhabitant.name !== "Doctor Vellum" || !newInhabitant.zoom || !newInhabitant.image.includes("anatomy-pixel.png")) throw new Error(`The new anatomy inhabitant lacks a grounded close encounter: ${JSON.stringify(newInhabitant)}`);
   await evaluate("document.querySelector('#character-dialog [data-close-panel]').click()");
 
   const sealed = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
