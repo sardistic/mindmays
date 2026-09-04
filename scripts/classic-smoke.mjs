@@ -130,8 +130,13 @@ try {
 
   await evaluate("window.__wikimazeClassicTest.visitPlate('anatomy'); document.querySelector('#character-hotspot').click()");
   await delay(720);
-  const newInhabitant = JSON.parse(await evaluate("JSON.stringify({name:document.querySelector('#character-name').textContent,zoom:document.querySelector('#room-scene').classList.contains('zoom-close'),image:document.querySelector('#room-plate-image').getAttribute('src')})"));
-  if (newInhabitant.name !== "Doctor Vellum" || !newInhabitant.zoom || !newInhabitant.image.includes("anatomy-pixel.png")) throw new Error(`The new anatomy inhabitant lacks a grounded close encounter: ${JSON.stringify(newInhabitant)}`);
+  const newInhabitant = JSON.parse(await evaluate("JSON.stringify({name:document.querySelector('#character-name').textContent,zoom:document.querySelector('#room-scene').classList.contains('zoom-close'),image:document.querySelector('#room-plate-image').getAttribute('src'),loaded:document.querySelector('#room-plate-image').complete&&document.querySelector('#room-plate-image').naturalWidth===640})"));
+  if (newInhabitant.name !== "Doctor Vellum" || newInhabitant.zoom || !newInhabitant.loaded || !newInhabitant.image.includes("anatomy-close-pixel.png")) throw new Error(`The new anatomy inhabitant lacks an authored 640×480 close encounter: ${JSON.stringify(newInhabitant)}`);
+  await evaluate("document.querySelector('#character-dialog [data-close-panel]').click()");
+  await evaluate("window.__wikimazeClassicTest.visitPlate('glossary'); document.querySelector('#character-hotspot').click()");
+  await delay(720);
+  const glossatorEncounter = JSON.parse(await evaluate("JSON.stringify({name:document.querySelector('#character-name').textContent,image:document.querySelector('#room-plate-image').getAttribute('src'),loaded:document.querySelector('#room-plate-image').complete&&document.querySelector('#room-plate-image').naturalWidth===640})"));
+  if (glossatorEncounter.name !== "The Glossator" || !glossatorEncounter.loaded || !glossatorEncounter.image.includes("glossary-close-pixel.png")) throw new Error(`The Glossator lacks an authored 640×480 close encounter: ${JSON.stringify(glossatorEncounter)}`);
   await evaluate("document.querySelector('#character-dialog [data-close-panel]').click()");
 
   const sealed = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
@@ -145,7 +150,7 @@ try {
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok new-inhabitant-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

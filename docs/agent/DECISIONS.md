@@ -50,4 +50,5 @@
 
 - Treat 640×480 indexed-color output as part of the Classic art contract, not merely a CSS display effect.
 - Match new generated plates to the established astronomer-room rendering language: simplified pre-rendered geometry, hard pixel clusters, restrained color ramps, and visible dithering.
+- Require a separately authored alternate-expression close plate for every inhabited Classic room; CSS magnification is not an acceptable substitute for the encounter image.
 - Keep full-resolution source renders out of the shipped asset set once a smaller 256-color game plate replaces them.
