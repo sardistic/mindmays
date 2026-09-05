@@ -6,7 +6,9 @@ button, input { font:inherit; }
 button, a { cursor:pointer; }
 #death-game { height:100dvh; display:grid; grid-template-rows:58px 1fr; }
 .death-header { position:relative; z-index:10; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:7px 18px; border-bottom:3px ridge #72572f; background:linear-gradient(#241a13,#0d0907); box-shadow:0 5px 26px #000; }
-.death-header > a { color:#aa9877; font:11px system-ui,sans-serif; text-decoration:none; }
+.death-header a { color:#aa9877; font:11px system-ui,sans-serif; text-decoration:none; }
+.death-header a:hover { color:#e0cca4; }
+.death-header .header-links { display:flex; gap:14px; letter-spacing:normal; }
 .death-header div { display:flex; align-items:baseline; gap:10px; letter-spacing:.13em; }
 .death-header span { color:#c6a768; font-size:13px; }
 .death-header strong { color:#f0cf78; font-size:20px; text-shadow:0 0 18px #9e3f25; }
@@ -61,6 +63,6 @@ button, a { cursor:pointer; }
 #new-descent { position:absolute; right:0; top:calc(100vh - 145px); padding:7px 10px; color:#a89776; background:#0d0907aa; border:1px solid #55412c; }
 [hidden] { display:none!important; }
 @media(max-width:650px){
-  #death-game{grid-template-rows:52px 1fr}.death-header{padding:6px 9px}.death-header>div span,.death-header>a{display:none}.death-header{grid-template-columns:1fr auto}.death-header>div{justify-self:start}.death-header strong{font-size:15px}.death-panel{padding:24px 18px}.death-panel>p:not(.kicker){font-size:14px}.question-panel h2{font-size:25px}#answer-form>div{grid-template-columns:1fr}#answer-form button{margin-top:6px}.panel-actions{flex-direction:column}.reward-copy{top:24px}.reward-copy h2{font-size:31px}#ultimate-link{top:61vh}.reward-panel img{object-position:center}.vault{max-width:68vw}
+  #death-game{grid-template-rows:52px 1fr}.death-header{padding:6px 9px}.death-header>div span,.death-header>.header-links{display:none}.death-header{grid-template-columns:1fr auto}.death-header>div{justify-self:start}.death-header strong{font-size:15px}.death-panel{padding:24px 18px}.death-panel>p:not(.kicker){font-size:14px}.question-panel h2{font-size:25px}#answer-form>div{grid-template-columns:1fr}#answer-form button{margin-top:6px}.panel-actions{flex-direction:column}.reward-copy{top:24px}.reward-copy h2{font-size:31px}#ultimate-link{top:61vh}.reward-panel img{object-position:center}.vault{max-width:68vw}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

@@ -58,3 +58,12 @@
 - Treat wrong seal answers as losses that extinguish exactly one flame while retaining the existing new-question-on-failure behavior.
 - When a wrong answer extinguishes the fifth flame, immediately reset score, opened seals, route memory, discoveries, dialogue memory, and position, then restore five flames at Chamber 1.
 - Do not apply the automatic run reset when a player voluntarily spends the final flame to reveal the route; route hints and answer losses remain distinct mechanics.
+
+## 2026-09-05 — Title screen and entry points
+
+- Make the root path a title screen rather than a game: the walkable edition moves to `/walk.html`, and `/` presents the wordmark over a darkened keep plate with a period-correct menu.
+- Model the menu on 1990s desktop software rather than on modern web navigation: beveled options, one underlined accelerator letter each, arrow-key selection with wrap-around, and a status line that describes the highlighted option.
+- Give the accelerator its letter at a word boundary where one exists, so the underline falls on the word the option is named for.
+- Let the menu read the same persisted keys the editions write, so it can offer Continue with a live chamber count, report the record in a score card, and set the scholar identity that Classic and the walkable edition already share.
+- Route New Quest through `/classic.html?new=1` and let `classic.js` own the reset, rather than duplicating reset logic in the menu; the marker is stripped from the URL so a refresh cannot clear the record twice.
+- Share the sound preference key with Classic so enabling ambience at the menu carries into the game.

@@ -11,10 +11,12 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4173` for the walkable edition, `http://localhost:4173/classic.html` for the fixed-view point-and-click edition, or `http://localhost:4173/sudden.html` for the one-life typed-answer challenge. To meet a friend, both players enter the same room name under **Expedition settings**. Add `?room=your-room` to a shared URL to prefill it.
+Open `http://localhost:4173` for the title screen and its menu, which leads to `/classic.html` (the fixed-view point-and-click edition), `/walk.html` (the walkable first-person edition), and `/sudden.html` (the one-life typed-answer challenge). To meet a friend, both players enter the same room name under **Expedition settings**. Add `?room=your-room` to a shared URL to prefill it.
 
 ## Current vertical slice
 
+- A 1990s CD-ROM title screen at the root: a darkened keep plate behind the wordmark and a beveled menu of eight options with underlined accelerator letters, arrow-key and mouse selection, and a Windows-style status line describing the highlighted option
+- The menu opens all three editions, remembers a quest in progress as **Continue the Quest** with its chamber count, confirms **New Quest** before clearing the record, and carries in-window panels for the scholar identity, instructions, a score card, and credits
 - A separate classic edition with 100 connected fixed-view chambers, sixteen original period-rendered room plates (including four entirely unoccupied object chambers), painted-door navigation, return and turn-around controls, and a compact 1990s encyclopedia-game interface
 - Every uncleared door carries a knowledge seal backed by 448 unique Wikipedia-linked prompts across four levels and twelve selectable areas of interest; a persisted 160-question memory replaces failed prompts and delays repeats, while twelve inhabitants remember repeated dialogue choices and grow visibly irritated when pestered
 - Wrong Classic answers extinguish one of the five flames; questions continue changing while a flame remains, and losing the fifth automatically resets score, opened seals, route memory, and discoveries

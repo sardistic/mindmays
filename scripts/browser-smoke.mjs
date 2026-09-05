@@ -11,7 +11,7 @@ const profile = await mkdtemp(join(tmpdir(), "wikimaze-smoke-"));
 const browser = spawn(browserExecutable, [
   "--headless=new", "--disable-gpu", "--no-first-run", `--remote-debugging-port=${debugPort}`,
   `--user-data-dir=${profile}`,
-  `http://localhost:4173/?debug=1&showcase=${encodeURIComponent(showcase)}`,
+  `http://localhost:4173/walk.html?debug=1&showcase=${encodeURIComponent(showcase)}`,
 ], { stdio: "ignore", windowsHide: true });
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="theme-color" content="#0d0a07" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script async defer data-cfasync="false" src="https://analytics.sardistic.com/script.js" data-website-id="362a86f4-7b10-4455-a860-3164746e841f" data-domains="maze.sardistic.com"></script>
+    <title>WikiMaze — The Unwritten Keep</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main id="game-shell">
+      <header class="marquee">
+        <div class="brand-mark" aria-hidden="true">W</div>
+        <div class="title-lockup">
+          <p class="eyebrow">The Unwritten Keep · Floor <span id="floor-number">I</span></p>
+          <h1>WikiMaze</h1>
+        </div>
+        <div class="campaign-meter" aria-label="Campaign progress">
+          <div class="meter-copy"><span>Lore recovered</span><strong><span id="score">0</span> / 20,000</strong></div>
+          <div class="meter-track"><i id="score-fill"></i></div>
+        </div>
+        <div class="status-cluster">
+          <a class="classic-switch" href="/">Main Menu</a>
+          <a class="classic-switch" href="/classic.html">Classic 2D</a>
+          <a class="classic-switch death-switch" href="/sudden.html">Sudden Death</a>
+          <span id="network-dot" class="network-dot"></span>
+          <span id="network-label">Solo archive</span>
+          <button id="identity-button" class="seal-button" aria-label="Expedition settings">⚙</button>
+        </div>
+      </header>
+
+      <section class="viewport-frame">
+        <canvas id="viewport" aria-label="First-person castle maze"></canvas>
+        <div class="location-plaque">
+          <span id="room-name-display">The Gatehouse</span>
+          <small id="compass-display">EAST</small>
+        </div>
+        <div id="crosshair" aria-hidden="true"></div>
+        <div id="prompt" class="prompt" hidden><kbd>E</kbd> <span></span></div>
+        <div id="map-reveal" class="map-reveal" hidden>
+          <div class="map-heading"><span>The cartographer’s flame</span><strong id="map-countdown">8</strong></div>
+          <canvas id="minimap" width="420" height="420" aria-label="Temporarily revealed route"></canvas>
+        </div>
+        <div id="toast" class="toast" hidden></div>
+        <div id="whisper" class="whisper" hidden aria-live="polite"></div>
+        <div class="mobile-controls" aria-label="Touch movement controls">
+          <button data-control="left" aria-label="Turn left">↶</button>
+          <button data-control="forward" aria-label="Walk forward">▲</button>
+          <button data-control="back" aria-label="Walk backward">▼</button>
+          <button data-control="right" aria-label="Turn right">↷</button>
+          <button data-control="interact" class="interact-control" aria-label="Interact">E</button>
+        </div>
+      </section>
+
+      <footer class="command-bar">
+        <span><kbd>W</kbd><kbd>S</kbd> walk</span>
+        <span><kbd>A</kbd><kbd>D</kbd> turn</span>
+        <span><kbd>E</kbd> interact</span>
+        <button id="torch-button" class="torch-button"><b>🔥</b> Reveal route <em id="torch-count">5</em></button>
+        <button id="ambience-button" class="ambience-button" aria-pressed="false">♫ Wake the keep</button>
+        <div class="party" id="party"><span class="party-label">In this keep</span><span id="party-count">1 scholar</span></div>
+      </footer>
+    </main>
+
+    <dialog id="encounter-dialog" class="encounter-dialog">
+      <div class="character-stage"><img id="character-image" alt="" /></div>
+      <section class="encounter-copy">
+        <button class="dialog-close" data-close aria-label="Close">×</button>
+        <p class="eyebrow" id="character-role">Keeper of the archive</p>
+        <h2 id="character-name">Orin Vale</h2>
+        <p id="character-speech" class="character-speech"></p>
+        <div id="character-actions" class="dialog-actions"></div>
+      </section>
+    </dialog>
+
+    <dialog id="challenge-dialog" class="challenge-dialog">
+      <aside class="question-keeper"><img src="/assets/characters/jester.png" alt="The riddle keeper" /></aside>
+      <section class="challenge-copy">
+        <button class="dialog-close" data-close aria-label="Close">×</button>
+        <div class="question-meta">
+          <span id="question-category">History</span>
+          <span id="question-difficulty">III · Scholar</span>
+          <strong id="question-points">+512 lore</strong>
+        </div>
+        <div class="timer"><i id="timer-fill"></i></div>
+        <h2 id="question-text">The keeper is choosing a question…</h2>
+        <div id="question-answers" class="question-answers"></div>
+        <div id="research-drawer" class="research-drawer" hidden>
+          <div>
+            <p class="eyebrow">Open the encyclopedia</p>
+            <h3 id="research-title">Article</h3>
+            <p id="research-extract"></p>
+          </div>
+          <a id="research-link" target="_blank" rel="noreferrer">Read the full Wikipedia article ↗</a>
+        </div>
+        <div class="challenge-tools">
+          <button id="research-button">📖 Research this question</button>
+          <button id="leave-challenge" class="quiet-button">Retreat from the door</button>
+        </div>
+        <p id="question-result" class="question-result" role="status"></p>
+      </section>
+    </dialog>
+
+    <dialog id="painting-dialog" class="stone-dialog">
+      <button class="dialog-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">A painting that is more than a painting</p>
+      <h2 id="article-title">Loading the archive…</h2>
+      <div id="article-loading" class="runes">◈ · ◇ · ◈</div>
+      <p id="article-extract"></p>
+      <div class="dialog-actions">
+        <a id="wikipedia-link" target="_blank" rel="noreferrer">Enter Wikipedia ↗</a>
+        <button data-close>Step away</button>
+      </div>
+    </dialog>
+
+    <dialog id="settings-dialog" class="stone-dialog compact-dialog">
+      <button class="dialog-close" data-close aria-label="Close">×</button>
+      <p class="eyebrow">Multiplayer expedition</p>
+      <h2>Choose your identity</h2>
+      <form id="settings-form">
+        <label>Scholar name <input id="player-name" maxlength="20" autocomplete="nickname" /></label>
+        <label>Shared keep <input id="room-name" maxlength="40" value="great-hall" /></label>
+        <label>Lantern color <input id="player-color" type="color" value="#e9b95c" /></label>
+        <button type="submit">Enter the archive</button>
+      </form>
+      <p class="fine-print">Share the keep name with friends. Their lantern-bearing figures appear inside the same corridors.</p>
+    </dialog>
+
+    <script type="module" src="/game.js"></script>
+  </body>
+</html>
