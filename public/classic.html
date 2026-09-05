@@ -22,18 +22,18 @@
           <img id="room-plate-image" src="/assets/classic/astronomer.png" alt="" />
           <button id="exit-left" class="painted-hotspot door-hotspot door-left" aria-label="Take the left door"><span>LEFT DOOR</span></button>
           <button id="exit-right" class="painted-hotspot door-hotspot door-right" aria-label="Take the right door"><span>RIGHT DOOR</span></button>
-          <button id="exit-forward" class="painted-hotspot" hidden></button>
+          <button id="exit-forward" class="painted-hotspot door-hotspot door-forward" aria-label="Take the passage ahead" hidden><span>PASSAGE AHEAD</span></button>
           <button id="character-hotspot" class="painted-hotspot character-area" aria-label="Speak to the room's inhabitant"><span>SPEAK</span></button>
           <button id="painting-hotspot" class="painted-hotspot knowledge-area" aria-label="Examine the room"><span>ENCYCLOPEDIA</span></button>
-          <button id="prop-hotspot" class="painted-hotspot" hidden></button>
+          <button id="prop-hotspot" class="painted-hotspot room-choice" hidden><span>CHOICE</span></button>
           <div id="remote-scholars" hidden></div>
           <div class="room-caption"><strong id="room-title">The Astronomer's Parlour</strong><span id="room-bearing">Chamber 01 · facing east</span></div>
           <div id="scene-whisper" class="scene-whisper" hidden></div><div id="transition-curtain" class="transition-curtain"></div>
 
           <section id="challenge-dialog" class="in-scene-window question-window" hidden aria-modal="true" role="dialog">
             <header><span>Knowledge Seal</span><button data-close-panel aria-label="Close">×</button></header>
-            <div class="question-body"><div class="question-line"><b id="question-category">History</b><span id="question-rank">Level 1</span><strong id="question-value">256 points</strong></div><h2 id="question-prompt"></h2><div id="question-answers" class="question-answers"></div><p id="question-result"></p><div id="research-drawer" class="research-panel" hidden><b id="research-title"></b><p id="research-extract"></p><a id="research-link" target="_blank" rel="noreferrer">Read in Wikipedia ↗</a></div></div>
-            <footer><button id="research-question">Search Wikipedia</button><button data-close-panel>Cancel</button></footer>
+            <div class="question-body"><div class="question-line"><b id="question-category">History</b><span id="question-rank">Level 1</span><strong id="question-value">256 points</strong></div><h2 id="question-prompt"></h2><div id="question-answers" class="question-answers"></div><p id="question-hint" class="question-hint" hidden></p><p id="question-result"></p><div id="research-drawer" class="research-panel" hidden><b id="research-title"></b><p id="research-extract"></p><a id="research-link" target="_blank" rel="noreferrer">Read in Wikipedia ↗</a></div></div>
+            <footer><button id="hint-question">Ask the room</button><button id="research-question">Search Wikipedia</button><button data-close-panel>Cancel</button></footer>
           </section>
 
           <section id="article-dialog" class="in-scene-window article-window" hidden aria-modal="true" role="dialog">
@@ -52,7 +52,7 @@
         </section>
 
         <section class="control-board">
-          <div class="route-console"><div class="matches" aria-label="Route matches"><button data-match="0">🔥</button><button data-match="1">🔥</button><button data-match="2">🔥</button><button data-match="3">🔥</button><button data-match="4">🔥</button></div><div id="maze-grid" class="maze-grid" aria-label="Route grid, normally hidden"></div><span class="route-label">ROUTE MEMORY</span></div>
+          <div class="route-console"><div class="matches" aria-label="Route matches"><button data-match="0">🔥</button><button data-match="1">🔥</button><button data-match="2">🔥</button><button data-match="3">🔥</button><button data-match="4">🔥</button></div><div id="maze-grid" class="maze-grid" aria-label="Route grid, normally hidden"></div><span class="route-label">ROUTE MAP · WALKED CHAMBERS AND OPENED DOORS</span></div>
 
           <fieldset class="interest-panel"><legend>Choose Area of Interest</legend><div class="interest-columns"><label><input type="radio" name="subject" value="All" checked /> All Areas</label><label><input type="radio" name="subject" value="History" /> History</label><label><input type="radio" name="subject" value="Life" /> Life Science</label><label><input type="radio" name="subject" value="Arts" /> Art & Literature</label><label><input type="radio" name="subject" value="Geography" /> Geography</label><label><input type="radio" name="subject" value="Science" /> Physical Science</label><label><input type="radio" name="subject" value="Music" /> Music</label><label><input type="radio" name="subject" value="Computing" /> Computing</label><label><input type="radio" name="subject" value="Mathematics" /> Mathematics</label><label><input type="radio" name="subject" value="Earth" /> Earth Science</label><label><input type="radio" name="subject" value="Language" /> Language</label><label><input type="radio" name="subject" value="Astronomy" /> Astronomy</label></div><div class="current-player"><span>Current player</span><strong id="player-display">Scholar</strong></div></fieldset>
 

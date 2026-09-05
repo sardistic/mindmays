@@ -164,12 +164,11 @@ function askNewQuest() {
   noticeWindow.hidden = false;
   document.querySelector("#notice-ok").focus();
 }
-function closeNotice() { noticeWindow.hidden = true; noticeConfirm = null; menuList.querySelectorAll(".menu-option")[selected]?.focus(); }
+function closeNotice() { noticeWindow.hidden = true; noticeConfirm = null; document.querySelector("#notice-cancel").hidden = false; menuList.querySelectorAll(".menu-option")[selected]?.focus(); }
 
 let audioContext = null;
 let audioMasterGain = null;
 let ambienceGain = null;
-let ambienceTextureTimer = 0;
 let soundCueCount = 0;
 let ambienceOn = localStorage.getItem("wikimaze-classic-sound") === "on";
 
@@ -206,7 +205,7 @@ async function ensureAudio() {
     air.connect(airFilter).connect(airGain).connect(ambienceGain); air.start();
   }
   try { if (audioContext.state !== "running") await audioContext.resume(); } catch { return false; }
-  if (created && ambienceOn && audioContext.state === "running") { ambienceGain.gain.setTargetAtTime(.07, audioContext.currentTime, .4); scheduleAmbienceTexture(); }
+  if (created && ambienceOn && audioContext.state === "running") ambienceGain.gain.setTargetAtTime(.07, audioContext.currentTime, .4);
   return audioContext.state === "running";
 }
 async function playCue(name) {
@@ -216,9 +215,6 @@ async function playCue(name) {
     enable: [[392, 0, .2, .13, "sine"], [494, .16, .22, .12, "sine"], [587, .33, .3, .11, "sine"], [784, .5, .5, .1, "sine"]],
     move: [[622, 0, .06, .055, "square"], [784, .04, .08, .04, "sine"]],
     select: [[330, 0, .12, .1, "sine"], [494, .09, .16, .09, "sine"], [659, .19, .26, .085, "sine"]],
-    farBell: [[392, 0, 1.4, .03, "sine"], [196, .08, 1.8, .025, "sine"]],
-    timber: [[72, 0, .52, .05, "sawtooth"], [68, .28, .7, .035, "triangle"]],
-    room: [[110, 0, .45, .035, "sine"], [103, .12, .58, .028, "triangle"]],
   };
   const now = audioContext.currentTime;
   for (const [frequency, offset, duration, volume, type] of patterns[name] || []) {
@@ -229,14 +225,9 @@ async function playCue(name) {
   }
   return true;
 }
-function scheduleAmbienceTexture() {
-  clearTimeout(ambienceTextureTimer);
-  if (!ambienceOn) return;
-  ambienceTextureTimer = setTimeout(async () => { const roll = Math.floor(Math.random() * 5); await playCue(roll === 0 ? "farBell" : roll < 3 ? "timber" : "room"); scheduleAmbienceTexture(); }, 7000 + Math.floor(Math.random() * 7000));
-}
 async function toggleAmbience() {
   if (ambienceOn) {
-    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off"); clearTimeout(ambienceTextureTimer);
+    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off");
     if (ambienceGain && audioContext) ambienceGain.gain.setTargetAtTime(.0001, audioContext.currentTime, .18);
     updateSoundButton(); statusLine.textContent = "Sound muted."; return;
   }
@@ -248,7 +239,7 @@ async function toggleAmbience() {
   localStorage.setItem("wikimaze-classic-sound", "on");
   ambienceGain.gain.setTargetAtTime(.07, audioContext.currentTime, .4);
   updateSoundButton(); statusLine.textContent = "Sound on. The keep is listening.";
-  await playCue("enable"); scheduleAmbienceTexture();
+  await playCue("enable");
 }
 
 document.querySelector("#ambience-button").addEventListener("click", toggleAmbience);
@@ -285,6 +276,14 @@ addEventListener("keydown", (event) => {
 
 renderMenu();
 updateSoundButton();
+if (new URLSearchParams(location.search).has("lost")) {
+  const address = new URL(location.href); address.searchParams.delete("lost"); history.replaceState({}, "", address);
+  noticeText.textContent = "Your fifth match went out. The keep took back your score, its opened seals, the route you had walked, and everything you had found. You are returned to the gate.";
+  document.querySelector("#notice-cancel").hidden = true;
+  noticeConfirm = null;
+  noticeWindow.hidden = false;
+  statusLine.textContent = "The run ended in the keep. Begin again when you are ready.";
+}
 window.__wikimazeIntroDebug = () => ({
   options: MENU.length,
   labels: [...menuList.querySelectorAll(".menu-option")].map((button) => button.textContent),
@@ -297,6 +296,7 @@ window.__wikimazeIntroDebug = () => ({
   panelTitle: panelTitle.textContent,
   panelText: panel.hidden ? "" : panelBody.textContent,
   noticeOpen: !noticeWindow.hidden,
+  noticeText: noticeText.textContent,
   plateLoaded: document.querySelector(".stage-plate")?.complete === true && document.querySelector(".stage-plate").naturalWidth > 0,
   titleText: document.querySelector(".title-lockup h1").textContent,
   started: record().started,

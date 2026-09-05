@@ -142,23 +142,55 @@ const UNEASY_LINES = [
 ];
 
 const ROOM_PLATES = [
-  { id: "astronomer", asset: "/assets/classic/astronomer.png", close: "/assets/classic/astronomer-close.png", names: ["The Astronomer's Study", "The Meridian Room", "The Blue Orrery"], character: "cartographer", topic: "History of astronomy", note: "The telescope is trained on a patch of stone wall.", char: [20, 24, 17, 66], knowledge: [31, 55, 38, 38] },
-  { id: "alchemist", asset: "/assets/classic/alchemist.png", close: "/assets/classic/alchemist-close.png", names: ["The Still Room", "The Green Retort", "The Alchemist's Kitchen"], character: "bell-widow", topic: "Alchemy", note: "The green liquid gives off no reflection.", char: [59, 25, 18, 68], knowledge: [21, 43, 38, 49] },
-  { id: "royal", asset: "/assets/classic/royal.png", close: "/assets/classic/royal-close.png", names: ["The Anxious Audience", "The Empty Throne Room", "The Chamber of Small Honors"], character: "measurer", topic: "Heraldry", note: "No two quarters of the shield agree on the same kingdom.", char: [20, 24, 18, 68], knowledge: [61, 44, 22, 34] },
-  { id: "library", asset: "/assets/classic/library.png", close: "/assets/classic/library-close.png", names: ["The Parrot's Library", "The Lower Reading Room", "The Book of Inland Seas"], character: "brother-moth", topic: "History of encyclopedias", note: "The parrot turns a page without touching it.", char: [53, 22, 18, 70], knowledge: [26, 42, 24, 43] },
-  { id: "chapel", asset: "/assets/classic/chapel.png", close: "/assets/classic/chapel-close.png", names: ["The Chapel of the Missing Saint", "The Leaning Candles", "The Empty Reliquary"], character: "archivist", topic: "Reliquary", note: "Every flame leans toward the empty recess.", char: [22, 24, 18, 66], knowledge: [35, 34, 35, 42] },
-  { id: "nursery", asset: "/assets/classic/nursery.png", close: "/assets/classic/nursery-close.png", names: ["The Lessons Room", "The Nursery Without a Door", "The Fool's Primer"], character: "jester", topic: "History of education", note: "The portrait miniatures disagree about where you are standing.", char: [64, 23, 17, 68], knowledge: [13, 42, 25, 40] },
-  { id: "conservatory", asset: "/assets/classic/conservatory.png", close: "/assets/classic/conservatory-close.png", names: ["The Pale Flower Room", "Cabinet of Resemblances", "The Conservatory of Wrong Seasons"], character: "naturalist", topic: "History of botany", note: "The pale flower has turned to face you.", char: [18, 23, 19, 68], knowledge: [30, 48, 42, 42] },
-  { id: "kitchen", asset: "/assets/classic/kitchen.png", close: "/assets/classic/kitchen-close.png", names: ["The Unserved Kitchen", "The Cold Hearth", "The Last Course"], character: "cook", topic: "Medieval cuisine", note: "Something beneath the copper lid taps once.", char: [65, 23, 18, 70], knowledge: [21, 54, 48, 36] },
-  { id: "music", asset: "/assets/classic/music.png", close: "/assets/classic/music-close.png", names: ["The Unheard Note", "Chamber of Small Resonances", "The Tuning Room"], character: "tuner", topic: "Acoustics", note: "The tuning fork vibrates before it is struck.", char: [23, 22, 19, 70], knowledge: [59, 35, 27, 47] },
-  { id: "maproom", asset: "/assets/classic/maproom.png", close: "/assets/classic/maproom-close.png", names: ["The Disputed Coast", "The Navigator's Table", "Atlas of Returning Roads"], character: "navigator", topic: "History of cartography", note: "The compass points directly at the door behind you.", char: [65, 23, 18, 68], knowledge: [23, 50, 45, 39] },
-  { id: "astrolabe", asset: "/assets/classic/astrolabe.png", names: ["The Unreflected Reliquary", "Cabinet of the Brass Sky", "The Pointer Room"], character: null, topic: "Astrolabe", note: "The glass reflects every part of the room except the astrolabe. Its pointer follows you.", knowledge: [36, 35, 34, 55] },
-  { id: "clock", asset: "/assets/classic/clock.png", names: ["The Thirteenth Hour", "The Contrary Clock Room", "Chamber of the Late Moon"], character: null, topic: "Astronomical clock", note: "There are thirteen marks on the dial. The pendulum's shadow swings before the pendulum does.", knowledge: [35, 8, 31, 72] },
-  { id: "manuscript", asset: "/assets/classic/manuscript.png", names: ["The Book of This Room", "The Blank Scriptorium", "The Doorway Folio"], character: null, topic: "Illuminated manuscript", note: "The pages are blank except for a painted doorway identical to the one behind you.", knowledge: [31, 43, 39, 45] },
-  { id: "cabinet", asset: "/assets/classic/cabinet.png", names: ["Cabinet of Quiet Species", "The Listening Shell", "Museum of Uncatalogued Shores"], character: null, topic: "Cabinet of curiosities", note: "Fingerprints cloud the inside of the bell jar. The shell's opening is warm.", knowledge: [37, 18, 27, 66] },
-  { id: "anatomy", asset: "/assets/classic/anatomy-pixel.png", close: "/assets/classic/anatomy-close-pixel.png", names: ["The Corrected Anatomy", "Doctor Vellum's Theatre", "The Caliper Room"], character: "anatomist", topic: "History of anatomy", note: "A new marginal figure has your posture and today's date.", char: [15, 24, 22, 67], knowledge: [47, 43, 35, 48] },
-  { id: "glossary", asset: "/assets/classic/glossary-pixel.png", close: "/assets/classic/glossary-close-pixel.png", names: ["The Seventh Palimpsest", "Room of Erased Languages", "The Glossator's Vigil"], character: "glossator", topic: "Palimpsest", note: "Under the erased gloss is a direction to the room you just left.", char: [62, 28, 22, 59], knowledge: [25, 33, 36, 47] },
+  { id: "astronomer", affinity: ["Astronomy", "Mathematics"], asset: "/assets/classic/astronomer.png", close: "/assets/classic/astronomer-close.png", names: ["The Astronomer's Study", "The Meridian Room", "The Blue Orrery"], character: "cartographer", topic: "History of astronomy", note: "The telescope is trained on a patch of stone wall.", char: [20, 24, 17, 66], knowledge: [31, 55, 38, 38] },
+  { id: "alchemist", affinity: ["Chemistry", "Physics"], asset: "/assets/classic/alchemist.png", close: "/assets/classic/alchemist-close.png", names: ["The Still Room", "The Green Retort", "The Alchemist's Kitchen"], character: "bell-widow", topic: "Alchemy", note: "The green liquid gives off no reflection.", char: [59, 25, 18, 68], knowledge: [21, 43, 38, 49] },
+  { id: "royal", affinity: ["History"], asset: "/assets/classic/royal.png", close: "/assets/classic/royal-close.png", names: ["The Anxious Audience", "The Empty Throne Room", "The Chamber of Small Honors"], character: "measurer", topic: "Heraldry", note: "No two quarters of the shield agree on the same kingdom.", char: [20, 24, 18, 68], knowledge: [61, 44, 22, 34] },
+  { id: "library", affinity: ["Literature", "Arts", "Language"], asset: "/assets/classic/library.png", close: "/assets/classic/library-close.png", names: ["The Parrot's Library", "The Lower Reading Room", "The Book of Inland Seas"], character: "brother-moth", topic: "History of encyclopedias", note: "The parrot turns a page without touching it.", char: [53, 22, 18, 70], knowledge: [26, 42, 24, 43] },
+  { id: "chapel", affinity: ["History", "Arts"], asset: "/assets/classic/chapel.png", close: "/assets/classic/chapel-close.png", names: ["The Chapel of the Missing Saint", "The Leaning Candles", "The Empty Reliquary"], character: "archivist", topic: "Reliquary", note: "Every flame leans toward the empty recess.", char: [22, 24, 18, 66], knowledge: [35, 34, 35, 42] },
+  { id: "nursery", affinity: ["History", "Language"], asset: "/assets/classic/nursery.png", close: "/assets/classic/nursery-close.png", names: ["The Lessons Room", "The Nursery Without a Door", "The Fool's Primer"], character: "jester", topic: "History of education", note: "The portrait miniatures disagree about where you are standing.", char: [64, 23, 17, 68], knowledge: [13, 42, 25, 40] },
+  { id: "conservatory", affinity: ["Life Science", "Biology"], asset: "/assets/classic/conservatory.png", close: "/assets/classic/conservatory-close.png", names: ["The Pale Flower Room", "Cabinet of Resemblances", "The Conservatory of Wrong Seasons"], character: "naturalist", topic: "History of botany", note: "The pale flower has turned to face you.", char: [18, 23, 19, 68], knowledge: [30, 48, 42, 42] },
+  { id: "kitchen", affinity: ["Life Science", "History"], asset: "/assets/classic/kitchen.png", close: "/assets/classic/kitchen-close.png", names: ["The Unserved Kitchen", "The Cold Hearth", "The Last Course"], character: "cook", topic: "Medieval cuisine", note: "Something beneath the copper lid taps once.", char: [65, 23, 18, 70], knowledge: [21, 54, 48, 36] },
+  { id: "music", affinity: ["Music"], asset: "/assets/classic/music.png", close: "/assets/classic/music-close.png", names: ["The Unheard Note", "Chamber of Small Resonances", "The Tuning Room"], character: "tuner", topic: "Acoustics", note: "The tuning fork vibrates before it is struck.", char: [23, 22, 19, 70], knowledge: [59, 35, 27, 47] },
+  { id: "maproom", affinity: ["Geography", "Earth Science"], asset: "/assets/classic/maproom.png", close: "/assets/classic/maproom-close.png", names: ["The Disputed Coast", "The Navigator's Table", "Atlas of Returning Roads"], character: "navigator", topic: "History of cartography", note: "The compass points directly at the door behind you.", char: [65, 23, 18, 68], knowledge: [23, 50, 45, 39] },
+  { id: "astrolabe", affinity: ["Astronomy", "Mathematics"], asset: "/assets/classic/astrolabe.png", names: ["The Unreflected Reliquary", "Cabinet of the Brass Sky", "The Pointer Room"], character: null, topic: "Astrolabe", note: "The glass reflects every part of the room except the astrolabe. Its pointer follows you.", knowledge: [36, 35, 34, 55] },
+  { id: "clock", affinity: ["Astronomy", "Technology"], asset: "/assets/classic/clock.png", names: ["The Thirteenth Hour", "The Contrary Clock Room", "Chamber of the Late Moon"], character: null, topic: "Astronomical clock", note: "There are thirteen marks on the dial. The pendulum's shadow swings before the pendulum does.", knowledge: [35, 8, 31, 72] },
+  { id: "manuscript", affinity: ["Literature", "Language"], asset: "/assets/classic/manuscript.png", names: ["The Book of This Room", "The Blank Scriptorium", "The Doorway Folio"], character: null, topic: "Illuminated manuscript", note: "The pages are blank except for a painted doorway identical to the one behind you.", knowledge: [31, 43, 39, 45] },
+  { id: "cabinet", affinity: ["Life Science", "Earth Science"], asset: "/assets/classic/cabinet.png", names: ["Cabinet of Quiet Species", "The Listening Shell", "Museum of Uncatalogued Shores"], character: null, topic: "Cabinet of curiosities", note: "Fingerprints cloud the inside of the bell jar. The shell's opening is warm.", knowledge: [37, 18, 27, 66] },
+  { id: "anatomy", affinity: ["Life Science", "Biology"], asset: "/assets/classic/anatomy-pixel.png", close: "/assets/classic/anatomy-close-pixel.png", names: ["The Corrected Anatomy", "Doctor Vellum's Theatre", "The Caliper Room"], character: "anatomist", topic: "History of anatomy", note: "A new marginal figure has your posture and today's date.", char: [15, 24, 22, 67], knowledge: [47, 43, 35, 48] },
+  { id: "glossary", affinity: ["Language", "Literature"], asset: "/assets/classic/glossary-pixel.png", close: "/assets/classic/glossary-close-pixel.png", names: ["The Seventh Palimpsest", "Room of Erased Languages", "The Glossator's Vigil"], character: "glossator", topic: "Palimpsest", note: "Under the erased gloss is a direction to the room you just left.", char: [62, 28, 22, 59], knowledge: [25, 33, 36, 47] },
 ];
+
+const PLATES_BY_ID = Object.fromEntries(ROOM_PLATES.map((plate) => [plate.id, plate]));
+
+// Each level is a different wing of the keep. A wing decides which chambers and
+// inhabitants you meet and what the rooms let you do besides answer questions.
+const WINGS = [
+  {
+    id: "outer", level: 1, name: "The Outer Ward", rank: "Page",
+    tone: "The lamps here are still lit by someone. The doors remember being ordinary doors.",
+    plates: ["chapel", "nursery", "library", "kitchen", "cabinet", "manuscript"],
+    choice: { id: "candle", label: "CANDLE STUB", title: "Take the candle stub", prompt: "A stub of candle has been left burning on the ledge, as though for you.", taken: "You pocket the stub. One match is restored.", spent: "This ledge is bare now." },
+  },
+  {
+    id: "range", level: 2, name: "The Scholars' Range", rank: "Squire",
+    tone: "Instruments outnumber chairs. Everything in this wing is pointed at something else.",
+    plates: ["astronomer", "maproom", "music", "glossary", "astrolabe", "clock"],
+    choice: { id: "starchart", label: "STAR CHART", title: "Read the star chart", prompt: "A chart is pinned open at this room's own coordinates.", taken: "The chart holds the route steady while you read it.", spent: "The chart has already given this room away." },
+  },
+  {
+    id: "wards", level: 3, name: "The Quiet Wards", rank: "Knight",
+    tone: "Specimens, calipers, and covered things. Nobody in this wing raises their voice.",
+    plates: ["anatomy", "conservatory", "alchemist", "cabinet", "nursery", "manuscript"],
+    choice: { id: "ledger", label: "THE LEDGER", title: "Sign the ledger", prompt: "An open ledger offers to buy your next seal for 400 lore.", taken: "The ledger takes its price. The next seal will simply open.", spent: "The ledger has already had its entry from this room.", cost: 400 },
+  },
+  {
+    id: "unwritten", level: 4, name: "The Unwritten Keep", rank: "Master",
+    tone: "These rooms were not finished. They are being written while you stand in them.",
+    plates: ["royal", "astronomer", "glossary", "anatomy", "clock", "astrolabe"],
+    choice: { id: "unwritten", label: "THE UNWRITTEN PAGE", title: "Read the unwritten page", prompt: "A page is filling with ink as you watch. It is describing your next question.", taken: "The page keeps one wrong answer for itself. The next seal opens already narrowed.", spent: "The page has gone blank again." },
+  },
+];
+function wingFor(level) { return WINGS[Math.min(WINGS.length - 1, Math.max(0, (level || 1) - 1))]; }
 
 const state = {
   current: 0,
@@ -173,6 +205,9 @@ const state = {
   questionAttempts: JSON.parse(localStorage.getItem("wikimaze-classic-question-attempts") || "{}"),
   questionHistory: JSON.parse(localStorage.getItem("wikimaze-classic-question-history") || "[]"),
   dialogueCounts: JSON.parse(localStorage.getItem("wikimaze-classic-dialogue-counts") || "{}"),
+  trail: JSON.parse(localStorage.getItem("wikimaze-classic-trail") || "[]"),
+  roomChoices: JSON.parse(localStorage.getItem("wikimaze-classic-room-choices") || "{}"),
+  boon: localStorage.getItem("wikimaze-classic-boon") || "",
   activeChallenge: null,
   routeUntil: 0,
   moving: false,
@@ -194,7 +229,6 @@ let audioMasterGain;
 let ambienceGain;
 let ambienceOn = localStorage.getItem("wikimaze-classic-sound") === "on";
 let soundCueCount = 0;
-let ambienceTextureTimer;
 let whisperTimer;
 let routeTimer;
 let encounterTimer;
@@ -236,10 +270,38 @@ function buildKeep() {
 
 function roomTheme(room) { return THEMES[(room.x * 3 + room.y * 7 + room.index) % THEMES.length]; }
 function roomPainting(room) { return PAINTINGS[(room.index * 5 + room.y) % PAINTINGS.length]; }
-function roomPlate(room) { return ROOM_PLATES[(room.x * 5 + room.y * 3 + room.index) % ROOM_PLATES.length]; }
+function wingPlates(level) { return wingFor(level).plates.map((id) => PLATES_BY_ID[id]); }
+function roomPlate(room, level = state.level) { const pool = wingPlates(level); return pool[(room.x * 5 + room.y * 3 + room.index) % pool.length]; }
 function roomTitle(room) { const plate = roomPlate(room); return plate.names[(room.x + room.y * 2) % plate.names.length]; }
+function roomChoiceKey(room = state.current) { return `${wingFor(state.level).id}:${room}`; }
+function roomChoiceTaken(room = state.current) { return Boolean(state.roomChoices[roomChoiceKey(room)]); }
 function isLocked(from, to) {
   return !state.unlocked.has(edgeKey(from, to));
+}
+function roomOffersChoice(room = state.current) { return hash(`${wingFor(state.level).id}-choice-${room}`) % 3 === 0; }
+function renderRoomChoice() {
+  const button = document.querySelector("#prop-hotspot"), choice = wingFor(state.level).choice, offered = roomOffersChoice();
+  button.hidden = !offered;
+  if (!offered) return;
+  const taken = roomChoiceTaken();
+  button.className = `painted-hotspot room-choice${taken ? " spent" : ""}`;
+  button.disabled = taken;
+  button.dataset.choice = choice.id;
+  button.title = taken ? choice.spent : `${choice.title} — ${choice.prompt}`;
+  button.setAttribute("aria-label", taken ? choice.spent : choice.title);
+  button.replaceChildren(Object.assign(document.createElement("span"), { textContent: taken ? "SPENT" : choice.label }));
+}
+function takeRoomChoice() {
+  const choice = wingFor(state.level).choice, status = document.querySelector("#room-status");
+  if (!roomOffersChoice() || roomChoiceTaken() || state.encounter || state.moving) return;
+  if (choice.cost && state.score < choice.cost) { status.textContent = `The ledger will not take an entry you cannot pay. ${choice.cost} lore is required.`; return; }
+  state.roomChoices[roomChoiceKey()] = choice.id;
+  if (choice.id === "candle") state.flames = Math.min(5, state.flames + 1);
+  if (choice.id === "starchart") { state.routeUntil = performance.now() + 20000; renderMazeGrid(true); startRouteTimer(); }
+  if (choice.id === "ledger") { state.score = Math.max(0, state.score - choice.cost); state.boon = "open"; }
+  if (choice.id === "unwritten") state.boon = "hint";
+  playCue("match"); persist(); renderRoom();
+  status.textContent = choice.taken;
 }
 function roomStatus(plate) { return plate.character ? `${CHARACTERS[plate.character].name} is here. Click a painted door to continue.` : `No inhabitant waits here. ${plate.topic} can be examined.`; }
 function relativeDirection(relative) { return positiveMod(state.facing + ({ left: -1, forward: 0, right: 1 }[relative]), 4); }
@@ -251,7 +313,7 @@ function renderRoom() {
   document.querySelector("#room-plate-image").src = plate.asset;
   document.querySelector("#room-plate-image").alt = roomTitle(room);
   document.querySelector("#room-title").textContent = roomTitle(room);
-  document.querySelector("#room-bearing").textContent = `Chamber ${String(room.index + 1).padStart(2, "0")} · facing ${DIRECTIONS[state.facing]}`;
+  document.querySelector("#room-bearing").textContent = `${wingFor(state.level).name} · Chamber ${String(room.index + 1).padStart(2, "0")} · facing ${DIRECTIONS[state.facing]}`;
   document.querySelector("#room-status").textContent = roomStatus(plate);
   const characterHotspot = document.querySelector("#character-hotspot"), hasInhabitant = Boolean(plate.character);
   characterHotspot.hidden = !hasInhabitant;
@@ -259,19 +321,22 @@ function renderRoom() {
   roomScene.style.setProperty("--knowledge-left", `${plate.knowledge[0]}%`); roomScene.style.setProperty("--knowledge-top", `${plate.knowledge[1]}%`); roomScene.style.setProperty("--knowledge-width", `${plate.knowledge[2]}%`); roomScene.style.setProperty("--knowledge-height", `${plate.knowledge[3]}%`);
   document.querySelector("#painting-hotspot").title = `Examine: ${plate.topic}`;
 
-  let choices = [...room.exits].filter((direction) => direction !== opposite(state.facing));
-  if (!choices.length && room.exits.has(opposite(state.facing))) choices = [opposite(state.facing)];
-  if (!state.history.length) choices = [...room.exits];
-  choices = choices.slice(0, 2);
-  for (const [index, button] of [document.querySelector("#exit-left"), document.querySelector("#exit-right")].entries()) {
-    const direction = choices[index]; button.hidden = direction === undefined;
-    if (direction === undefined) continue;
+  const passages = [];
+  for (const [relative, selector] of [["left", "#exit-left"], ["forward", "#exit-forward"], ["right", "#exit-right"]]) {
+    const button = document.querySelector(selector), direction = relativeDirection(relative), open = room.exits.has(direction);
+    button.hidden = !open;
+    if (!open) continue;
     const next = neighbor(room.index, direction), locked = isLocked(room.index, next);
     button.dataset.direction = String(direction); button.classList.toggle("locked", locked);
-    button.querySelector("span").textContent = `${locked ? "SEALED" : "OPEN"} · ${cardinalLabel(direction)}`;
-    button.setAttribute("aria-label", `${locked ? "Question-sealed" : "Open"} ${DIRECTIONS[direction]} door`);
+    button.querySelector("span").textContent = `${locked ? "SEALED" : "OPEN"} · ${RELATIVE_LABELS[relative].toUpperCase()} · ${cardinalLabel(direction)}`;
+    button.setAttribute("aria-label", `${locked ? "Question-sealed" : "Open"} ${relative} passage, leading ${DIRECTIONS[direction]} to chamber ${next + 1}`);
+    passages.push(`${relative} ${locked ? "sealed" : "open"}`);
   }
+  const behind = room.exits.has(opposite(state.facing));
+  document.querySelector("#turn-around").disabled = false;
+  document.querySelector("#turn-around").title = behind ? "A passage lies behind you." : "Turn to face the wall behind you.";
   document.querySelector("#previous-room").disabled = state.history.length === 0;
+  renderRoomChoice();
   renderMazeGrid(state.routeUntil > performance.now()); renderRemoteScholars(); updateJournal(); updateHud(); sendState();
 }
 
@@ -279,12 +344,20 @@ function moveThrough(direction) {
   if (state.moving) return;
   const next = neighbor(state.current, direction);
   if (next < 0 || !rooms[state.current].exits.has(direction)) return;
-  if (isLocked(state.current, next)) { openChallenge(direction); return; }
+  if (isLocked(state.current, next)) {
+    if (state.boon === "open") {
+      state.boon = ""; state.unlocked.add(edgeKey(state.current, next)); persist();
+      if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "unlock", doorId: edgeDoorId(edgeKey(state.current, next)) }));
+      document.querySelector("#room-status").textContent = "The ledger entry is honoured. The seal opens without a question.";
+    } else { openChallenge(direction); return; }
+  }
   playCue("door");
   state.moving = true; transitionCurtain.classList.remove("moving"); void transitionCurtain.offsetWidth; transitionCurtain.classList.add("moving");
   setTimeout(() => {
     state.history.push({ room: state.current, facing: state.facing });
-    state.current = next; state.facing = direction; state.visited.add(next); persist(); renderRoom(); maybeWhisper();
+    state.current = next; state.facing = direction; state.visited.add(next);
+    state.trail = [...state.trail.filter((room) => room !== next), next].slice(-ROOM_COUNT);
+    persist(); renderRoom(); maybeWhisper();
   }, 220);
   setTimeout(() => { state.moving = false; transitionCurtain.classList.remove("moving"); }, 510);
 }
@@ -299,9 +372,15 @@ function returnToPrevious() {
 function turnAround() { if (state.moving) return; state.facing = opposite(state.facing); renderRoom(); }
 
 function questionFor(direction) {
-  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Technology", "Earth Science"], Music: ["Music"], Computing: ["Computing", "Technology"], Mathematics: ["Mathematics"], Earth: ["Earth Science", "Geography"], Language: ["Language", "Literature"], Astronomy: ["Astronomy"] };
-  let candidates = QUESTIONS.filter((question) => question.difficulty === state.level && (state.subject === "All" || groups[state.subject]?.includes(question.category)));
-  if (!candidates.length) candidates = QUESTIONS.filter((question) => question.difficulty === state.level);
+  const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Technology", "Earth Science", "Science"], Music: ["Music"], Computing: ["Computing", "Technology"], Mathematics: ["Mathematics"], Earth: ["Earth Science", "Geography"], Language: ["Language", "Literature"], Astronomy: ["Astronomy"] };
+  const difficulty = Math.max(1, Math.min(4, state.level - (state.questionAttempts[edgeKey(state.current, neighbor(state.current, direction))] ? 1 : 0)));
+  let candidates = QUESTIONS.filter((question) => question.difficulty === difficulty && (state.subject === "All" || groups[state.subject]?.includes(question.category)));
+  if (!candidates.length) candidates = QUESTIONS.filter((question) => question.difficulty === difficulty);
+  if (state.subject === "All") {
+    const affinity = roomPlate(rooms[state.current]).affinity || [];
+    const aligned = candidates.filter((question) => affinity.includes(question.category));
+    if (aligned.length >= 8) candidates = aligned;
+  }
   const next = neighbor(state.current, direction), key = edgeKey(state.current, next), attempt = state.questionAttempts[key] || 0;
   const unseen = candidates.filter((question) => !state.questionHistory.includes(question.prompt));
   if (!unseen.length) return [...candidates].sort((a, b) => state.questionHistory.indexOf(b.prompt) - state.questionHistory.indexOf(a.prompt))[0];
@@ -311,7 +390,7 @@ function openChallenge(direction) {
   playCue("seal");
   const question = questionFor(direction), dialog = document.querySelector("#challenge-dialog");
   state.questionHistory = [question.prompt, ...state.questionHistory.filter((prompt) => prompt !== question.prompt)].slice(0, 160); persist();
-  state.activeChallenge = { direction, question, researched: false, answered: false };
+  state.activeChallenge = { direction, question, researched: false, answered: false, hinted: false, hintUsed: false, removed: [] };
   document.querySelector("#question-category").textContent = question.category;
   document.querySelector("#question-rank").textContent = `Level ${question.difficulty}`;
   document.querySelector("#question-value").textContent = `${[0, 256, 512, 1024, 2048][question.difficulty]} points`;
@@ -320,7 +399,47 @@ function openChallenge(direction) {
   document.querySelector("#research-drawer").hidden = true;
   const answerBox = document.querySelector("#question-answers"); answerBox.replaceChildren();
   question.answers.forEach((answer, index) => { const button = document.createElement("button"); button.textContent = `${String.fromCharCode(65 + index)}. ${answer}`; button.dataset.answer = String(index); button.addEventListener("click", () => answerQuestion(index)); answerBox.append(button); });
+  const hint = document.querySelector("#question-hint"); hint.hidden = true; hint.textContent = "";
+  const hintButton = document.querySelector("#hint-question");
+  hintButton.disabled = false; hintButton.textContent = `Ask ${roomSpeaker()}`;
+  updateChallengeValue();
   dialog.hidden = false;
+  if (state.boon === "hint") { state.boon = ""; persist(); askTheRoom(true); }
+}
+function roomSpeaker() {
+  const plate = roomPlate(rooms[state.current]);
+  return plate.character ? CHARACTERS[plate.character].name : `the ${plate.topic.toLowerCase()}`;
+}
+function updateChallengeValue() {
+  const challenge = state.activeChallenge; if (!challenge) return;
+  const base = [0, 256, 512, 1024, 2048][challenge.question.difficulty];
+  const reward = challengeReward(challenge);
+  document.querySelector("#question-value").textContent = reward === base ? `${base} points` : `${reward} points · help used`;
+}
+function challengeReward(challenge) {
+  const base = [0, 256, 512, 1024, 2048][challenge.question.difficulty];
+  return Math.round(base * (challenge.researched ? .5 : 1) * (challenge.hintUsed ? .75 : 1));
+}
+// The room answers with what it knows: it removes one answer it is sure of, in the
+// voice of whoever or whatever is standing in it.
+function askTheRoom(free = false) {
+  const challenge = state.activeChallenge;
+  if (!challenge || challenge.answered || challenge.hinted) return;
+  const question = challenge.question;
+  const wrong = question.answers.map((_, index) => index).filter((index) => index !== question.correct);
+  const removed = wrong[hash(`${question.prompt}-${state.current}-${wingFor(state.level).id}`) % wrong.length];
+  challenge.hinted = true; challenge.removed = [removed];
+  if (!free) challenge.hintUsed = true;
+  const button = document.querySelector(`#question-answers button[data-answer="${removed}"]`);
+  if (button) { button.disabled = true; button.classList.add("eliminated"); }
+  const plate = roomPlate(rooms[state.current]);
+  const aligned = (plate.affinity || []).includes(question.category);
+  const opening = free ? "The unwritten page has already crossed one line out." : aligned ? `${plate.topic} is exactly this room's business.` : `This is not quite this room's subject, but`;
+  document.querySelector("#question-hint").textContent = `${opening} ${roomSpeaker()}: “It is not ‘${question.answers[removed]}’. Of that much the room is certain.”`;
+  document.querySelector("#question-hint").hidden = false;
+  document.querySelector("#hint-question").disabled = true;
+  updateChallengeValue();
+  playCue("dialogue");
 }
 function answerQuestion(index) {
   const challenge = state.activeChallenge;
@@ -330,9 +449,12 @@ function answerQuestion(index) {
   buttons.forEach((button, buttonIndex) => { button.disabled = true; if (buttonIndex === challenge.question.correct) button.classList.add("correct"); if (buttonIndex === index && !correct) button.classList.add("wrong"); });
   if (correct) {
     playCue("correct");
-    const target = neighbor(state.current, challenge.direction), key = edgeKey(state.current, target), reward = Math.round([0, 256, 512, 1024, 2048][challenge.question.difficulty] * (challenge.researched ? .5 : 1));
-    state.unlocked.add(key); delete state.questionAttempts[key]; state.score += reward; state.solved += 1; persist(); updateHud();
-    document.querySelector("#question-result").textContent = `${challenge.question.explanation} Correct! ${reward} points added to your score.`;
+    const target = neighbor(state.current, challenge.direction), key = edgeKey(state.current, target), reward = challengeReward(challenge);
+    state.unlocked.add(key); delete state.questionAttempts[key]; state.score += reward; state.solved += 1;
+    const recovered = state.solved % 4 === 0 && state.flames < 5;
+    if (recovered) state.flames += 1;
+    persist(); updateHud();
+    document.querySelector("#question-result").textContent = `${challenge.question.explanation} Correct! ${reward} points added to your score.${recovered ? ` A fourth seal opened — one match is relit, ${state.flames} in hand.` : ""}`;
     if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "unlock", doorId: edgeDoorId(key) }));
     setTimeout(() => { document.querySelector("#challenge-dialog").hidden = true; state.activeChallenge = null; renderRoom(); moveThrough(challenge.direction); }, 1050);
   } else {
@@ -345,12 +467,11 @@ function answerQuestion(index) {
       setTimeout(() => {
         if (state.activeChallenge !== challenge) return;
         document.querySelector("#challenge-dialog").hidden = true; state.activeChallenge = null; resetClassicGame();
-        document.querySelector("#notice-text").textContent = "All five flames are gone. Your score, opened seals, route memory, and discoveries have been reset.";
-        document.querySelector("#notice-window").hidden = false;
+        location.href = "/?lost=1";
       }, 1450);
       return;
     }
-    document.querySelector("#question-result").textContent = `${challenge.question.explanation} One flame goes out; ${state.flames} remain. The seal is choosing another question…`;
+    document.querySelector("#question-result").textContent = `${challenge.question.explanation} One flame goes out; ${state.flames} remain. The seal relents and chooses an easier question…`;
     setTimeout(() => { if (state.activeChallenge === challenge) openChallenge(challenge.direction); }, 1150);
   }
 }
@@ -358,7 +479,7 @@ function answerQuestion(index) {
 async function researchActiveQuestion() {
   const challenge = state.activeChallenge; if (!challenge) return;
   challenge.researched = true;
-  document.querySelector("#question-value").textContent = "Half lore · research used";
+  updateChallengeValue();
   const drawer = document.querySelector("#research-drawer"); drawer.hidden = false;
   document.querySelector("#research-title").textContent = "Consulting the living encyclopedia…"; document.querySelector("#research-extract").textContent = "";
   const article = await fetchArticle(challenge.question.source);
@@ -443,6 +564,9 @@ function revealRoute() {
   state.flames -= 1; state.routeUntil = performance.now() + 8000; persist(); updateHud();
   renderMazeGrid(true);
   document.querySelector("#room-status").textContent = "The match reveals only remembered rooms and the next useful chamber.";
+  startRouteTimer();
+}
+function startRouteTimer() {
   clearInterval(routeTimer); routeTimer = setInterval(() => { if (state.routeUntil <= performance.now()) { clearInterval(routeTimer); state.routeUntil = 0; renderMazeGrid(false); document.querySelector("#room-status").textContent = "The route has gone dark again."; } }, 200);
 }
 function findNearestUnvisited() {
@@ -455,7 +579,23 @@ function renderMazeGrid(reveal = false) {
   const grid = document.querySelector("#maze-grid");
   if (!grid.children.length) for (let index = 0; index < ROOM_COUNT; index++) { const cell = document.createElement("i"); cell.className = "maze-cell"; cell.dataset.room = String(index); grid.append(cell); }
   const target = reveal ? findNearestUnvisited()?.room : -1;
-  [...grid.children].forEach((cell, index) => { cell.className = "maze-cell"; if (reveal && state.visited.has(index)) cell.classList.add("remembered"); if (index === target) cell.classList.add("hinted"); if (index === state.current) cell.classList.add("current"); });
+  const walked = new Set(state.trail);
+  [...grid.children].forEach((cell, index) => {
+    cell.className = "maze-cell";
+    if (state.visited.has(index) && index !== state.current) cell.classList.add("remembered");
+    if (walked.has(index) && index !== state.current) cell.classList.add("walked");
+    if (index === target) cell.classList.add("hinted");
+    if (index === state.current) cell.classList.add("current");
+    if (!state.visited.has(index)) { cell.title = ""; return; }
+    const openings = [];
+    for (const direction of rooms[index].exits) {
+      const next = neighbor(index, direction);
+      if (next < 0 || isLocked(index, next)) continue;
+      cell.classList.add(`open-${DIRECTIONS[direction][0]}`);
+      openings.push(DIRECTIONS[direction]);
+    }
+    cell.title = `Chamber ${index + 1}${openings.length ? ` · open ${openings.join(", ")}` : " · no seal opened yet"}`;
+  });
 }
 
 function maybeWhisper() {
@@ -465,7 +605,7 @@ function maybeWhisper() {
 function updateHud() {
   document.querySelector("#classic-score").textContent = state.score.toLocaleString(); document.querySelector("#classic-score-fill").style.width = `${Math.min(100, state.score / 20000 * 100)}%`;
   document.querySelector("#flame-count").textContent = state.flames; document.querySelector("#route-button").disabled = state.flames <= 0;
-  document.querySelector("#rank-letter").textContent = ["P", "P", "S", "K", "M"][state.level];
+  document.querySelector("#rank-letter").textContent = wingFor(state.level).rank[0];
   document.querySelectorAll("[data-level]").forEach((button) => button.classList.toggle("active", Number(button.dataset.level) === state.level));
   document.querySelectorAll("[data-match]").forEach((button, index) => { const spent = index >= state.flames; button.classList.toggle("spent", spent); button.disabled = spent; });
 }
@@ -474,12 +614,12 @@ function updateJournal() {
   const log = document.querySelector("#article-log"); log.replaceChildren(...(state.articles.length ? state.articles.map((title) => Object.assign(document.createElement("li"), { textContent: title })) : [Object.assign(document.createElement("li"), { textContent: "No entry yet." })]));
 }
 function persist() {
-  localStorage.setItem("wikimaze-classic-visited", JSON.stringify([...state.visited])); localStorage.setItem("wikimaze-classic-unlocked", JSON.stringify([...state.unlocked])); localStorage.setItem("wikimaze-score", String(state.score)); localStorage.setItem("wikimaze-classic-flames", String(state.flames)); localStorage.setItem("wikimaze-classic-solved", String(state.solved)); localStorage.setItem("wikimaze-classic-articles", JSON.stringify(state.articles)); localStorage.setItem("wikimaze-classic-question-attempts", JSON.stringify(state.questionAttempts)); localStorage.setItem("wikimaze-classic-question-history", JSON.stringify(state.questionHistory)); localStorage.setItem("wikimaze-classic-dialogue-counts", JSON.stringify(state.dialogueCounts)); localStorage.setItem("wikimaze-classic-level", String(state.level)); localStorage.setItem("wikimaze-classic-subject", state.subject);
+  localStorage.setItem("wikimaze-classic-visited", JSON.stringify([...state.visited])); localStorage.setItem("wikimaze-classic-unlocked", JSON.stringify([...state.unlocked])); localStorage.setItem("wikimaze-score", String(state.score)); localStorage.setItem("wikimaze-classic-flames", String(state.flames)); localStorage.setItem("wikimaze-classic-solved", String(state.solved)); localStorage.setItem("wikimaze-classic-articles", JSON.stringify(state.articles)); localStorage.setItem("wikimaze-classic-question-attempts", JSON.stringify(state.questionAttempts)); localStorage.setItem("wikimaze-classic-question-history", JSON.stringify(state.questionHistory)); localStorage.setItem("wikimaze-classic-dialogue-counts", JSON.stringify(state.dialogueCounts)); localStorage.setItem("wikimaze-classic-trail", JSON.stringify(state.trail)); localStorage.setItem("wikimaze-classic-room-choices", JSON.stringify(state.roomChoices)); localStorage.setItem("wikimaze-classic-boon", state.boon); localStorage.setItem("wikimaze-classic-level", String(state.level)); localStorage.setItem("wikimaze-classic-subject", state.subject);
 }
 
 function resetClassicGame() {
   clearTimeout(encounterTimer); clearInterval(routeTimer);
-  state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.dialogueCounts = {}; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.activeChallenge = null; state.routeUntil = 0; state.moving = false; state.encounter = null; state.facing = [...rooms[0].exits][0] ?? 1;
+  state.current = 0; state.history = []; state.visited = new Set([0]); state.unlocked.clear(); state.questionAttempts = {}; state.questionHistory = []; state.dialogueCounts = {}; state.trail = []; state.roomChoices = {}; state.boon = ""; state.score = 0; state.flames = 5; state.solved = 0; state.articles = []; state.activeChallenge = null; state.routeUntil = 0; state.moving = false; state.encounter = null; state.facing = [...rooms[0].exits][0] ?? 1;
   document.querySelectorAll(".in-scene-window").forEach((panel) => panel.hidden = true);
   roomScene.classList.remove("encounter-active", "person-encounter", "object-encounter", "dialogue-irritated", "zoom-close");
   persist(); renderRoom();
@@ -549,7 +689,6 @@ async function ensureAudio() {
   try { if (audioContext.state !== "running") await audioContext.resume(); } catch { return false; }
   if (created && ambienceOn && audioContext.state === "running") {
     ambienceGain.gain.setTargetAtTime(.075, audioContext.currentTime, .35);
-    scheduleAmbienceTexture();
   }
   return audioContext.state === "running";
 }
@@ -578,14 +717,10 @@ async function playCue(name, intensity = 1) {
   }
   return true;
 }
-function scheduleAmbienceTexture() {
-  clearTimeout(ambienceTextureTimer);
-  if (!ambienceOn) return;
-  ambienceTextureTimer = setTimeout(async () => { const roll = hash(`${state.current}-${Date.now() >> 12}`) % 5; await playCue(roll === 0 ? "farBell" : roll < 3 ? "timber" : "room"); scheduleAmbienceTexture(); }, 6500 + Math.floor(Math.random() * 6500));
-}
+
 async function toggleAmbience() {
   if (ambienceOn) {
-    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off"); clearTimeout(ambienceTextureTimer);
+    ambienceOn = false; localStorage.setItem("wikimaze-classic-sound", "off");
     if (ambienceGain && audioContext) ambienceGain.gain.setTargetAtTime(.0001, audioContext.currentTime, .18);
     updateSoundButton(); document.querySelector("#room-status").textContent = "Sound muted."; return;
   }
@@ -596,7 +731,7 @@ async function toggleAmbience() {
   }
   localStorage.setItem("wikimaze-classic-sound", "on"); ambienceGain.gain.setTargetAtTime(.075, audioContext.currentTime, .35);
   updateSoundButton(); document.querySelector("#room-status").textContent = "Sound on. The keep is listening.";
-  await playCue("enable"); scheduleAmbienceTexture();
+  await playCue("enable");
 }
 
 document.querySelectorAll(".door-hotspot").forEach((button) => button.addEventListener("click", () => moveThrough(Number(button.dataset.direction))));
@@ -604,9 +739,11 @@ document.querySelector("#turn-around").addEventListener("click", turnAround); do
 document.querySelector("#painting-hotspot").addEventListener("click", beginObjectEncounter);
 document.querySelector("#character-hotspot").addEventListener("click", (event) => beginCharacterEncounter(event.currentTarget.dataset.character));
 document.querySelector("#research-question").addEventListener("click", researchActiveQuestion);
+document.querySelector("#hint-question").addEventListener("click", () => askTheRoom(false));
+document.querySelector("#prop-hotspot").addEventListener("click", takeRoomChoice);
 document.querySelectorAll("[data-close]").forEach((button) => button.addEventListener("click", () => { const dialog = button.closest("dialog"); dialog.close(); if (dialog.id === "challenge-dialog") state.activeChallenge = null; }));
 document.querySelectorAll("[data-close-panel]").forEach((button) => button.addEventListener("click", () => { const panel = button.closest(".in-scene-window"); panel.hidden = true; if (panel.id === "challenge-dialog") state.activeChallenge = null; if (["article-dialog", "character-dialog"].includes(panel.id)) endEncounter(); }));
-document.querySelectorAll("[data-level]").forEach((button) => button.addEventListener("click", () => { state.level = Number(button.dataset.level); persist(); updateHud(); }));
+document.querySelectorAll("[data-level]").forEach((button) => button.addEventListener("click", () => { state.level = Number(button.dataset.level); persist(); renderRoom(); document.querySelector("#room-status").textContent = `${wingFor(state.level).name}. ${wingFor(state.level).tone}`; }));
 document.querySelectorAll('input[name="subject"]').forEach((radio) => { radio.checked = radio.value === state.subject; radio.addEventListener("change", () => { state.subject = radio.value; persist(); }); });
 document.querySelectorAll("[data-match]").forEach((button) => button.addEventListener("click", revealRoute));
 document.querySelector("#scorecard-button").addEventListener("click", () => document.querySelector("#scorecard-dialog").showModal());
@@ -626,7 +763,7 @@ if (new URLSearchParams(location.search).has("new")) {
   resetClassicGame();
 }
 renderRoom(); connect(); updateSoundButton();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(WINGS.flatMap((wing) => wing.plates)).size, wingRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, wings: WINGS.length, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, mappedOpenings: document.querySelectorAll(".maze-cell.open-n, .maze-cell.open-e, .maze-cell.open-s, .maze-cell.open-w").length, trail: state.trail.length, wing: wingFor(state.level).id, wingName: wingFor(state.level).name, wingPlates: wingPlates(state.level).map((plate) => plate.id), wingInhabitants: [...new Set(wingPlates(state.level).map((plate) => plate.character).filter(Boolean))], roomChoice: roomOffersChoice() ? wingFor(state.level).choice.id : null, roomChoiceTaken: roomChoiceTaken(), roomChoiceVisible: !document.querySelector("#prop-hotspot").hidden, boon: state.boon, hintShown: !document.querySelector("#question-hint").hidden, hintText: document.querySelector("#question-hint").textContent, eliminatedAnswers: document.querySelectorAll("#question-answers button.eliminated").length, roomAffinity: roomPlate(rooms[state.current]).affinity || [], questionCategory: state.activeChallenge?.question.category || null, passages: [...document.querySelectorAll(".door-hotspot:not([hidden])")].map((button) => button.className.replace("painted-hotspot door-hotspot ", "")), remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {
@@ -639,6 +776,14 @@ if (new URLSearchParams(location.search).has("debug")) {
     answerCorrect() { if (state.activeChallenge) answerQuestion(state.activeChallenge.question.correct); },
     answerWrong() { if (state.activeChallenge) answerQuestion((state.activeChallenge.question.correct + 1) % state.activeChallenge.question.answers.length); },
     setFlames(value) { state.flames = Math.max(0, Math.min(5, Number(value) || 0)); persist(); updateHud(); },
-    visitPlate(id) { const room = rooms.find((candidate) => roomPlate(candidate).id === id); if (!room) return false; state.current = room.index; state.history = []; renderRoom(); return true; },
+    visitPlate(id) {
+      const wing = WINGS.find((candidate) => candidate.plates.includes(id)); if (!wing) return false;
+      state.level = wing.level;
+      const room = rooms.find((candidate) => roomPlate(candidate, wing.level).id === id); if (!room) return false;
+      state.current = room.index; state.history = []; persist(); renderRoom(); return true;
+    },
+    setLevel(level) { state.level = Number(level) || 1; persist(); renderRoom(); return wingFor(state.level).id; },
+    takeRoomChoice() { const room = rooms.find((candidate) => roomOffersChoice(candidate.index) && !roomChoiceTaken(candidate.index)); if (!room) return false; state.current = room.index; state.history = []; renderRoom(); takeRoomChoice(); return true; },
+    askRoom() { askTheRoom(false); return state.activeChallenge?.hinted === true; },
   };
 }

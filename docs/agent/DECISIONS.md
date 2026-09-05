@@ -67,3 +67,39 @@
 - Let the menu read the same persisted keys the editions write, so it can offer Continue with a live chamber count, report the record in a score card, and set the scholar identity that Classic and the walkable edition already share.
 - Route New Quest through `/classic.html?new=1` and let `classic.js` own the reset, rather than duplicating reset logic in the menu; the marker is stripped from the URL so a refresh cannot clear the record twice.
 - Share the sound preference key with Classic so enabling ambience at the menu carries into the game.
+
+## 2026-09-05 — Classic navigation, wings and the route map
+
+- Doors now correspond to the chambers they open onto: the left, forward and right hotspots are bound to the passages at `facing-1`, `facing`, and `facing+1`, so no exit is silently dropped and a door on the left leads to the room on the left. The passage behind is reached with Turn Around.
+- The route board is no longer hidden. It draws the chambers you have walked and marks, on the shared edge between two cells, every seal you have opened — so the map and the painted doors describe the same keep. A match still reveals the next useful chamber.
+- Each level is a different wing of the keep with its own chambers, inhabitants and offer, rather than only a difficulty setting. The four wings between them use all sixteen authored plates.
+- Every wing carries one choice, available in about a third of its chambers and only once each: a candle stub that relights a match, a star chart that holds the route open, a ledger that buys the next seal for 400 lore, and an unwritten page that narrows the next question.
+- New chambers reuse the sixteen authored 640×480 plates rather than shipping unauthored art; the 2026-09-04 image-fidelity decision still governs any genuinely new room.
+
+## 2026-09-05 — Making a run survivable
+
+- A wrong answer still costs a flame, but every fourth seal opened relights one, so a long run can recover from mistakes.
+- After a wrong answer the seal asks again one difficulty level lower, so a stuck door eases rather than hardening.
+- Losing the fifth flame ends the run and returns the player to the main menu with a notice, instead of silently resetting them in place.
+- The keep no longer makes unprompted noises. The ambience bed and the event cues remain; the timer that fired random bells, timbers and room tones was removed from both the menu and Classic.
+
+## 2026-09-05 — Rooms that answer the seal
+
+- Each chamber plate declares an affinity of question categories. When the player has not narrowed the subject themselves, a seal prefers questions in the room's own subject, so the room and the question are about the same thing.
+- "Ask the room" strikes out one wrong answer and says so in the voice of the chamber's inhabitant, or of its central object when the chamber is empty. It costs a quarter of the seal's lore; research still costs half, and the two stack.
+
+## 2026-09-05 — A ten-thousand-question bank
+
+- The bank is stored as families of facts rather than finished questions. A fact is one row of `[clue, Wikipedia article, answer]`, and a family declares the forms that turn a row into a question, so one verified fact supplies several prompts and the shipped data stays small enough to read and correct.
+- Two forms are synthesised rather than written out: `describe` adds the recognition question to a family whose clue is a description, and `identify` adds the naming question to a family whose answer is one.
+- A reversed question may never offer a second true answer: every other clue sharing the same answer is barred from that question's options, and the bank check proves it for every reversed prompt.
+- The audit works on distinct source-and-answer claims rather than on every phrasing, because the bank is far larger than the set of articles behind it.
+
+## 2026-09-05 — What the question audit can and cannot prove
+
+- The audit's guarantee is now stated precisely, because at ten thousand questions the old blanket claim was not true. Every cited article must resolve. Every claim whose answer is the encyclopedia's own — a name, a place, a date, a symbol, a formula in prose — must appear in the article text.
+- A mirror question asserts no new fact. When a family declares `describe` or `identify`, the synthesised second form restates the family's fact from the other side, and its "answer" is our description. The audit checks that fact once, in the direction where the answer is quotable, and marks the mirror `authored`.
+- British and American spellings are folded before comparison, so "pernicious anaemia" is not reported as unsupported against "pernicious anemia".
+- What remains is a short list of claims that are true but unquotable: an answer written as a description for the player, or a datum that lives in an infobox the extracts API strips, such as a chemical formula or an orbital period. These are read by hand and recorded in `scripts/question-audit-allowlist.json` with the date they were reviewed.
+- The allow-list is checked in both directions. Any weak claim absent from it fails the audit, and any entry in it that no longer matches a claim in the bank also fails, so the list cannot quietly rot as the bank changes.
+- This is a real reduction in what the audit proves for those entries, and it is written down rather than hidden behind a clean number.

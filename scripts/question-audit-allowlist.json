@@ -1,0 +1,578 @@
+{
+  "note": "Claims read by hand on 2026-09-05 and found true, but not quotable from the article's prose. Two reasons: the answer is a description written for the player rather than the encyclopedia's wording, or the datum lives in an infobox that the extracts API strips, such as a chemical formula or an orbital period. Every other claim in the bank must still be evidenced. The audit fails on any weak claim absent from this list, and fails on any entry here that no longer matches a claim in the bank, so the list cannot quietly rot.",
+  "reviewed": "2026-09-05",
+  "claims": [
+    {
+      "source": "Acetone",
+      "answer": "C3H6O"
+    },
+    {
+      "source": "Amerigo Vespucci",
+      "answer": "The navigator whose name was given to the Americas"
+    },
+    {
+      "source": "Andromeda (constellation)",
+      "answer": "The chained maiden"
+    },
+    {
+      "source": "André-Jacques Garnerin",
+      "answer": "The parachute's modern form"
+    },
+    {
+      "source": "Angst",
+      "answer": "A deep, undirected anxiety"
+    },
+    {
+      "source": "Arctic tern",
+      "answer": "Pole to pole each year"
+    },
+    {
+      "source": "Asgard",
+      "answer": "The stronghold of the Æsir"
+    },
+    {
+      "source": "Athena",
+      "answer": "Wisdom and warcraft"
+    },
+    {
+      "source": "Baba Yaga",
+      "answer": "Slavic countries"
+    },
+    {
+      "source": "Bakelite",
+      "answer": "Early electrical fittings"
+    },
+    {
+      "source": "Baldr",
+      "answer": "Light and purity"
+    },
+    {
+      "source": "Belt (clothing)",
+      "answer": "An eyelet"
+    },
+    {
+      "source": "Blood plasma",
+      "answer": "Carrying cells and dissolved substances"
+    },
+    {
+      "source": "Blue-ringed octopus",
+      "answer": "Carrying tetrodotoxin"
+    },
+    {
+      "source": "Bombyx mori",
+      "answer": "The domestic silkmoth"
+    },
+    {
+      "source": "Bowerbird",
+      "answer": "Building decorated structures to attract mates"
+    },
+    {
+      "source": "Buenos Aires",
+      "answer": "Good airs"
+    },
+    {
+      "source": "Caffeine",
+      "answer": "C8H10N4O2"
+    },
+    {
+      "source": "Car",
+      "answer": "The late nineteenth century"
+    },
+    {
+      "source": "Carmen",
+      "answer": "Mezzo-soprano"
+    },
+    {
+      "source": "Carte blanche",
+      "answer": "Full discretion to act"
+    },
+    {
+      "source": "Cassiopeia (constellation)",
+      "answer": "The seated queen"
+    },
+    {
+      "source": "Catch-22",
+      "answer": "A no-win situation created by contradictory rules"
+    },
+    {
+      "source": "Cell nucleus",
+      "answer": "Holding the DNA"
+    },
+    {
+      "source": "Cerebellum",
+      "answer": "Coordinating movement and balance"
+    },
+    {
+      "source": "Charles Babbage",
+      "answer": "Designing the analytical engine"
+    },
+    {
+      "source": "Christopher Columbus",
+      "answer": "The Atlantic crossings of 1492"
+    },
+    {
+      "source": "Coffea arabica",
+      "answer": "The coffee plant of Arabia"
+    },
+    {
+      "source": "Conus",
+      "answer": "Hunting with a venomous harpoon"
+    },
+    {
+      "source": "Corpus callosum",
+      "answer": "Joining the two hemispheres"
+    },
+    {
+      "source": "Coup d'état",
+      "answer": "A sudden seizure of government"
+    },
+    {
+      "source": "Crested porcupine",
+      "answer": "The porcupine of the Old World"
+    },
+    {
+      "source": "Crow",
+      "answer": "Caw"
+    },
+    {
+      "source": "Cutty Sark",
+      "answer": "A surviving tea clipper"
+    },
+    {
+      "source": "Date of birth",
+      "answer": "DOB"
+    },
+    {
+      "source": "Dice",
+      "answer": "A double"
+    },
+    {
+      "source": "Eighth note",
+      "answer": "Half a beat"
+    },
+    {
+      "source": "Elephant in the room",
+      "answer": "An obvious problem nobody mentions"
+    },
+    {
+      "source": "Empty set",
+      "answer": "A slashed zero"
+    },
+    {
+      "source": "Endoplasmic reticulum",
+      "answer": "Synthesising and transporting molecules"
+    },
+    {
+      "source": "Et alia",
+      "answer": "And others"
+    },
+    {
+      "source": "Eucalyptus",
+      "answer": "The chief food of the koala"
+    },
+    {
+      "source": "Exosphere",
+      "answer": "The outermost layer, thinning into space"
+    },
+    {
+      "source": "Faux pas",
+      "answer": "A social blunder"
+    },
+    {
+      "source": "Femme fatale",
+      "answer": "A dangerously alluring woman"
+    },
+    {
+      "source": "Ficus benghalensis",
+      "answer": "Spreading by aerial roots into many trunks"
+    },
+    {
+      "source": "Fluorine",
+      "answer": "Toothpaste additives and non-stick coatings"
+    },
+    {
+      "source": "Flying Scotsman",
+      "answer": "A famous British steam locomotive"
+    },
+    {
+      "source": "Frigg",
+      "answer": "Marriage and foreknowledge"
+    },
+    {
+      "source": "Frontal lobe",
+      "answer": "Planning and judgement"
+    },
+    {
+      "source": "Germ theory of disease",
+      "answer": "The demonstration of germ theory"
+    },
+    {
+      "source": "Golem",
+      "answer": "Bohemia"
+    },
+    {
+      "source": "Golgi apparatus",
+      "answer": "Packaging proteins"
+    },
+    {
+      "source": "Gordian Knot",
+      "answer": "An intractable problem solved by bold action"
+    },
+    {
+      "source": "Graph (abstract data type)",
+      "answer": "Vertices joined by edges"
+    },
+    {
+      "source": "Half note",
+      "answer": "Two beats"
+    },
+    {
+      "source": "Han dynasty",
+      "answer": "China for four centuries"
+    },
+    {
+      "source": "Hanging Gardens of Babylon",
+      "answer": "A terraced garden said to have stood at Babylon"
+    },
+    {
+      "source": "Heap (data structure)",
+      "answer": "A tree keeping the extreme value at the root"
+    },
+    {
+      "source": "Heimdall",
+      "answer": "Watchfulness at the rainbow bridge"
+    },
+    {
+      "source": "Helen of Troy",
+      "answer": "The woman whose flight began the Trojan War"
+    },
+    {
+      "source": "Helium",
+      "answer": "Pierre Janssen"
+    },
+    {
+      "source": "Henry Hudson",
+      "answer": "Sought a northern passage and gave his name to a bay"
+    },
+    {
+      "source": "Hera",
+      "answer": "Marriage and queenship"
+    },
+    {
+      "source": "Hercules (constellation)",
+      "answer": "The strongman"
+    },
+    {
+      "source": "Hokusai",
+      "answer": "Woodblock printing"
+    },
+    {
+      "source": "Horse",
+      "answer": "Neigh"
+    },
+    {
+      "source": "Human skeleton",
+      "answer": "Supporting and protecting the body"
+    },
+    {
+      "source": "Hydrus",
+      "answer": "The lesser water snake"
+    },
+    {
+      "source": "Hyena",
+      "answer": "A cackle"
+    },
+    {
+      "source": "Ibn Battuta",
+      "answer": "Three decades of travel across Afro-Eurasia"
+    },
+    {
+      "source": "Id est",
+      "answer": "That is"
+    },
+    {
+      "source": "Indra",
+      "answer": "Rain, storms and the heavens"
+    },
+    {
+      "source": "Integral symbol",
+      "answer": "An elongated S"
+    },
+    {
+      "source": "International Date Line",
+      "answer": "Roughly the 180th meridian"
+    },
+    {
+      "source": "Iodine",
+      "answer": "Antiseptics and thyroid function"
+    },
+    {
+      "source": "Knight (chess)",
+      "answer": "An L-shaped move"
+    },
+    {
+      "source": "Labours of Hercules",
+      "answer": "A task of enormous difficulty"
+    },
+    {
+      "source": "Lark",
+      "answer": "An exaltation"
+    },
+    {
+      "source": "Least-concern species",
+      "answer": "Widespread and abundant"
+    },
+    {
+      "source": "Linus Torvalds",
+      "answer": "Starting the Linux kernel"
+    },
+    {
+      "source": "List of Latin phrases (C)",
+      "answer": "Compare"
+    },
+    {
+      "source": "List of Latin phrases (P)",
+      "answer": "By itself"
+    },
+    {
+      "source": "List of Latin phrases (V)",
+      "answer": "The other way round"
+    },
+    {
+      "source": "Llama",
+      "answer": "The Andes"
+    },
+    {
+      "source": "Loki",
+      "answer": "Mischief and shape-changing"
+    },
+    {
+      "source": "Louis Daguerre",
+      "answer": "The camera obscura's photographic successor"
+    },
+    {
+      "source": "Lymphatic system",
+      "answer": "Draining fluid and supporting immunity"
+    },
+    {
+      "source": "Malala Yousafzai",
+      "answer": "Campaigning for girls' education"
+    },
+    {
+      "source": "Malaria",
+      "answer": "Protozoan parasite"
+    },
+    {
+      "source": "Mayday",
+      "answer": "A spoken distress call"
+    },
+    {
+      "source": "Merlin",
+      "answer": "Arthur's wizard and counsellor"
+    },
+    {
+      "source": "Metric prefix",
+      "answer": "One billionth"
+    },
+    {
+      "source": "Metric prefix",
+      "answer": "One hundredth"
+    },
+    {
+      "source": "Metric prefix",
+      "answer": "One millionth"
+    },
+    {
+      "source": "Metric prefix",
+      "answer": "One tenth"
+    },
+    {
+      "source": "Metric prefix",
+      "answer": "One trillionth"
+    },
+    {
+      "source": "Midas",
+      "answer": "The knack of making everything profitable"
+    },
+    {
+      "source": "Nabataeans",
+      "answer": "The builders of Petra"
+    },
+    {
+      "source": "National Assembly (Afghanistan)",
+      "answer": "The Loya Jirga tradition"
+    },
+    {
+      "source": "Natural rubber",
+      "answer": "Tyres and seals"
+    },
+    {
+      "source": "Nazca culture",
+      "answer": "The makers of vast desert line drawings in Peru"
+    },
+    {
+      "source": "Neptune",
+      "answer": "165 years"
+    },
+    {
+      "source": "Nervous system",
+      "answer": "Carrying signals and coordinating the body"
+    },
+    {
+      "source": "Opal",
+      "answer": "Iridescent"
+    },
+    {
+      "source": "Orbicularis oculi muscle",
+      "answer": "Around the eye"
+    },
+    {
+      "source": "Otodus megalodon",
+      "answer": "An enormous extinct shark"
+    },
+    {
+      "source": "Partial derivative",
+      "answer": "A curly d"
+    },
+    {
+      "source": "Penelope",
+      "answer": "Odysseus's patient wife"
+    },
+    {
+      "source": "Persona non grata",
+      "answer": "An unwelcome person"
+    },
+    {
+      "source": "Phloem",
+      "answer": "Carrying sugars around the plant"
+    },
+    {
+      "source": "Piano pedals",
+      "answer": "It sustains or softens the notes of a piano"
+    },
+    {
+      "source": "Plant propagation",
+      "answer": "Taking a cutting"
+    },
+    {
+      "source": "Plant stem",
+      "answer": "Supporting the plant and carrying sap"
+    },
+    {
+      "source": "Primer (paint)",
+      "answer": "A primer or ground"
+    },
+    {
+      "source": "Red herring",
+      "answer": "A misleading distraction"
+    },
+    {
+      "source": "Rhinoceros",
+      "answer": "A crash"
+    },
+    {
+      "source": "Rook (chess)",
+      "answer": "Movement along ranks and files"
+    },
+    {
+      "source": "Root",
+      "answer": "Anchoring the plant and absorbing water"
+    },
+    {
+      "source": "Round Table",
+      "answer": "The table at which no knight sat above another"
+    },
+    {
+      "source": "Sekhmet",
+      "answer": "War and healing"
+    },
+    {
+      "source": "Sixteenth note",
+      "answer": "A quarter of a beat"
+    },
+    {
+      "source": "Sloth",
+      "answer": "Among the slowest of mammals"
+    },
+    {
+      "source": "Stagecraft",
+      "answer": "The wings"
+    },
+    {
+      "source": "Steam locomotive",
+      "answer": "The early nineteenth century"
+    },
+    {
+      "source": "Styx",
+      "answer": "The river bounding the underworld"
+    },
+    {
+      "source": "Tardigrade",
+      "answer": "Surviving extremes by entering cryptobiosis"
+    },
+    {
+      "source": "Telephone",
+      "answer": "The 1870s"
+    },
+    {
+      "source": "The Barber of Seville",
+      "answer": "Baritone"
+    },
+    {
+      "source": "The Wedding at Cana",
+      "answer": "Paolo Veronese"
+    },
+    {
+      "source": "Thermosphere",
+      "answer": "The layer containing the aurorae"
+    },
+    {
+      "source": "Trojan Horse",
+      "answer": "A deceptive gift concealing danger"
+    },
+    {
+      "source": "Tundra",
+      "answer": "Treeless ground above or beyond the tree line"
+    },
+    {
+      "source": "Týr",
+      "answer": "Law and heroic glory"
+    },
+    {
+      "source": "Urea",
+      "answer": "CH4N2O"
+    },
+    {
+      "source": "Vacuole",
+      "answer": "Storing water and solutes"
+    },
+    {
+      "source": "Valkyrie",
+      "answer": "The choosers of the slain"
+    },
+    {
+      "source": "Venus",
+      "answer": "225 days"
+    },
+    {
+      "source": "Vint Cerf",
+      "answer": "Co-designing the TCP/IP protocols"
+    },
+    {
+      "source": "West Indian manatee",
+      "answer": "The manatee of the West Indies"
+    },
+    {
+      "source": "Wheel and axle",
+      "answer": "A wheel fixed to a shaft that turns with it"
+    },
+    {
+      "source": "Whole note",
+      "answer": "Four beats"
+    },
+    {
+      "source": "Wildebeest",
+      "answer": "In a great circuit of the Serengeti"
+    }
+  ]
+}

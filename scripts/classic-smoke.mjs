@@ -34,13 +34,16 @@ try {
     socket.on("message", onMessage); socket.send(JSON.stringify({ id, method, params }));
   });
   const evaluate = async (expression) => { const result = await command("Runtime.evaluate", { expression, returnByValue: true }); return result.result.value; };
+  const MAP_PROBE = `JSON.stringify((()=>{const debug=window.__wikimazeClassicDebug();const cell=[...document.querySelectorAll(".maze-cell")][debug.currentRoom];const drawn=["n","e","s","w"].filter((side)=>cell.classList.contains("open-"+side));const doors=[...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].map((button)=>["north","east","south","west"][Number(button.dataset.direction)][0]);return{drawn,doors,current:cell.classList.contains("current")};})())`;
+  const CLEARED_PROBE = `JSON.stringify({visited:localStorage.getItem("wikimaze-classic-visited"),score:localStorage.getItem("wikimaze-score"),unlocked:localStorage.getItem("wikimaze-classic-unlocked"),trail:localStorage.getItem("wikimaze-classic-trail"),flames:localStorage.getItem("wikimaze-classic-flames")})`;
   for (let attempt = 0; attempt < 60 && !await evaluate("typeof window.__wikimazeClassicDebug === 'function'"); attempt++) await delay(100);
   const startRaw = await evaluate("typeof window.__wikimazeClassicDebug === 'function' ? JSON.stringify(window.__wikimazeClassicDebug()) : JSON.stringify({ready:document.readyState,title:document.title,scripts:[...document.scripts].map(s=>s.src),body:document.body.innerText.slice(0,120)})");
   const start = JSON.parse(startRaw);
   if (!("totalRooms" in start)) { const moduleError = await evaluate("import('/classic.js').then(()=>'none').catch((error)=>String(error.stack||error))"); throw new Error(`Classic module did not initialize: ${JSON.stringify(start)} MODULE ${moduleError}`); }
   if (start.totalRooms !== 100) throw new Error(`Expected 100 classic chambers, found ${start.totalRooms}`);
   if (start.reachableRooms !== 100 || start.roomPlates < 16 || start.uniqueRoomPlates < 16 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
-  if (start.questions !== 448 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 105) || start.characters < 12) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
+  if (start.wings !== 4) throw new Error(`Expected four wings, found ${start.wings}`);
+  if (start.questions < 10000 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 1000) || start.characters < 12) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   if (start.routeGridCells !== 100 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
   const soundButtonRect = JSON.parse(await evaluate("JSON.stringify((() => { const rect = document.querySelector('#ambience-button').getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; })())"));
@@ -151,14 +154,78 @@ try {
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
 
-  const fatalSeal = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
-  if (!fatalSeal) throw new Error("No locked passage remained for the final-flame reset test");
-  await evaluate("window.__wikimazeClassicTest.setFlames(1); window.__wikimazeClassicTest.answerWrong()");
-  await delay(1650);
-  const resetRun = JSON.parse(await evaluate("JSON.stringify({...window.__wikimazeClassicDebug(),noticeVisible:!document.querySelector('#notice-window').hidden,noticeText:document.querySelector('#notice-text').textContent})"));
-  if (resetRun.flames !== 5 || resetRun.score !== 0 || resetRun.solved !== 0 || resetRun.unlockedEdges !== 0 || resetRun.currentRoom !== 0 || resetRun.visitedRooms !== 1 || !resetRun.noticeVisible || !resetRun.noticeText.includes("All five flames")) throw new Error(`The fifth lost flame did not fully reset the run: ${JSON.stringify(resetRun)}`);
+  // The route board must describe the same keep the painted doors do.
+  const board = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (board.trail < 1 || board.revealedRouteCells < 1 || board.mappedOpenings < 1) throw new Error(`The route map did not record the walked chambers and opened doors: ${JSON.stringify({ trail: board.trail, remembered: board.revealedRouteCells, openings: board.mappedOpenings })}`);
+  const mapAgrees = JSON.parse(await evaluate(MAP_PROBE));
+  if (!mapAgrees.current) throw new Error("The route map does not mark the chamber you are standing in");
+  for (const side of mapAgrees.doors) if (!mapAgrees.drawn.includes(side)) throw new Error(`An open painted door is missing from the route map: ${JSON.stringify(mapAgrees)}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok hidden-route=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  // Each level is a different wing with its own chambers and inhabitants.
+  const wings = [];
+  for (const level of [1, 2, 3, 4]) {
+    await evaluate(`window.__wikimazeClassicTest.setLevel(${level})`);
+    await delay(160);
+    wings.push(JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())")));
+  }
+  const wingIds = wings.map((wing) => wing.wing);
+  if (new Set(wingIds).size !== 4) throw new Error(`Levels must enter distinct wings: ${wingIds.join(",")}`);
+  for (const [index, wing] of wings.entries()) {
+    if (!wing.wingPlates.length || !wing.wingInhabitants.length) throw new Error(`Wing ${index + 1} has no chambers or inhabitants`);
+    if (wings.filter((other) => other.wingPlates.join() === wing.wingPlates.join()).length !== 1) throw new Error(`Wing ${index + 1} is not distinct from the others`);
+  }
+  if (new Set(wings.flatMap((wing) => wing.wingPlates)).size < 16) throw new Error("The four wings do not use every authored chamber plate");
+  if (new Set(wings.flatMap((wing) => wing.wingInhabitants)).size < 8) throw new Error("The wings do not progress through different inhabitants");
+
+  // A wing's own offer is a real choice with a real effect.
+  await evaluate("window.__wikimazeClassicTest.setLevel(1)");
+  await delay(160);
+  await evaluate("window.__wikimazeClassicTest.setFlames(2)");
+  const beforeChoice = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (!await evaluate("window.__wikimazeClassicTest.takeRoomChoice()")) throw new Error("No chamber in the first wing offered its choice");
+  await delay(240);
+  const afterChoice = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (afterChoice.flames !== beforeChoice.flames + 1 || !afterChoice.roomChoiceTaken) throw new Error(`The candle stub did not relight a match: ${JSON.stringify({ before: beforeChoice.flames, after: afterChoice.flames, taken: afterChoice.roomChoiceTaken })}`);
+
+  // The room answers the seal standing in front of it.
+  if (!await evaluate("window.__wikimazeClassicTest.openLockedChallenge()")) throw new Error("No locked passage remained for the room-hint test");
+  await delay(240);
+  if (!await evaluate("window.__wikimazeClassicTest.askRoom()")) throw new Error("The room refused to answer the seal");
+  await delay(220);
+  const hinted = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (!hinted.hintShown || hinted.eliminatedAnswers !== 1) throw new Error(`Asking the room must strike out exactly one wrong answer: ${JSON.stringify({ shown: hinted.hintShown, struck: hinted.eliminatedAnswers })}`);
+  if (!hinted.hintText.includes("It is not")) throw new Error(`The room's hint does not name what it rules out: ${hinted.hintText}`);
+  await evaluate("window.__wikimazeClassicTest.answerCorrect()");
+  await delay(1300);
+
+  // Opening a fourth seal relights a match, so a long run can recover.
+  await evaluate("window.__wikimazeClassicTest.setFlames(2)");
+  let relit = null;
+  for (let seal = 0; seal < 8 && !relit; seal++) {
+    if (!await evaluate("window.__wikimazeClassicTest.openLockedChallenge()")) break;
+    await delay(220);
+    const before = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+    await evaluate("window.__wikimazeClassicTest.answerCorrect()");
+    await delay(1300);
+    const after = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+    if (after.flames > before.flames) relit = after.solved;
+  }
+  if (relit === null) throw new Error("Opening seals never relit a match, so a long run cannot recover");
+
+  const fatalSeal = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
+  if (!fatalSeal) throw new Error("No locked passage remained for the final-flame test");
+  await evaluate("window.__wikimazeClassicTest.setFlames(1); window.__wikimazeClassicTest.answerWrong()");
+  await delay(2800);
+  const landed = await evaluate("location.pathname");
+  if (landed !== "/") throw new Error(`Losing the final match must return the player to the main menu, landed on ${landed}`);
+  for (let attempt = 0; attempt < 60 && !await evaluate("typeof window.__wikimazeIntroDebug === 'function'"); attempt++) await delay(100);
+  const menu = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeIntroDebug())"));
+  if (!menu.noticeOpen || !menu.noticeText.includes("fifth match")) throw new Error(`The main menu did not report the lost run: ${JSON.stringify({ open: menu.noticeOpen, text: menu.noticeText })}`);
+  if (menu.started) throw new Error("A lost run must leave no quest to continue");
+  const cleared = JSON.parse(await evaluate(CLEARED_PROBE));
+  if (cleared.visited !== "[0]" || cleared.score !== "0" || cleared.unlocked !== "[]" || cleared.trail !== "[]" || cleared.flames !== "5") throw new Error(`The lost run did not clear the record: ${JSON.stringify(cleared)}`);
+
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

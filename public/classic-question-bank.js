@@ -1,198 +1,144 @@
+// The bank is stored as families of facts rather than as finished questions. Every
+// fact is one row of [clue, Wikipedia article, answer]; every family declares one or
+// more forms that turn a row into a question, so a single verified fact supplies
+// several distinct prompts and the shipped data stays small enough to read.
+import { soft } from "./questions/case.js";
+import { GEOGRAPHY_FAMILIES } from "./questions/geography.js";
+import { SCIENCE_FAMILIES } from "./questions/science.js";
+import { LIFE_FAMILIES } from "./questions/life.js";
+import { HISTORY_FAMILIES } from "./questions/history.js";
+import { ARTS_FAMILIES } from "./questions/arts.js";
+import { LANGUAGE_FAMILIES } from "./questions/language.js";
+import { ASTRONOMY_FAMILIES } from "./questions/astronomy.js";
+import { MATHEMATICS_FAMILIES } from "./questions/mathematics.js";
+import { COMPUTING_FAMILIES } from "./questions/computing.js";
+import { MUSIC_FAMILIES } from "./questions/music.js";
+import { MYTHOLOGY_FAMILIES } from "./questions/mythology.js";
+import { GEOGRAPHY2_FAMILIES } from "./questions/geography2.js";
+import { SCIENCE2_FAMILIES } from "./questions/science2.js";
+import { LIFE2_FAMILIES } from "./questions/life2.js";
+import { GEOGRAPHY3_FAMILIES } from "./questions/geography3.js";
+import { HISTORY2_FAMILIES } from "./questions/history2.js";
+import { LITERATURE2_FAMILIES } from "./questions/literature2.js";
+import { SPORTS_FAMILIES } from "./questions/sports.js";
+import { ABBREVIATION_FAMILIES } from "./questions/abbreviations.js";
+import { PEOPLE_FAMILIES } from "./questions/people.js";
+import { WORLD_FAMILIES } from "./questions/world.js";
+import { CULTURE2_FAMILIES } from "./questions/culture2.js";
+import { ASTRONOMY2_FAMILIES } from "./questions/astronomy2.js";
+import { SCIENCE3_FAMILIES } from "./questions/science3.js";
+import { LANGUAGE3_FAMILIES } from "./questions/language3.js";
+import { COMPUTING2_FAMILIES } from "./questions/computing2.js";
+import { NATURE_FAMILIES } from "./questions/nature.js";
+import { HISTORY3_FAMILIES } from "./questions/history3.js";
+import { MUSIC2_FAMILIES } from "./questions/music2.js";
+import { EVERYDAY_FAMILIES } from "./questions/everyday.js";
+import { MEDICINE_FAMILIES } from "./questions/medicine.js";
+import { GEOGRAPHY4_FAMILIES } from "./questions/geography4.js";
+import { ARTS3_FAMILIES } from "./questions/arts3.js";
+import { SCIENCE4_FAMILIES } from "./questions/science4.js";
+import { BINOMIALS2_FAMILIES } from "./questions/binomials2.js";
+import { ABBREVIATIONS2_FAMILIES } from "./questions/abbreviations2.js";
+import { RECORDS_FAMILIES } from "./questions/records.js";
+import { WORKS_FAMILIES } from "./questions/works.js";
+import { PLACES_FAMILIES } from "./questions/places.js";
+import { TERMS_FAMILIES } from "./questions/terms.js";
+import { MYTHOLOGY2_FAMILIES } from "./questions/mythology2.js";
+import { TERMS2_FAMILIES } from "./questions/terms2.js";
+import { SCIENCE5_FAMILIES } from "./questions/science5.js";
+import { CULTURE3_FAMILIES } from "./questions/culture3.js";
+import { WORLD2_FAMILIES } from "./questions/world2.js";
+import { TERMS3_FAMILIES } from "./questions/terms3.js";
+import { HISTORY4_FAMILIES } from "./questions/history4.js";
+import { LANGUAGE4_FAMILIES } from "./questions/language4.js";
+import { TERMS4_FAMILIES } from "./questions/terms4.js";
+import { TERMS5_FAMILIES } from "./questions/terms5.js";
+
 const FAMILIES = [
-  {
-    category: "Geography",
-    prompt: (country) => `What is the capital of ${country}?`,
-    explain: (country, capital) => `${capital} is the capital of ${country}.`,
-    facts: [
-      ["France", "France", "Paris"], ["Japan", "Japan", "Tokyo"], ["Brazil", "Brazil", "Brasília"], ["Canada", "Canada", "Ottawa"], ["Australia", "Australia", "Canberra"], ["Egypt", "Egypt", "Cairo"],
-      ["Turkey", "Turkey", "Ankara"], ["Morocco", "Morocco", "Rabat"], ["Nigeria", "Nigeria", "Abuja"], ["Kenya", "Kenya", "Nairobi"], ["Argentina", "Argentina", "Buenos Aires"], ["Thailand", "Thailand", "Bangkok"],
-      ["Kazakhstan", "Kazakhstan", "Astana"], ["Myanmar", "Myanmar", "Naypyidaw"], ["Tanzania", "Tanzania", "Dodoma"], ["Sri Lanka", "Sri Lanka", "Sri Jayawardenepura Kotte"], ["Ivory Coast", "Côte d’Ivoire", "Yamoussoukro"], ["Belize", "Belize", "Belmopan"],
-      ["Bhutan", "Bhutan", "Thimphu"], ["Kyrgyzstan", "Kyrgyzstan", "Bishkek"], ["Palau", "Palau", "Ngerulmud"], ["Federated States of Micronesia", "Micronesia", "Palikir"], ["Burkina Faso", "Burkina Faso", "Ouagadougou"], ["Brunei", "Brunei", "Bandar Seri Begawan"],
-    ],
-  },
-  {
-    category: "Geography",
-    prompt: (landmark) => `In which present-day country is ${landmark}?`,
-    explain: (landmark, country) => `${landmark} is in ${country}.`,
-    facts: [
-      ["Machu Picchu", "Machu Picchu", "Peru"], ["Petra", "Petra", "Jordan"], ["Angkor Wat", "Angkor Wat", "Cambodia"], ["Taj Mahal", "the Taj Mahal", "India"], ["Great Pyramid of Giza", "the Great Pyramid of Giza", "Egypt"], ["Colosseum", "the Colosseum", "Italy"],
-      ["Alhambra", "the Alhambra", "Spain"], ["Borobudur", "Borobudur", "Indonesia"], ["Chichen Itza", "Chichén Itzá", "Mexico"], ["Easter Island", "the moai of Rapa Nui", "Chile"], ["Rock-Hewn Churches, Lalibela", "the rock-hewn churches of Lalibela", "Ethiopia"], ["Neuschwanstein Castle", "Neuschwanstein Castle", "Germany"],
-      ["Bagan", "Bagan", "Myanmar"], ["Sigiriya", "Sigiriya", "Sri Lanka"], ["Great Zimbabwe", "Great Zimbabwe", "Zimbabwe"], ["Leptis Magna", "Leptis Magna", "Libya"], ["Persepolis", "Persepolis", "Iran"], ["Tikal", "Tikal", "Guatemala"],
-      ["Nan Madol", "Nan Madol", "Micronesia"], ["Mesa Verde National Park", "the Mesa Verde cliff dwellings", "United States"], ["Skara Brae", "Skara Brae", "Scotland"], ["Göbekli Tepe", "Göbekli Tepe", "Turkey"], ["Aït Benhaddou", "Aït Benhaddou", "Morocco"], ["Meroë", "Meroë", "Sudan"],
-    ],
-  },
-  {
-    category: "Geography",
-    prompt: (clue) => `Which geographical feature matches this description: ${clue}?`,
-    explain: (clue, feature) => `${feature} is the feature described.`,
-    facts: [
-      ["Pacific Ocean", "Earth’s largest ocean", "Pacific Ocean"], ["Mount Everest", "Earth’s highest mountain above sea level", "Mount Everest"], ["Andes", "the world’s longest continental mountain range", "Andes"], ["Sahara", "the world’s largest hot desert", "Sahara"], ["Lake Baikal", "the world’s deepest lake", "Lake Baikal"], ["Greenland", "the world’s largest island that is not a continent", "Greenland"],
-      ["Nile", "the river flowing north through Egypt to the Mediterranean", "Nile"], ["Mediterranean Sea", "the sea between southern Europe and northern Africa", "Mediterranean Sea"], ["Victoria Falls", "the great waterfall on the Zambia–Zimbabwe border", "Victoria Falls"], ["Tibetan Plateau", "the high plateau often called the Roof of the World", "Tibetan Plateau"], ["Great Barrier Reef", "the vast coral reef system off northeastern Australia", "Great Barrier Reef"], ["Ganges Delta", "the enormous delta shared principally by Bangladesh and India", "Ganges–Brahmaputra Delta"],
-      ["Strait of Gibraltar", "the narrow passage linking the Atlantic Ocean and Mediterranean Sea", "Strait of Gibraltar"], ["Lake Titicaca", "the large navigable high-altitude lake between Peru and Bolivia", "Lake Titicaca"], ["Gobi Desert", "the cold desert spanning southern Mongolia and northern China", "Gobi Desert"], ["Grand Canyon", "the immense Colorado River gorge in Arizona", "Grand Canyon"], ["Salar de Uyuni", "the immense salt flat on Bolivia’s Altiplano", "Salar de Uyuni"], ["Mount Etna", "the active stratovolcano on eastern Sicily", "Mount Etna"],
-      ["Mariana Trench", "the ocean trench containing Challenger Deep", "Mariana Trench"], ["Okavango Delta", "the inland delta that fans into Botswana’s Kalahari", "Okavango Delta"], ["Mount Roraima", "the table-top tepui at the junction of Venezuela, Guyana, and Brazil", "Mount Roraima"], ["Sognefjord", "Norway’s longest and deepest fjord", "Sognefjord"], ["Lambert Glacier", "the enormous glacier draining part of East Antarctica", "Lambert Glacier"], ["Sơn Đoòng Cave", "the gigantic cave passage discovered in central Vietnam", "Sơn Đoòng Cave"],
-    ],
-  },
-  {
-    category: "History",
-    prompt: (year) => `Which event occurred in ${year}?`,
-    explain: (year, event) => `${event} occurred in ${year}.`,
-    facts: [
-      ["Norman Conquest", "1066", "The Norman Conquest of England"], ["Fall of Constantinople", "1453", "The fall of Constantinople"], ["Voyages of Christopher Columbus", "1492", "Columbus’s first Atlantic voyage"], ["Ninety-five Theses", "1517", "Luther’s publication of the Ninety-five Theses"], ["Spanish Armada", "1588", "The defeat of the Spanish Armada"], ["Peace of Westphalia", "1648", "The Peace of Westphalia"],
-      ["Philosophiæ Naturalis Principia Mathematica", "1687", "Publication of Newton’s Principia"], ["United States Declaration of Independence", "1776", "The American Declaration of Independence"], ["French Revolution", "1789", "The beginning of the French Revolution"], ["Haitian Declaration of Independence", "1804", "Haitian independence"], ["Battle of Waterloo", "1815", "The Battle of Waterloo"], ["Revolutions of 1848", "1848", "The Revolutions of 1848"],
-      ["American Civil War", "1861", "The beginning of the American Civil War"], ["Meiji Restoration", "1868", "The Meiji Restoration"], ["World War I", "1914", "The beginning of World War I"], ["Russian Revolution", "1917", "The Russian Revolution"], ["Treaty of Versailles", "1919", "The signing of the Treaty of Versailles"], ["History of penicillin", "1928", "Fleming’s observation of penicillin"],
-      ["United Nations", "1945", "The founding of the United Nations"], ["Indian Independence Act 1947", "1947", "Indian independence from British rule"], ["Sputnik 1", "1957", "The launch of Sputnik 1"], ["Apollo 11", "1969", "The Apollo 11 Moon landing"], ["Fall of the Berlin Wall", "1989", "The opening of the Berlin Wall"], ["Dissolution of the Soviet Union", "1991", "The dissolution of the Soviet Union"],
-    ],
-  },
-  {
-    category: "History",
-    prompt: (clue) => `Which historical figure is most closely associated with ${clue}?`,
-    explain: (clue, figure) => `${figure} is most closely associated with ${clue}.`,
-    facts: [
-      ["Hammurabi", "the Babylonian law code carved on a famous stele", "Hammurabi"], ["Pericles", "the political leadership of Athens during much of its fifth-century BCE golden age", "Pericles"], ["Ashoka", "rock and pillar edicts promoting dharma across the Mauryan Empire", "Ashoka"], ["Qin Shi Huang", "the first unification of imperial China", "Qin Shi Huang"], ["Augustus", "becoming the first Roman emperor", "Augustus"], ["Mansa Musa", "the spectacular fourteenth-century pilgrimage from Mali to Mecca", "Mansa Musa"],
-      ["Charlemagne", "a western imperial coronation on Christmas Day in 800", "Charlemagne"], ["Saladin", "the Ayyubid recapture of Jerusalem in 1187", "Saladin"], ["Genghis Khan", "the founding of the Mongol Empire", "Genghis Khan"], ["Joan of Arc", "the relief of Orléans during the Hundred Years’ War", "Joan of Arc"], ["Suleiman the Magnificent", "the sixteenth-century height of Ottoman imperial power", "Suleiman the Magnificent"], ["Akbar", "Mughal expansion and a policy of broad religious accommodation", "Akbar"],
-      ["Simón Bolívar", "independence movements across northern South America", "Simón Bolívar"], ["Toussaint Louverture", "leadership during the Haitian Revolution", "Toussaint Louverture"], ["Otto von Bismarck", "German unification through diplomacy and war", "Otto von Bismarck"], ["Emmeline Pankhurst", "the British Women’s Social and Political Union", "Emmeline Pankhurst"], ["Sun Yat-sen", "the revolutionary movement that helped end China’s Qing dynasty", "Sun Yat-sen"], ["Mustafa Kemal Atatürk", "the founding and secular reform of the Republic of Turkey", "Mustafa Kemal Atatürk"],
-      ["Kwame Nkrumah", "Ghanaian independence and Pan-Africanism", "Kwame Nkrumah"], ["Nelson Mandela", "the anti-apartheid struggle and South Africa’s first fully democratic presidency", "Nelson Mandela"], ["Lech Wałęsa", "Poland’s Solidarity trade-union movement", "Lech Wałęsa"], ["Václav Havel", "Czechoslovakia’s dissident movement and Velvet Revolution", "Václav Havel"], ["Aung San", "the movement for Burmese independence before 1948", "Aung San"], ["Ellen Johnson Sirleaf", "becoming Africa’s first elected female head of state", "Ellen Johnson Sirleaf"],
-    ],
-  },
-  {
-    category: "Arts",
-    prompt: (work) => `Who created ${work}?`,
-    explain: (work, artist) => `${work} was created by ${artist}.`,
-    facts: [
-      ["Mona Lisa", "the Mona Lisa", "Leonardo da Vinci"], ["The Starry Night", "The Starry Night", "Vincent van Gogh"], ["Guernica (Picasso)", "Guernica", "Pablo Picasso"], ["The Great Wave off Kanagawa", "The Great Wave off Kanagawa", "Hokusai"], ["Girl with a Pearl Earring", "Girl with a Pearl Earring", "Johannes Vermeer"], ["The Birth of Venus", "The Birth of Venus", "Sandro Botticelli"],
-      ["Las Meninas", "Las Meninas", "Diego Velázquez"], ["The Night Watch", "The Night Watch", "Rembrandt"], ["The Kiss (Klimt)", "The Kiss", "Gustav Klimt"], ["The Persistence of Memory", "The Persistence of Memory", "Salvador Dalí"], ["American Gothic", "American Gothic", "Grant Wood"], ["Nighthawks (Hopper)", "Nighthawks", "Edward Hopper"],
-      ["Arnolfini Portrait", "the Arnolfini Portrait", "Jan van Eyck"], ["The Garden of Earthly Delights", "The Garden of Earthly Delights", "Hieronymus Bosch"], ["Liberty Leading the People", "Liberty Leading the People", "Eugène Delacroix"], ["Olympia (Manet)", "Olympia", "Édouard Manet"], ["No. 5, 1948", "No. 5, 1948", "Jackson Pollock"], ["The Two Fridas", "The Two Fridas", "Frida Kahlo"],
-      ["The School of Athens", "The School of Athens", "Raphael"], ["The Burial of the Count of Orgaz", "The Burial of the Count of Orgaz", "El Greco"], ["Wanderer above the Sea of Fog", "Wanderer above the Sea of Fog", "Caspar David Friedrich"], ["The Third of May 1808", "The Third of May 1808", "Francisco Goya"], ["The Son of Man", "The Son of Man", "René Magritte"], ["The Sleeping Gypsy", "The Sleeping Gypsy", "Henri Rousseau"],
-    ],
-  },
-  {
-    category: "Literature",
-    prompt: (work) => `Who wrote ${work}?`,
-    explain: (work, author) => `${work} was written by ${author}.`,
-    facts: [
-      ["Odyssey", "the Odyssey", "Homer"], ["Hamlet", "Hamlet", "William Shakespeare"], ["Pride and Prejudice", "Pride and Prejudice", "Jane Austen"], ["Don Quixote", "Don Quixote", "Miguel de Cervantes"], ["The Tale of Genji", "The Tale of Genji", "Murasaki Shikibu"], ["Divine Comedy", "the Divine Comedy", "Dante Alighieri"],
-      ["Things Fall Apart", "Things Fall Apart", "Chinua Achebe"], ["One Hundred Years of Solitude", "One Hundred Years of Solitude", "Gabriel García Márquez"], ["The Metamorphosis", "The Metamorphosis", "Franz Kafka"], ["Beloved (novel)", "Beloved", "Toni Morrison"], ["The Stranger (Camus novel)", "The Stranger", "Albert Camus"], ["Invisible Man", "Invisible Man", "Ralph Ellison"],
-      ["The Master and Margarita", "The Master and Margarita", "Mikhail Bulgakov"], ["Middlemarch", "Middlemarch", "George Eliot"], ["Pedro Páramo", "Pedro Páramo", "Juan Rulfo"], ["The Tale of Kiều", "The Tale of Kiều", "Nguyễn Du"], ["Season of Migration to the North", "Season of Migration to the North", "Tayeb Salih"], ["The Leopard", "The Leopard", "Giuseppe Tomasi di Lampedusa"],
-      ["The Conference of the Birds", "The Conference of the Birds", "Attar of Nishapur"], ["Dream of the Red Chamber", "Dream of the Red Chamber", "Cao Xueqin"], ["Ficciones", "Ficciones", "Jorge Luis Borges"], ["Snow Country", "Snow Country", "Yasunari Kawabata"], ["The Tin Drum", "The Tin Drum", "Günter Grass"], ["Palace of the Peacock", "Palace of the Peacock", "Wilson Harris"],
-    ],
-  },
-  {
-    category: "Music",
-    prompt: (work) => `Which composer wrote ${work}?`,
-    explain: (work, composer) => `${work} was composed by ${composer}.`,
-    facts: [
-      ["The Four Seasons (Vivaldi)", "The Four Seasons", "Antonio Vivaldi"], ["The Magic Flute", "The Magic Flute", "Wolfgang Amadeus Mozart"], ["Symphony No. 5 (Beethoven)", "Beethoven’s Fifth Symphony", "Ludwig van Beethoven"], ["Messiah (Handel)", "Messiah", "George Frideric Handel"], ["Brandenburg Concertos", "the Brandenburg Concertos", "Johann Sebastian Bach"], ["Swan Lake", "Swan Lake", "Pyotr Ilyich Tchaikovsky"],
-      ["Boléro", "Boléro", "Maurice Ravel"], ["The Rite of Spring", "The Rite of Spring", "Igor Stravinsky"], ["The Planets", "The Planets", "Gustav Holst"], ["New World Symphony", "the New World Symphony", "Antonín Dvořák"], ["Carmen", "Carmen", "Georges Bizet"], ["William Tell Overture", "the William Tell Overture", "Gioachino Rossini"],
-      ["Clair de lune (Debussy)", "Clair de Lune", "Claude Debussy"], ["Enigma Variations", "the Enigma Variations", "Edward Elgar"], ["Pictures at an Exhibition", "Pictures at an Exhibition", "Modest Mussorgsky"], ["Symphonie fantastique", "Symphonie fantastique", "Hector Berlioz"], ["The Blue Danube", "The Blue Danube", "Johann Strauss II"], ["Peer Gynt (Grieg)", "the Peer Gynt incidental music", "Edvard Grieg"],
-      ["Turandot", "Turandot", "Giacomo Puccini"], ["Aida", "Aida", "Giuseppe Verdi"], ["Finlandia", "Finlandia", "Jean Sibelius"], ["Appalachian Spring", "Appalachian Spring", "Aaron Copland"], ["Carmina Burana (Orff)", "Carmina Burana", "Carl Orff"], ["West Side Story", "West Side Story", "Leonard Bernstein"],
-    ],
-  },
-  {
-    category: "Biology",
-    prompt: (clue) => `Which biological structure or process is described as ${clue}?`,
-    explain: (clue, term) => `${term} is the structure or process described.`,
-    facts: [
-      ["Mitochondrion", "the organelle that produces most cellular ATP through aerobic respiration", "Mitochondrion"], ["Ribosome", "the cellular machine that translates RNA into protein", "Ribosome"], ["Cell membrane", "the selectively permeable boundary surrounding a cell", "Cell membrane"], ["Lysosome", "an animal-cell organelle containing digestive enzymes", "Lysosome"], ["Stoma", "a microscopic leaf pore controlling gas exchange", "Stoma"], ["Hemoglobin", "the iron-containing blood protein that carries oxygen", "Hemoglobin"],
-      ["Enzyme", "a biological catalyst that lowers activation energy", "Enzyme"], ["Neuron", "a cell specialized to transmit electrical and chemical signals", "Neuron"], ["Antibody", "an immune protein that recognizes a specific antigen", "Antibody"], ["Nephron", "the microscopic functional unit of a kidney", "Nephron"], ["Pulmonary alveolus", "a tiny lung air sac where gases diffuse", "Alveolus"], ["Myelin", "the insulating sheath around many axons", "Myelin"],
-      ["Adenosine triphosphate", "the cell’s immediately usable energy currency", "ATP"], ["Messenger RNA", "the RNA copy carrying coding information from DNA to a ribosome", "Messenger RNA"], ["Transfer RNA", "the adaptor molecule delivering amino acids during translation", "Transfer RNA"], ["DNA polymerase", "the enzyme that synthesizes DNA from a template", "DNA polymerase"], ["Homeostasis", "maintenance of a relatively stable internal environment", "Homeostasis"], ["Osmosis", "net water movement across a selectively permeable membrane", "Osmosis"],
-      ["Apoptosis", "regulated, programmed cell death", "Apoptosis"], ["Meiosis", "the division process producing haploid gametes", "Meiosis"], ["Epigenetics", "heritable regulation that does not require changing the DNA sequence", "Epigenetics"], ["Telomere", "the repetitive protective region at a chromosome’s end", "Telomere"], ["Operon", "a jointly regulated cluster of genes common in prokaryotes", "Operon"], ["Ribozyme", "an RNA molecule capable of catalysis", "Ribozyme"],
-    ],
-  },
-  {
-    category: "Life Science",
-    prompt: (clue) => `Which ecological or evolutionary term matches this definition: ${clue}?`,
-    explain: (clue, term) => `${term} matches the definition.`,
-    facts: [
-      ["Primary producer", "an organism that builds organic matter from inorganic sources", "Primary producer"], ["Consumer (food chain)", "an organism obtaining energy by eating other organisms", "Consumer"], ["Decomposer", "an organism breaking down dead material and wastes", "Decomposer"], ["Food web", "a network of interconnected feeding relationships", "Food web"], ["Habitat", "the physical environment in which an organism lives", "Habitat"], ["Ecological niche", "a species’ role and resource use within an ecosystem", "Ecological niche"],
-      ["Keystone species", "a species with an ecological effect disproportionate to its abundance", "Keystone species"], ["Ecological succession", "orderly community change following disturbance or new habitat", "Ecological succession"], ["Mutualism (biology)", "a close interaction benefiting both participating species", "Mutualism"], ["Commensalism", "an interaction benefiting one species without significantly affecting the other", "Commensalism"], ["Parasitism", "an interaction in which one organism benefits at its host’s expense", "Parasitism"], ["Biomagnification", "increasing contaminant concentration at higher trophic levels", "Biomagnification"],
-      ["Carrying capacity", "the largest population an environment can sustain over time", "Carrying capacity"], ["Genetic drift", "random change in allele frequencies, especially in small populations", "Genetic drift"], ["Founder effect", "reduced variation when a new population begins from few individuals", "Founder effect"], ["Population bottleneck", "sharp population reduction that removes genetic variation", "Population bottleneck"], ["Convergent evolution", "independent evolution of similar traits in separate lineages", "Convergent evolution"], ["Adaptive radiation", "rapid diversification from one ancestor into multiple ecological roles", "Adaptive radiation"],
-      ["Horizontal gene transfer", "movement of genetic material other than from parent to offspring", "Horizontal gene transfer"], ["Symbiogenesis", "the origin of new cellular structures through long-term symbiosis", "Symbiogenesis"], ["Cladogram", "a branching diagram representing hypothesized relationships", "Cladogram"], ["Synapomorphy", "a shared derived character supporting a clade", "Synapomorphy"], ["Allopatric speciation", "species formation following geographic separation", "Allopatric speciation"], ["Punctuated equilibrium", "long morphological stability interrupted by comparatively rapid change", "Punctuated equilibrium"],
-    ],
-  },
-  {
-    category: "Chemistry",
-    prompt: (symbol) => `Which chemical element has the symbol ${symbol}?`,
-    explain: (symbol, element) => `${symbol} is the chemical symbol for ${element}.`,
-    facts: [
-      ["Hydrogen", "H", "Hydrogen"], ["Helium", "He", "Helium"], ["Carbon", "C", "Carbon"], ["Nitrogen", "N", "Nitrogen"], ["Oxygen", "O", "Oxygen"], ["Sodium", "Na", "Sodium"],
-      ["Magnesium", "Mg", "Magnesium"], ["Aluminium", "Al", "Aluminium"], ["Silicon", "Si", "Silicon"], ["Phosphorus", "P", "Phosphorus"], ["Sulfur", "S", "Sulfur"], ["Chlorine", "Cl", "Chlorine"],
-      ["Potassium", "K", "Potassium"], ["Calcium", "Ca", "Calcium"], ["Iron", "Fe", "Iron"], ["Copper", "Cu", "Copper"], ["Silver", "Ag", "Silver"], ["Gold", "Au", "Gold"],
-      ["Mercury (element)", "Hg", "Mercury"], ["Lead", "Pb", "Lead"], ["Tin", "Sn", "Tin"], ["Tungsten", "W", "Tungsten"], ["Uranium", "U", "Uranium"], ["Platinum", "Pt", "Platinum"],
-    ],
-  },
-  {
-    category: "Astronomy",
-    prompt: (clue) => `Which astronomical object matches this description: ${clue}?`,
-    explain: (clue, object) => `${object} is the object described.`,
-    facts: [
-      ["Sun", "the star at the center of the Solar System", "Sun"], ["Jupiter", "the largest planet in the Solar System", "Jupiter"], ["Mars", "the planet commonly called the Red Planet", "Mars"], ["Saturn", "the planet with the Solar System’s most conspicuous ring system", "Saturn"], ["Moon", "Earth’s only permanent natural satellite", "Moon"], ["Pluto", "the dwarf planet visited by New Horizons in 2015", "Pluto"],
-      ["Milky Way", "the barred spiral galaxy containing the Solar System", "Milky Way"], ["Andromeda Galaxy", "the nearest large galaxy to the Milky Way", "Andromeda Galaxy"], ["Sirius", "the brightest star in Earth’s night sky", "Sirius"], ["Orion Nebula", "the bright stellar nursery in Orion’s sword", "Orion Nebula"], ["Crab Nebula", "the supernova remnant associated with the event observed in 1054", "Crab Nebula"], ["Halley's Comet", "the famous short-period comet returning roughly every 76 years", "Halley’s Comet"],
-      ["Uranus", "the planet rotating with an axial tilt near 98 degrees", "Uranus"], ["Venus", "the hottest planet at its surface", "Venus"], ["Ganymede (moon)", "the largest moon in the Solar System", "Ganymede"], ["Neptune", "the blue giant planet whose color is influenced by atmospheric methane", "Neptune"], ["Eris (dwarf planet)", "the scattered-disc dwarf planet whose discovery helped prompt Pluto’s reclassification", "Eris"], ["Ceres (dwarf planet)", "the largest object in the main asteroid belt", "Ceres"],
-      ["PSR B1919+21", "the first pulsar to be discovered", "PSR B1919+21"], ["Sagittarius A*", "the supermassive black hole at the Milky Way’s center", "Sagittarius A*"], ["51 Pegasi b", "the first exoplanet found orbiting a Sun-like main-sequence star", "51 Pegasi b"], ["Olympus Mons", "the enormous shield volcano on Mars", "Olympus Mons"], ["Voyager 1", "the most distant human-made object from Earth", "Voyager 1"], ["Heliopause", "the boundary where the solar wind yields to the interstellar medium", "Heliopause"],
-    ],
-  },
-  {
-    category: "Computing",
-    prompt: (clue) => `Which computing term matches this definition: ${clue}?`,
-    explain: (clue, term) => `${term} matches the definition.`,
-    facts: [
-      ["Binary number", "a numeral system using only 0 and 1", "Binary"], ["Bit", "a single binary digit", "Bit"], ["Byte", "a unit conventionally composed of eight bits", "Byte"], ["Central processing unit", "the processor that executes a computer’s instructions", "CPU"], ["Random-access memory", "fast volatile working memory", "RAM"], ["Operating system", "software managing hardware resources and application execution", "Operating system"],
-      ["Algorithm", "a finite procedure for solving a class of problems", "Algorithm"], ["Compiler", "software translating source code into another executable form", "Compiler"], ["Database", "an organized collection of electronically accessible data", "Database"], ["Communication protocol", "agreed rules governing data exchange", "Protocol"], ["Encryption", "reversible transformation of plaintext using a key", "Encryption"], ["Hash function", "a function mapping data to a fixed-size digest", "Hash function"],
-      ["Recursion (computer science)", "a technique in which a definition or routine invokes itself", "Recursion"], ["Stack (abstract data type)", "a last-in, first-out data structure", "Stack"], ["Queue (abstract data type)", "a first-in, first-out data structure", "Queue"], ["Tree (data structure)", "a hierarchical structure of connected nodes without cycles", "Tree"], ["Graph (abstract data type)", "a structure of vertices joined by edges", "Graph"], ["Cache (computing)", "a fast store holding copies of frequently needed data", "Cache"],
-      ["Public-key cryptography", "encryption using mathematically related public and private keys", "Public-key cryptography"], ["SQL", "the standard language widely used to query relational databases", "SQL"], ["Domain Name System", "the distributed system translating domain names to network records", "DNS"], ["HTTP", "the application protocol underlying ordinary web document transfer", "HTTP"], ["Transmission Control Protocol", "the transport protocol providing an ordered reliable byte stream", "TCP"], ["Big O notation", "notation describing asymptotic growth of resource use", "Big O notation"],
-    ],
-  },
-  {
-    category: "Mathematics",
-    prompt: (clue) => `Which mathematical term matches this definition: ${clue}?`,
-    explain: (clue, term) => `${term} matches the definition.`,
-    facts: [
-      ["Triangle", "a polygon with three sides", "Triangle"], ["Prime number", "a positive integer greater than one with exactly two positive divisors", "Prime number"], ["Pi", "the ratio of a circle’s circumference to its diameter", "Pi"], ["Hypotenuse", "the side opposite the right angle in a right triangle", "Hypotenuse"], ["Arithmetic mean", "the sum of values divided by their count", "Arithmetic mean"], ["Median", "the middle value of an ordered data set", "Median"],
-      ["Derivative", "an instantaneous rate of change", "Derivative"], ["Integral", "an accumulation represented by an antiderivative or limiting sum", "Integral"], ["Matrix (mathematics)", "a rectangular array of mathematical entries", "Matrix"], ["Euclidean vector", "a quantity having magnitude and direction", "Vector"], ["Logarithm", "the inverse operation of exponentiation", "Logarithm"], ["Factorial", "the product of positive integers up to a given nonnegative integer", "Factorial"],
-      ["Bijection", "a mapping that is both one-to-one and onto", "Bijection"], ["Irrational number", "a real number not expressible as a ratio of integers", "Irrational number"], ["Complex number", "a number expressible in the form a + bi", "Complex number"], ["Topology", "the study of properties preserved under continuous deformation", "Topology"], ["Group (mathematics)", "a set with an associative operation, identity, and inverses", "Group"], ["Eigenvalues and eigenvectors", "a nonzero vector whose direction is preserved by a linear transformation", "Eigenvector"],
-      ["Cardinality", "the measure of the number of elements in a set", "Cardinality"], ["Asymptote", "a line a curve approaches arbitrarily closely", "Asymptote"], ["Determinant", "a scalar associated with a square matrix and its scaling effect", "Determinant"], ["Permutation", "an arrangement of a set’s members into an order", "Permutation"], ["Standard deviation", "a measure of dispersion around a mean", "Standard deviation"], ["Fibonacci sequence", "the sequence in which each term after the first two is their sum", "Fibonacci sequence"],
-    ],
-  },
-  {
-    category: "Earth Science",
-    prompt: (clue) => `Which Earth science term matches this description: ${clue}?`,
-    explain: (clue, term) => `${term} is the process or feature described.`,
-    facts: [
-      ["Water cycle", "the continuous circulation of water through evaporation, condensation, precipitation, and runoff", "Water cycle"], ["Weathering", "the in-place breakdown of rocks and minerals at Earth’s surface", "Weathering"], ["Erosion", "the removal and transport of soil or rock by agents such as water, wind, or ice", "Erosion"], ["Sedimentary rock", "rock formed by accumulated sediment or chemical and biological precipitation", "Sedimentary rock"], ["Igneous rock", "rock formed when magma or lava cools and solidifies", "Igneous rock"], ["Metamorphic rock", "rock transformed by heat, pressure, or reactive fluids without fully melting", "Metamorphic rock"],
-      ["Plate tectonics", "the theory that Earth’s lithosphere is divided into moving plates", "Plate tectonics"], ["Subduction", "the descent of one tectonic plate beneath another", "Subduction"], ["Mid-ocean ridge", "a submarine mountain system where new oceanic crust is created", "Mid-ocean ridge"], ["Fault (geology)", "a fracture or zone of fractures along which rock masses have moved", "Fault"], ["Epicenter", "the point on Earth’s surface directly above an earthquake focus", "Epicenter"], ["Tsunami", "a series of long waves caused by a large displacement of water", "Tsunami"],
-      ["Mohorovičić discontinuity", "the boundary between Earth’s crust and mantle", "Mohorovičić discontinuity"], ["Paleomagnetism", "the study of magnetic records preserved in rocks and sediments", "Paleomagnetism"], ["Isostasy", "the gravitational equilibrium in which the lithosphere floats on the asthenosphere", "Isostasy"], ["Orogeny", "a mountain-building event driven chiefly by tectonic deformation", "Orogeny"], ["Hotspot (geology)", "a long-lived volcanic region thought to be fed by unusually hot mantle", "Hotspot"], ["Lahar", "a rapidly flowing mixture of volcanic debris and water", "Lahar"],
-      ["Wilson Cycle", "the repeated opening and closing of ocean basins through plate tectonics", "Wilson cycle"], ["Wadati–Benioff zone", "an inclined zone of earthquake foci tracing a subducting slab", "Wadati–Benioff zone"], ["Thermohaline circulation", "large-scale ocean circulation driven by density differences from temperature and salinity", "Thermohaline circulation"], ["Coriolis force", "the apparent deflection of moving objects in a rotating reference frame", "Coriolis force"], ["Supercontinent cycle", "the geologic cycle in which continents assemble into and disperse from supercontinents", "Supercontinent cycle"], ["Snowball Earth", "the hypothesis that Earth’s surface became nearly or entirely frozen during ancient glaciations", "Snowball Earth"],
-    ],
-  },
-  {
-    category: "Language",
-    prompt: (clue) => `Which linguistic term matches this definition: ${clue}?`,
-    explain: (clue, term) => `${term} is the linguistic term described.`,
-    facts: [
-      ["Noun", "a word class typically naming a person, place, thing, or idea", "Noun"], ["Verb", "a word class typically expressing an action, occurrence, or state", "Verb"], ["Adjective", "a word class that modifies or describes a noun", "Adjective"], ["Phoneme", "the smallest contrastive sound unit in a language", "Phoneme"], ["Morpheme", "the smallest linguistic unit carrying meaning or grammatical function", "Morpheme"], ["Syntax", "the rules governing how words and phrases combine into sentences", "Syntax"],
-      ["Grapheme", "the smallest functional unit of a writing system", "Grapheme"], ["Dialect", "a language variety associated with a group or region", "Dialect"], ["Etymology", "the study of the origin and historical development of words", "Etymology"], ["Cognate", "a word related to another through descent from a common ancestral form", "Cognate"], ["Loanword", "a word adopted from one language into another", "Loanword"], ["Register (sociolinguistics)", "a variety of language selected for a particular purpose or social setting", "Register"],
-      ["Allophone", "one of multiple possible spoken realizations of a single phoneme", "Allophone"], ["Inflection", "word modification that expresses grammatical features without creating a new lexeme", "Inflection"], ["Morphological derivation", "the formation of a new word from an existing word or root", "Derivation"], ["Agglutination", "word formation by joining morphemes that usually retain distinct functions", "Agglutination"], ["Diglossia", "a community’s regular use of two language varieties in different social contexts", "Diglossia"], ["Isogloss", "a geographic boundary marking the distribution of a linguistic feature", "Isogloss"],
-      ["Indo-European ablaut", "systematic vowel alternation within related word forms", "Ablaut"], ["Grammaticalization", "historical change by which lexical items develop grammatical functions", "Grammaticalization"], ["Glottochronology", "a proposed method for estimating language divergence dates from vocabulary replacement", "Glottochronology"], ["Morphosyntactic alignment", "the grammatical pattern relating arguments of transitive and intransitive verbs", "Morphosyntactic alignment"], ["Sprachbund", "a group of languages sharing features through geographic contact rather than common descent", "Sprachbund"], ["Suppletion", "the use of historically unrelated forms within one word’s paradigm, as with go and went", "Suppletion"],
-    ],
-  },
+  ...GEOGRAPHY_FAMILIES, ...SCIENCE_FAMILIES, ...LIFE_FAMILIES, ...HISTORY_FAMILIES, ...ARTS_FAMILIES,
+  ...LANGUAGE_FAMILIES, ...ASTRONOMY_FAMILIES, ...MATHEMATICS_FAMILIES, ...COMPUTING_FAMILIES, ...MUSIC_FAMILIES, ...MYTHOLOGY_FAMILIES, ...GEOGRAPHY2_FAMILIES, ...SCIENCE2_FAMILIES, ...LIFE2_FAMILIES, ...GEOGRAPHY3_FAMILIES, ...HISTORY2_FAMILIES, ...LITERATURE2_FAMILIES, ...SPORTS_FAMILIES, ...ABBREVIATION_FAMILIES, ...PEOPLE_FAMILIES, ...WORLD_FAMILIES, ...CULTURE2_FAMILIES, ...ASTRONOMY2_FAMILIES, ...SCIENCE3_FAMILIES, ...LANGUAGE3_FAMILIES, ...COMPUTING2_FAMILIES, ...NATURE_FAMILIES, ...HISTORY3_FAMILIES, ...MUSIC2_FAMILIES, ...EVERYDAY_FAMILIES, ...MEDICINE_FAMILIES, ...GEOGRAPHY4_FAMILIES, ...ARTS3_FAMILIES, ...SCIENCE4_FAMILIES, ...BINOMIALS2_FAMILIES, ...ABBREVIATIONS2_FAMILIES, ...RECORDS_FAMILIES, ...WORKS_FAMILIES, ...PLACES_FAMILIES, ...TERMS_FAMILIES, ...MYTHOLOGY2_FAMILIES, ...TERMS2_FAMILIES, ...SCIENCE5_FAMILIES, ...CULTURE3_FAMILIES, ...WORLD2_FAMILIES, ...TERMS3_FAMILIES, ...HISTORY4_FAMILIES, ...LANGUAGE4_FAMILIES, ...TERMS4_FAMILIES, ...TERMS5_FAMILIES,
 ];
 
-function questionsFromFamily(family, familyIndex) {
-  const answerPool = family.facts.map(([, , answer]) => answer);
-  return family.facts.map(([source, clue, answer], index) => {
-    const distractors = [5, 11, 17].map((offset) => answerPool[(index + offset) % answerPool.length]);
-    const correct = (familyIndex + index) % 4;
-    const answers = [...distractors]; answers.splice(correct, 0, answer);
-    return {
-      category: family.category,
-      difficulty: Math.floor(index / 6) + 1,
-      source,
-      prompt: family.prompt(clue),
-      answers,
-      correct,
-      explanation: family.explain(clue, answer),
-    };
-  });
+function hashText(value) {
+  let result = 2166136261;
+  for (const character of String(value)) { result ^= character.charCodeAt(0); result = Math.imul(result, 16777619); }
+  return result >>> 0;
 }
 
-export const EXPANDED_QUESTIONS = FAMILIES.flatMap(questionsFromFamily);
+// Distractors are drawn from the same family so every option is the same kind of
+// thing, which is what makes a wrong answer plausible rather than obviously wrong.
+function pickDistractors(pool, banned, seed) {
+  const options = [];
+  const size = pool.length;
+  for (let step = 1; options.length < 3 && step < size + 3; step++) {
+    const candidate = pool[(seed + step * 7 + step * step) % size];
+    if (banned.has(candidate) || options.includes(candidate)) continue;
+    options.push(candidate);
+  }
+  for (const candidate of pool) {
+    if (options.length >= 3) break;
+    if (!banned.has(candidate) && !options.includes(candidate)) options.push(candidate);
+  }
+  return options;
+}
+
+function expandFamily(family, familyIndex) {
+  const [minLevel, maxLevel] = family.levels || [1, 4];
+  const span = maxLevel - minLevel + 1;
+  const clues = family.facts.map(([clue]) => clue);
+  const answers = family.facts.map((fact) => fact[2]);
+  const questions = [];
+  // A family whose clue is a description earns a second, genuinely different question:
+  // recognising the description from the term, rather than the term from the description.
+  const forms = [...family.forms];
+  if (family.describe) forms.push({ mirror: true, reverse: true, prompt: (definition, term) => `Which of these best describes ${soft(term)}?`, explain: (definition, term) => `${term}: ${soft(definition)}.` });
+  // The mirror of `describe`: the clue is the thing and the answer describes it, so the
+  // second question asks the reader to name the thing from its description.
+  if (family.identify) forms.push({ mirror: true, reverse: true, prompt: (thing, description) => `Which of these is best described as ${soft(description)}?`, explain: (thing, description) => `${thing}: ${soft(description)}.` });
+  for (const [formIndex, form] of forms.entries()) {
+    const pool = [...new Set(form.reverse ? clues : answers)];
+    if (pool.length < 4) continue;
+    for (const [factIndex, [clue, source, answer]] of family.facts.entries()) {
+      const correctValue = form.reverse ? clue : answer;
+      // A reversed question must not offer a second true answer: every other clue
+      // that shares this answer is barred from the options.
+      const banned = form.reverse
+        ? new Set(family.facts.filter((fact) => fact[2] === answer).map((fact) => fact[0]))
+        : new Set(family.facts.filter((fact) => fact[0] === clue).map((fact) => fact[2]));
+      const seed = hashText(`${family.category}|${formIndex}|${clue}|${answer}`);
+      const distractors = pickDistractors(pool, banned, seed % pool.length);
+      if (distractors.length < 3) continue;
+      const correct = seed % 4;
+      const options = [...distractors];
+      options.splice(correct, 0, correctValue);
+      questions.push({
+        // A mirror question restates the family's fact from the other side, and a
+        // family marked `paraphrase` answers in authored prose rather than in the
+        // article's words. Neither can be evidenced by quotation, and the audit
+        // reports them apart from the claims it does check.
+        ...(form.mirror || family.paraphrase ? { authored: true } : {}),
+        category: form.category || family.category,
+        difficulty: minLevel + ((factIndex + formIndex + familyIndex) % span),
+        source,
+        prompt: form.prompt(clue, answer),
+        answers: options,
+        correct,
+        explanation: form.explain(clue, answer),
+      });
+    }
+  }
+  return questions;
+}
+
+const expanded = FAMILIES.flatMap(expandFamily);
+
+// A prompt must be unique across the whole bank: two families can legitimately reach
+// the same wording, and a repeated prompt would defeat the recent-question memory.
+const seenPrompts = new Set();
+export const EXPANDED_QUESTIONS = expanded.filter((question) => {
+  if (seenPrompts.has(question.prompt)) return false;
+  seenPrompts.add(question.prompt);
+  return true;
+});
+
+export const QUESTION_FAMILIES = FAMILIES;
