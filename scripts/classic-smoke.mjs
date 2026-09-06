@@ -48,6 +48,17 @@ try {
   // A chamber must never look like a dead end: every passage out of it is shown.
   const everyExitShown = JSON.parse(await evaluate("JSON.stringify((()=>{const debug=window.__wikimazeClassicDebug();return{shown:[...document.querySelectorAll('.door-hotspot:not([hidden])')].length,exits:debug.roomExits};})())"));
   if (everyExitShown.shown !== everyExitShown.exits) throw new Error(`The starting chamber hides a passage: ${JSON.stringify(everyExitShown)}`);
+  // Nothing may sit on top of a passage. A real pointer is used because a synthetic
+  // click skips hit-testing and would not notice another hotspot covering it.
+  const covered = JSON.parse(await evaluate("JSON.stringify([...document.querySelectorAll('.door-hotspot:not([hidden])')].map((button)=>{const box=button.getBoundingClientRect();const top=document.elementFromPoint(box.left+box.width/2,box.top+box.height/2);return{id:button.id,reached:Boolean(top)&&(top===button||button.contains(top))};}))"));
+  for (const passage of covered) if (!passage.reached) throw new Error(`A passage is covered by another hotspot: ${JSON.stringify(covered)}`);
+  const firstPassage = JSON.parse(await evaluate("JSON.stringify((()=>{const r=document.querySelector('.door-hotspot:not([hidden])').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};})())"));
+  await command("Input.dispatchMouseEvent", { type: "mousePressed", x: firstPassage.x, y: firstPassage.y, button: "left", clickCount: 1 });
+  await command("Input.dispatchMouseEvent", { type: "mouseReleased", x: firstPassage.x, y: firstPassage.y, button: "left", clickCount: 1 });
+  await delay(700);
+  if (await evaluate("document.querySelector('#challenge-dialog').hidden")) throw new Error("Clicking a sealed passage with a real pointer did not open its seal");
+  await evaluate("document.querySelector('#challenge-dialog [data-close-panel]').click()");
+  await delay(200);
   if (start.routeGridCells !== 100 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
   const soundButtonRect = JSON.parse(await evaluate("JSON.stringify((() => { const rect = document.querySelector('#ambience-button').getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; })())"));
   await command("Input.dispatchMouseEvent", { type: "mousePressed", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
