@@ -53,6 +53,25 @@ async function wikipediaSummary(title) {
   };
 }
 
+// Replace the version query on a page's own script and stylesheet with a stamp taken
+// from that file, so the URL changes exactly when the file does. Stamps are read once
+// per process, which is the right granularity here: a deployment recreates the
+// container, and the dev server restarts on change.
+const assetStamps = new Map();
+async function stampAssets(html) {
+  const references = [...html.matchAll(/(src|href)="\/([\w./-]+\.(?:js|css))(\?v=[^"]*)?"/g)];
+  let stamped = html;
+  for (const [match, attribute, path] of references) {
+    if (!assetStamps.has(path)) {
+      const info = await stat(join(root, path)).catch(() => null);
+      assetStamps.set(path, info ? Math.trunc(info.mtimeMs).toString(36) : null);
+    }
+    const stamp = assetStamps.get(path);
+    if (stamp) stamped = stamped.replace(match, `${attribute}="/${path}?v=${stamp}"`);
+  }
+  return stamped;
+}
+
 const server = createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host}`);
@@ -91,6 +110,17 @@ const server = createServer(async (request, response) => {
     if (request.headers["if-none-match"] === etag) {
       response.writeHead(304, headers);
       response.end();
+      return;
+    }
+    // The edge rewrites the browser's cache directive to four hours regardless of what
+    // this server asks for, so a returning player can hold yesterday's script. Stamping
+    // each page's own script and stylesheet with the asset's modification time gives
+    // them a new URL whenever the file actually changes, and none when it does not.
+    if (extension === ".html") {
+      const stamped = await stampAssets(content.toString("utf8"));
+      const body = Buffer.from(stamped, "utf8");
+      response.writeHead(200, { ...headers, ETag: `${etag.slice(0, -1)}-${stamped.length.toString(16)}"` });
+      response.end(body);
       return;
     }
     response.writeHead(200, headers);
