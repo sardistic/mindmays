@@ -45,6 +45,9 @@ try {
   if (start.wings !== 4) throw new Error(`Expected four wings, found ${start.wings}`);
   if (start.questions < 10000 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 1000) || start.characters < 12) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
   if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
+  // A chamber must never look like a dead end: every passage out of it is shown.
+  const everyExitShown = JSON.parse(await evaluate("JSON.stringify((()=>{const debug=window.__wikimazeClassicDebug();return{shown:[...document.querySelectorAll('.door-hotspot:not([hidden])')].length,exits:debug.roomExits};})())"));
+  if (everyExitShown.shown !== everyExitShown.exits) throw new Error(`The starting chamber hides a passage: ${JSON.stringify(everyExitShown)}`);
   if (start.routeGridCells !== 100 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
   const soundButtonRect = JSON.parse(await evaluate("JSON.stringify((() => { const rect = document.querySelector('#ambience-button').getBoundingClientRect(); return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }; })())"));
   await command("Input.dispatchMouseEvent", { type: "mousePressed", x: soundButtonRect.x, y: soundButtonRect.y, button: "left", clickCount: 1 });
