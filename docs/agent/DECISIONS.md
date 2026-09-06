@@ -103,3 +103,10 @@
 - What remains is a short list of claims that are true but unquotable: an answer written as a description for the player, or a datum that lives in an infobox the extracts API strips, such as a chemical formula or an orbital period. These are read by hand and recorded in `scripts/question-audit-allowlist.json` with the date they were reviewed.
 - The allow-list is checked in both directions. Any weak claim absent from it fails the audit, and any entry in it that no longer matches a claim in the bank also fails, so the list cannot quietly rot as the bank changes.
 - This is a real reduction in what the audit proves for those entries, and it is written down rather than hidden behind a clean number.
+
+## 2026-09-05 — Cache headers for deployed code
+
+- The origin sent no `Cache-Control` at all, so the edge applied its own four-hour default to scripts, styles and artwork. Markup is served dynamically, so every deployment put fresh HTML in front of up to four hours of stale JavaScript. That is what made the first chamber look like a dead end after a deploy.
+- Code — HTML, JavaScript, CSS and JSON — is now served `no-cache` with an ETag derived from the file's size and modification time, and conditional requests are answered with 304, so revalidation is cheap and a deployment is visible immediately.
+- Artwork is served `public, max-age=604800`; it is large, it changes rarely, and a replacement can carry a new filename or a cache-busted check.
+- The asset references in the four entry points carry a one-time `?v=2` so the already-cached copies are bypassed. No further version bumps are needed: the origin's header now governs.

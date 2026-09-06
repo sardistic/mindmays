@@ -76,7 +76,24 @@ const server = createServer(async (request, response) => {
     if (info?.isDirectory()) filePath = join(filePath, "index.html");
     if (!info) filePath = join(root, "index.html");
     const content = await readFile(filePath);
-    response.writeHead(200, { "Content-Type": mimeTypes[extname(filePath)] || "application/octet-stream" });
+    const extension = extname(filePath);
+    // Without an explicit policy the edge applies its own four-hour default to scripts
+    // and styles, so a deployment serves fresh markup against stale code. Code must be
+    // revalidated every time; artwork may sit in the cache for a week.
+    const stamp = await stat(filePath);
+    const etag = `"${stamp.size.toString(16)}-${Math.trunc(stamp.mtimeMs).toString(16)}"`;
+    const revalidate = [".html", ".js", ".css", ".json"].includes(extension);
+    const headers = {
+      "Content-Type": mimeTypes[extension] || "application/octet-stream",
+      "Cache-Control": revalidate ? "no-cache" : "public, max-age=604800",
+      ETag: etag,
+    };
+    if (request.headers["if-none-match"] === etag) {
+      response.writeHead(304, headers);
+      response.end();
+      return;
+    }
+    response.writeHead(200, headers);
     response.end(content);
   } catch (error) {
     const status = request.url?.startsWith("/api/") ? 502 : 404;
