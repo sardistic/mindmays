@@ -70,7 +70,7 @@
 
 ## 2026-09-05 — Classic navigation, wings and the route map
 
-- Doors now correspond to the chambers they open onto: the left, forward and right hotspots are bound to the passages at `facing-1`, `facing`, and `facing+1`, so no exit is silently dropped and a door on the left leads to the room on the left. The passage behind is reached with Turn Around.
+- Doors correspond to the chambers they open onto, and a passage is only ever drawn where the plate paints a door. The plates paint the side walls, so the left and right hotspots carry the exits at `facing-1` and `facing+1` and nothing else. Superseded by the 2026-09-05 turning decision below, which is what makes the other exits reachable.
 - The route board is no longer hidden. It draws the chambers you have walked and marks, on the shared edge between two cells, every seal you have opened — so the map and the painted doors describe the same keep. A match still reveals the next useful chamber.
 - Each level is a different wing of the keep with its own chambers, inhabitants and offer, rather than only a difficulty setting. The four wings between them use all sixteen authored plates.
 - Every wing carries one choice, available in about a third of its chambers and only once each: a candle stub that relights a match, a star chart that holds the route open, a ledger that buys the next seal for 400 lore, and an unwritten page that narrows the next question.
@@ -111,3 +111,10 @@
 - Artwork is served `public, max-age=604800`; it is large, it changes rarely, and a replacement can carry a new filename or a cache-busted check.
 - The edge honours this and now reports `REVALIDATED` rather than `HIT`, so a deployment is visible at once. It still rewrites the browser's directive to four hours, which is a zone setting this project cannot reach from the host; setting Browser Cache TTL to "Respect Existing Headers" in Cloudflare would remove the need for what follows.
 - Until then, each page's own script and stylesheet are stamped as the page is served with a version taken from that file's modification time, so a returning player gets a new URL exactly when the file changes and the same URL when it does not. Stamps are read once per process, which matches a deployment recreating the container.
+
+## 2026-09-05 — Turning by a quarter
+
+- The keep is a compass grid where a chamber may have exits on all four sides, but the plates paint doors on the side walls only. Turning by a half swaps left for right and shows the same two walls, so a passage running the way the player faces could never appear on a door in any facing. That mismatch is what forced the old code to drop exits, and what a floating "passage ahead" label papered over. A sign on a blank wall is not a door.
+- Turning is now by a quarter, left or right, so every wall can be faced and every exit of a chamber comes onto a painted door in at most one turn. Nothing is drawn where the artwork has no door.
+- The keep opens on a facing that already has a door in view, so the first chamber is never a blank wall. When a chamber does leave both side walls bare, the status line names the direction to turn.
+- The smoke test sweeps all four facings and asserts that the doors seen across them are exactly the chamber's exits, then clicks one with a real pointer. A synthetic click skips hit-testing, which is how an earlier fault — the encyclopedia hotspot sitting over a passage — went unnoticed.

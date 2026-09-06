@@ -44,19 +44,35 @@ try {
   if (start.reachableRooms !== 100 || start.roomPlates < 16 || start.uniqueRoomPlates < 16 || start.closePlates !== start.inhabitedPlates || start.uninhabitedPlates < 4) throw new Error(`Classic room variety or connectivity is incomplete: ${JSON.stringify(start)}`);
   if (start.wings !== 4) throw new Error(`Expected four wings, found ${start.wings}`);
   if (start.questions < 10000 || start.uniqueQuestions !== start.questions || start.questionsByLevel.some((count) => count < 1000) || start.characters < 12) throw new Error(`Classic knowledge or inhabitant depth is incomplete: ${JSON.stringify(start)}`);
-  if (start.visibleExits < 1 || start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
+  if (start.visibleExits < 1) throw new Error("The keep opens facing a blank wall");
+  if (start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   // A chamber must never look like a dead end: every passage out of it is shown.
-  const everyExitShown = JSON.parse(await evaluate("JSON.stringify((()=>{const debug=window.__wikimazeClassicDebug();return{shown:[...document.querySelectorAll('.door-hotspot:not([hidden])')].length,exits:debug.roomExits};})())"));
-  if (everyExitShown.shown !== everyExitShown.exits) throw new Error(`The starting chamber hides a passage: ${JSON.stringify(everyExitShown)}`);
-  // Nothing may sit on top of a passage. A real pointer is used because a synthetic
+  // A passage is only ever drawn on a door the plate paints, so what must hold is that
+  // turning brings every exit of the chamber onto one of those doors.
+  const sweep = JSON.parse(await evaluate(`JSON.stringify((()=>{
+    const seen = new Set();
+    for (let quarter = 0; quarter < 4; quarter++) {
+      for (const button of document.querySelectorAll('.door-hotspot:not([hidden])')) seen.add(button.dataset.direction);
+      window.__wikimazeClassicTest.turn(1);
+    }
+    return { seen: [...seen].sort(), exits: window.__wikimazeClassicDebug().roomExitDirections.sort() };
+  })())`));
+  if (sweep.seen.join() !== sweep.exits.join()) throw new Error(`Turning does not reveal every passage: ${JSON.stringify(sweep)}`);
+
+  // Nothing may sit on top of a door, and a real pointer must open its seal. A synthetic
   // click skips hit-testing and would not notice another hotspot covering it.
+  for (let quarter = 0; quarter < 4 && await evaluate("document.querySelectorAll('.door-hotspot:not([hidden])').length === 0"); quarter++) {
+    await evaluate("window.__wikimazeClassicTest.turn(1)");
+    await delay(160);
+  }
   const covered = JSON.parse(await evaluate("JSON.stringify([...document.querySelectorAll('.door-hotspot:not([hidden])')].map((button)=>{const box=button.getBoundingClientRect();const top=document.elementFromPoint(box.left+box.width/2,box.top+box.height/2);return{id:button.id,reached:Boolean(top)&&(top===button||button.contains(top))};}))"));
-  for (const passage of covered) if (!passage.reached) throw new Error(`A passage is covered by another hotspot: ${JSON.stringify(covered)}`);
+  if (!covered.length) throw new Error("No painted door became visible in a full turn");
+  for (const passage of covered) if (!passage.reached) throw new Error(`A door is covered by another hotspot: ${JSON.stringify(covered)}`);
   const firstPassage = JSON.parse(await evaluate("JSON.stringify((()=>{const r=document.querySelector('.door-hotspot:not([hidden])').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};})())"));
   await command("Input.dispatchMouseEvent", { type: "mousePressed", x: firstPassage.x, y: firstPassage.y, button: "left", clickCount: 1 });
   await command("Input.dispatchMouseEvent", { type: "mouseReleased", x: firstPassage.x, y: firstPassage.y, button: "left", clickCount: 1 });
   await delay(700);
-  if (await evaluate("document.querySelector('#challenge-dialog').hidden")) throw new Error("Clicking a sealed passage with a real pointer did not open its seal");
+  if (await evaluate("document.querySelector('#challenge-dialog').hidden")) throw new Error("Clicking a sealed door with a real pointer did not open its seal");
   await evaluate("document.querySelector('#challenge-dialog [data-close-panel]').click()");
   await delay(200);
   if (start.routeGridCells !== 100 || start.revealedRouteCells !== 0) throw new Error("The route board must begin blank except for the current-room marker");
