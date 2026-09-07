@@ -47,26 +47,18 @@ try {
   if (start.visibleExits < 1) throw new Error("The keep opens facing a blank wall");
   if (start.openExits !== 0 || start.lockedExits !== start.visibleExits) throw new Error("Every uncleared starting passage must carry a knowledge seal");
   // A chamber must never look like a dead end: every passage out of it is shown.
-  // A passage is only ever drawn on a door the plate paints, so what must hold is that
-  // turning brings every exit of the chamber onto one of those doors.
-  const sweep = JSON.parse(await evaluate(`JSON.stringify((()=>{
-    const seen = new Set();
-    for (let quarter = 0; quarter < 4; quarter++) {
-      for (const button of document.querySelectorAll('.door-hotspot:not([hidden])')) seen.add(button.dataset.direction);
-      window.__wikimazeClassicTest.turn(1);
-    }
-    return { seen: [...seen].sort(), exits: window.__wikimazeClassicDebug().roomExitDirections.sort() };
-  })())`));
-  if (sweep.seen.join() !== sweep.exits.join()) throw new Error(`Turning does not reveal every passage: ${JSON.stringify(sweep)}`);
+  // Every chamber must be reachable with the painted doors alone, and no way into any
+  // chamber may face two blank walls, because there is nothing to turn.
+  const keep = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
+  if (keep.navigableRooms !== keep.totalRooms) throw new Error(`The keep needs turning: only ${keep.navigableRooms} of ${keep.totalRooms} chambers can be reached through the painted doors`);
+  if (keep.strandedRooms !== 0) throw new Error(`${keep.strandedRooms} chambers would be entered facing two blank walls`);
+  if (!await evaluate("document.querySelectorAll('#turn-left, #turn-right, #turn-around').length === 0")) throw new Error("A turn control survived");
+  if (keep.forkEntries < 100) throw new Error(`The keep barely forks: only ${keep.forkEntries} entries show two doors`);
 
   // Nothing may sit on top of a door, and a real pointer must open its seal. A synthetic
-  // click skips hit-testing and would not notice another hotspot covering it.
-  for (let quarter = 0; quarter < 4 && await evaluate("document.querySelectorAll('.door-hotspot:not([hidden])').length === 0"); quarter++) {
-    await evaluate("window.__wikimazeClassicTest.turn(1)");
-    await delay(160);
-  }
+  // click skips hit-testing, which is how an earlier fault went unnoticed.
   const covered = JSON.parse(await evaluate("JSON.stringify([...document.querySelectorAll('.door-hotspot:not([hidden])')].map((button)=>{const box=button.getBoundingClientRect();const top=document.elementFromPoint(box.left+box.width/2,box.top+box.height/2);return{id:button.id,reached:Boolean(top)&&(top===button||button.contains(top))};}))"));
-  if (!covered.length) throw new Error("No painted door became visible in a full turn");
+  if (!covered.length) throw new Error("The opening chamber shows no painted door");
   for (const passage of covered) if (!passage.reached) throw new Error(`A door is covered by another hotspot: ${JSON.stringify(covered)}`);
   const firstPassage = JSON.parse(await evaluate("JSON.stringify((()=>{const r=document.querySelector('.door-hotspot:not([hidden])').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};})())"));
   await command("Input.dispatchMouseEvent", { type: "mousePressed", x: firstPassage.x, y: firstPassage.y, button: "left", clickCount: 1 });
@@ -255,7 +247,7 @@ try {
   const cleared = JSON.parse(await evaluate(CLEARED_PROBE));
   if (cleared.visited !== "[0]" || cleared.score !== "0" || cleared.unlocked !== "[]" || cleared.trail !== "[]" || cleared.flames !== "5") throw new Error(`The lost run did not clear the record: ${JSON.stringify(cleared)}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok no-turning-needed=ok wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

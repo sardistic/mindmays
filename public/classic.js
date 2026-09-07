@@ -244,20 +244,43 @@ function edgeKey(from, to) { return `${Math.min(from, to)}-${Math.max(from, to)}
 function edgeDoorId(key) { const [a, b] = key.split("-"); return `f90-${a}-${b}`; }
 
 function buildKeep() {
-  const random = mulberry32(0x51A7C4);
+  const random = mulberry32(0x51B350);
   rooms = Array.from({ length: ROOM_COUNT }, (_, index) => ({ index, x: index % GRID, y: Math.floor(index / GRID), exits: new Set() }));
+  const open = (index, direction) => {
+    const next = neighbor(index, direction);
+    if (next < 0) return false;
+    rooms[index].exits.add(direction); rooms[next].exits.add(opposite(direction));
+    return true;
+  };
   const visited = new Set([0]), stack = [0];
   while (stack.length) {
     const current = stack.at(-1);
     const candidates = DIRECTIONS.map((_, direction) => ({ direction, next: neighbor(current, direction) })).filter(({ next }) => next >= 0 && !visited.has(next));
     if (!candidates.length) { stack.pop(); continue; }
     const choice = candidates[Math.floor(random() * candidates.length)];
-    rooms[current].exits.add(choice.direction); rooms[choice.next].exits.add(opposite(choice.direction));
+    open(current, choice.direction);
     visited.add(choice.next); stack.push(choice.next);
   }
-  for (let attempt = 0; attempt < 22; attempt++) {
-    const current = Math.floor(random() * ROOM_COUNT), direction = Math.floor(random() * 4), next = neighbor(current, direction);
-    if (next >= 0 && rooms[current].exits.size < 3 && rooms[next].exits.size < 3) { rooms[current].exits.add(direction); rooms[next].exits.add(opposite(direction)); }
+  // A chamber is entered facing the way you travelled, so its painted doors show the
+  // exits perpendicular to the one you came through. One shape strands the player: a
+  // chamber whose exits are a single opposite pair, entered facing two blank walls. Open
+  // a perpendicular wall wherever that happens — and repeat, because opening a wall
+  // changes the neighbour too. Corners, tees and crossroads all survive, so the keep
+  // still forks.
+  for (let pass = 0; pass < 40; pass++) {
+    let repaired = 0;
+    for (let index = 0; index < ROOM_COUNT; index++) {
+      if (!isStranded(rooms[index].exits)) continue;
+      const closed = DIRECTIONS
+        .map((_, direction) => direction)
+        .filter((direction) => !rooms[index].exits.has(direction) && neighbor(index, direction) >= 0)
+        .sort((a, b) => rooms[neighbor(index, a)].exits.size - rooms[neighbor(index, b)].exits.size);
+      const perpendicular = closed.filter((direction) => [...rooms[index].exits].some((existing) => existing !== direction && existing !== opposite(direction)));
+      const pool = perpendicular.length ? perpendicular : closed;
+      const choice = pool[Math.floor(random() * pool.length)];
+      if (choice !== undefined && open(index, choice)) repaired += 1;
+    }
+    if (!repaired) break;
   }
   roomDepths = Array(ROOM_COUNT).fill(Infinity); roomDepths[0] = 0;
   const queue = [0];
@@ -266,6 +289,33 @@ function buildKeep() {
     for (const direction of rooms[current].exits) { const next = neighbor(current, direction); if (roomDepths[next] > roomDepths[current] + 1) { roomDepths[next] = roomDepths[current] + 1; queue.push(next); } }
   }
   state.facing = facingShowingADoor(0);
+}
+
+// The keep must be walkable with the painted doors alone. This is the shape that would
+// break that promise: nothing to turn to, and nothing perpendicular to walk through.
+function isStranded(exits) {
+  return exits.size < 2 || (exits.size === 2 && [...exits].every((direction) => exits.has(opposite(direction))));
+}
+
+// Every chamber reachable from the gate using only left and right doors, proving no
+// passage depends on a turn the player cannot make.
+function navigableRooms() {
+  const start = facingShowingADoor(0);
+  const seen = new Set([`0:${start}`]), reached = new Set([0]), queue = [[0, start]];
+  while (queue.length) {
+    const [index, facing] = queue.shift();
+    for (const side of [-1, 1]) {
+      const direction = positiveMod(facing + side, 4);
+      if (!rooms[index].exits.has(direction)) continue;
+      const next = neighbor(index, direction);
+      if (next < 0) continue;
+      reached.add(next);
+      const key = `${next}:${direction}`;
+      if (seen.has(key)) continue;
+      seen.add(key); queue.push([next, direction]);
+    }
+  }
+  return reached.size;
 }
 
 function roomTheme(room) { return THEMES[(room.x * 3 + room.y * 7 + room.index) % THEMES.length]; }
@@ -343,18 +393,10 @@ function renderRoom() {
     passages.push(`${relative} ${locked ? "sealed" : "open"}`);
   }
   document.querySelector("#previous-room").disabled = state.history.length === 0;
-  const elsewhere = [...room.exits].filter((direction) => direction !== relativeDirection("left") && direction !== relativeDirection("right"));
-  for (const [selector, relative] of [["#turn-left", "left"], ["#turn-right", "right"]]) {
-    const facingAfter = positiveMod(state.facing + (relative === "left" ? -1 : 1), 4);
-    const reveals = [...room.exits].some((direction) => direction === positiveMod(facingAfter - 1, 4) || direction === positiveMod(facingAfter + 1, 4));
-    document.querySelector(selector).title = reveals ? `A door stands on that wall.` : `Turn to face ${DIRECTIONS[facingAfter]}.`;
-  }
   renderRoomChoice();
-  if (!passages.length) {
-    document.querySelector("#room-status").textContent = elsewhere.length
-      ? `No door on either side wall. Turn to face ${DIRECTIONS[elsewhere[0]]} and the passage comes into view.`
-      : "This chamber has no other way out. Take the previous room back.";
-  }
+  // The keep is built so this cannot happen; if it ever did the player would be stuck,
+  // so say so plainly rather than leave them staring at a wall.
+  if (!passages.length) document.querySelector("#room-status").textContent = "No door on either wall. Take the previous room back.";
   renderMazeGrid(state.routeUntil > performance.now()); renderRemoteScholars(); updateJournal(); updateHud(); sendState();
 }
 
@@ -387,7 +429,6 @@ function returnToPrevious() {
   setTimeout(() => { const previous = state.history.pop(); state.current = previous.room; state.facing = previous.facing; renderRoom(); }, 220);
   setTimeout(() => { state.moving = false; transitionCurtain.classList.remove("moving"); }, 510);
 }
-function turn(quarters) { if (state.moving || state.encounter) return; state.facing = positiveMod(state.facing + quarters, 4); renderRoom(); }
 
 function questionFor(direction) {
   const groups = { History: ["History"], Life: ["Life Science", "Biology", "Genetics"], Arts: ["Arts", "Literature"], Geography: ["Geography"], Science: ["Physics", "Chemistry", "Technology", "Earth Science", "Science"], Music: ["Music"], Computing: ["Computing", "Technology"], Mathematics: ["Mathematics"], Earth: ["Earth Science", "Geography"], Language: ["Language", "Literature"], Astronomy: ["Astronomy"] };
@@ -753,7 +794,7 @@ async function toggleAmbience() {
 }
 
 document.querySelectorAll(".door-hotspot").forEach((button) => button.addEventListener("click", () => moveThrough(Number(button.dataset.direction))));
-document.querySelector("#turn-left").addEventListener("click", () => turn(-1)); document.querySelector("#turn-right").addEventListener("click", () => turn(1)); document.querySelector("#previous-room").addEventListener("click", returnToPrevious); document.querySelector("#route-button").addEventListener("click", revealRoute); document.querySelector("#ambience-button").addEventListener("click", toggleAmbience);
+document.querySelector("#previous-room").addEventListener("click", returnToPrevious); document.querySelector("#route-button").addEventListener("click", revealRoute); document.querySelector("#ambience-button").addEventListener("click", toggleAmbience);
 document.querySelector("#painting-hotspot").addEventListener("click", beginObjectEncounter);
 document.querySelector("#character-hotspot").addEventListener("click", (event) => beginCharacterEncounter(event.currentTarget.dataset.character));
 document.querySelector("#research-question").addEventListener("click", researchActiveQuestion);
@@ -773,7 +814,7 @@ document.querySelector("#player-name").value = savedSettings.name || `Scholar ${
 document.querySelector("#player-display").textContent = document.querySelector("#player-name").value;
 document.querySelector("#identity-button").addEventListener("click", () => document.querySelector("#settings-dialog").showModal());
 document.querySelector("#settings-form").addEventListener("submit", (event) => { event.preventDefault(); localStorage.setItem("wikimaze-settings", JSON.stringify(settings())); document.querySelector("#player-display").textContent = settings().name; joinKeep(); document.querySelector("#settings-dialog").close(); });
-addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); if (event.key.toLowerCase() === "a") turn(-1); if (event.key.toLowerCase() === "d") turn(1); });
+addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
 buildKeep();
 if (new URLSearchParams(location.search).has("new")) {
@@ -781,7 +822,7 @@ if (new URLSearchParams(location.search).has("new")) {
   resetClassicGame();
 }
 renderRoom(); connect(); updateSoundButton();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, roomExits: rooms[state.current].exits.size, roomExitDirections: [...rooms[state.current].exits].map(String), openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(WINGS.flatMap((wing) => wing.plates)).size, wingRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, wings: WINGS.length, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, mappedOpenings: document.querySelectorAll(".maze-cell.open-n, .maze-cell.open-e, .maze-cell.open-s, .maze-cell.open-w").length, trail: state.trail.length, wing: wingFor(state.level).id, wingName: wingFor(state.level).name, wingPlates: wingPlates(state.level).map((plate) => plate.id), wingInhabitants: [...new Set(wingPlates(state.level).map((plate) => plate.character).filter(Boolean))], roomChoice: roomOffersChoice() ? wingFor(state.level).choice.id : null, roomChoiceTaken: roomChoiceTaken(), roomChoiceVisible: !document.querySelector("#prop-hotspot").hidden, boon: state.boon, hintShown: !document.querySelector("#question-hint").hidden, hintText: document.querySelector("#question-hint").textContent, eliminatedAnswers: document.querySelectorAll("#question-answers button.eliminated").length, roomAffinity: roomPlate(rooms[state.current]).affinity || [], questionCategory: state.activeChallenge?.question.category || null, passages: [...document.querySelectorAll(".door-hotspot:not([hidden])")].map((button) => button.className.replace("painted-hotspot door-hotspot ", "")), remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, roomExits: rooms[state.current].exits.size, roomExitDirections: [...rooms[state.current].exits].map(String), navigableRooms: navigableRooms(), strandedRooms: rooms.filter((room) => isStranded(room.exits)).length, forkEntries: rooms.reduce((total, room) => total + [...room.exits].filter((entry) => [...room.exits].filter((direction) => direction === positiveMod(opposite(entry) - 1, 4) || direction === positiveMod(opposite(entry) + 1, 4)).length >= 2).length, 0), openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(WINGS.flatMap((wing) => wing.plates)).size, wingRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, wings: WINGS.length, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, mappedOpenings: document.querySelectorAll(".maze-cell.open-n, .maze-cell.open-e, .maze-cell.open-s, .maze-cell.open-w").length, trail: state.trail.length, wing: wingFor(state.level).id, wingName: wingFor(state.level).name, wingPlates: wingPlates(state.level).map((plate) => plate.id), wingInhabitants: [...new Set(wingPlates(state.level).map((plate) => plate.character).filter(Boolean))], roomChoice: roomOffersChoice() ? wingFor(state.level).choice.id : null, roomChoiceTaken: roomChoiceTaken(), roomChoiceVisible: !document.querySelector("#prop-hotspot").hidden, boon: state.boon, hintShown: !document.querySelector("#question-hint").hidden, hintText: document.querySelector("#question-hint").textContent, eliminatedAnswers: document.querySelectorAll("#question-answers button.eliminated").length, roomAffinity: roomPlate(rooms[state.current]).affinity || [], questionCategory: state.activeChallenge?.question.category || null, passages: [...document.querySelectorAll(".door-hotspot:not([hidden])")].map((button) => button.className.replace("painted-hotspot door-hotspot ", "")), remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {
@@ -800,7 +841,6 @@ if (new URLSearchParams(location.search).has("debug")) {
       const room = rooms.find((candidate) => roomPlate(candidate, wing.level).id === id); if (!room) return false;
       state.current = room.index; state.history = []; persist(); renderRoom(); return true;
     },
-    turn(quarters) { turn(Number(quarters) || 1); return DIRECTIONS[state.facing]; },
     setLevel(level) { state.level = Number(level) || 1; persist(); renderRoom(); return wingFor(state.level).id; },
     takeRoomChoice() { const room = rooms.find((candidate) => roomOffersChoice(candidate.index) && !roomChoiceTaken(candidate.index)); if (!room) return false; state.current = room.index; state.history = []; renderRoom(); takeRoomChoice(); return true; },
     askRoom() { askTheRoom(false); return state.activeChallenge?.hinted === true; },
