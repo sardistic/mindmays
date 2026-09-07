@@ -2,7 +2,7 @@ import { EXPANDED_QUESTIONS } from "./classic-question-bank.js";
 
 const DIRECTIONS = ["north", "east", "south", "west"];
 const VECTORS = [{ x: 0, y: -1 }, { x: 1, y: 0 }, { x: 0, y: 1 }, { x: -1, y: 0 }];
-const RELATIVE_LABELS = { left: "Left passage", right: "Right passage" };
+const RELATIVE_LABELS = { left: "Left passage", right: "Right passage", forward: "Far door" };
 const GRID = 10;
 const ROOM_COUNT = GRID * GRID;
 
@@ -158,6 +158,11 @@ const ROOM_PLATES = [
   { id: "cabinet", affinity: ["Life Science", "Earth Science"], asset: "/assets/classic/cabinet.png", names: ["Cabinet of Quiet Species", "The Listening Shell", "Museum of Uncatalogued Shores"], character: null, topic: "Cabinet of curiosities", note: "Fingerprints cloud the inside of the bell jar. The shell's opening is warm.", knowledge: [37, 18, 27, 66] },
   { id: "anatomy", affinity: ["Life Science", "Biology"], asset: "/assets/classic/anatomy-pixel.png", close: "/assets/classic/anatomy-close-pixel.png", names: ["The Corrected Anatomy", "Doctor Vellum's Theatre", "The Caliper Room"], character: "anatomist", topic: "History of anatomy", note: "A new marginal figure has your posture and today's date.", char: [15, 24, 22, 67], knowledge: [47, 43, 35, 48] },
   { id: "glossary", affinity: ["Language", "Literature"], asset: "/assets/classic/glossary-pixel.png", close: "/assets/classic/glossary-close-pixel.png", names: ["The Seventh Palimpsest", "Room of Erased Languages", "The Glossator's Vigil"], character: "glossator", topic: "Palimpsest", note: "Under the erased gloss is a direction to the room you just left.", char: [62, 28, 22, 59], knowledge: [25, 33, 36, 47] },
+  { id: "library-far", affinity: ["Literature", "Arts", "Language"], asset: "/assets/classic/library-far.png", close: "/assets/classic/library-close.png", names: ["The Boarded Reading Room", "The Library of the Shut Window", "The Second Reading Room"], character: "brother-moth", topic: "History of encyclopedias", note: "Where the window was, someone has hung a door.", char: [53, 22, 18, 70], knowledge: [26, 42, 24, 43], forward: [310, 103, 36, 82] },
+  { id: "music-far", affinity: ["Music"], asset: "/assets/classic/music-far.png", close: "/assets/classic/music-close.png", names: ["The Shuttered Consort", "Chamber of the Stopped Window", "The Boarded Tuning Room"], character: "tuner", topic: "Acoustics", note: "The boards over the window are warm on the far side.", char: [23, 22, 19, 70], knowledge: [59, 35, 27, 47], forward: [300, 114, 40, 80] },
+  { id: "maproom-far", affinity: ["Geography", "Earth Science"], asset: "/assets/classic/maproom-far.png", close: "/assets/classic/maproom-close.png", names: ["The Closed Meridian", "Atlas of the Barred Window", "The Second Navigator's Table"], character: "navigator", topic: "History of cartography", note: "The charts stop at the boarded window and begin again beyond it.", char: [65, 23, 18, 68], knowledge: [23, 50, 45, 39], forward: [292, 88, 41, 85] },
+  { id: "astronomer-far", affinity: ["Astronomy", "Mathematics"], asset: "/assets/classic/astronomer-far.png", close: "/assets/classic/astronomer-close.png", names: ["The Occulted Study", "The Shuttered Meridian", "The Second Orrery"], character: "cartographer", topic: "History of astronomy", note: "The sky has been boarded over. The telescope is aimed at the boards.", char: [20, 24, 17, 66], knowledge: [31, 55, 38, 38], forward: [299, 110, 41, 84] },
+  { id: "alchemist-far", affinity: ["Chemistry", "Physics"], asset: "/assets/classic/alchemist-far.png", close: "/assets/classic/alchemist-close.png", names: ["The Sealed Still Room", "The Boarded Retort", "The Second Alchemist's Kitchen"], character: "bell-widow", topic: "Alchemy", note: "A small door stands where the light used to come in.", char: [59, 25, 18, 68], knowledge: [21, 43, 38, 49], forward: [293, 113, 25, 51] },
 ];
 
 const PLATES_BY_ID = Object.fromEntries(ROOM_PLATES.map((plate) => [plate.id, plate]));
@@ -168,25 +173,25 @@ const WINGS = [
   {
     id: "outer", level: 1, name: "The Outer Ward", rank: "Page",
     tone: "The lamps here are still lit by someone. The doors remember being ordinary doors.",
-    plates: ["chapel", "nursery", "library", "kitchen", "cabinet", "manuscript"],
+    plates: ["chapel", "nursery", "library", "library-far", "kitchen", "cabinet", "manuscript"],
     choice: { id: "candle", label: "CANDLE STUB", title: "Take the candle stub", prompt: "A stub of candle has been left burning on the ledge, as though for you.", taken: "You pocket the stub. One match is restored.", spent: "This ledge is bare now." },
   },
   {
     id: "range", level: 2, name: "The Scholars' Range", rank: "Squire",
     tone: "Instruments outnumber chairs. Everything in this wing is pointed at something else.",
-    plates: ["astronomer", "maproom", "music", "glossary", "astrolabe", "clock"],
+    plates: ["astronomer", "maproom", "maproom-far", "music", "music-far", "glossary", "astrolabe", "clock"],
     choice: { id: "starchart", label: "STAR CHART", title: "Read the star chart", prompt: "A chart is pinned open at this room's own coordinates.", taken: "The chart holds the route steady while you read it.", spent: "The chart has already given this room away." },
   },
   {
     id: "wards", level: 3, name: "The Quiet Wards", rank: "Knight",
     tone: "Specimens, calipers, and covered things. Nobody in this wing raises their voice.",
-    plates: ["anatomy", "conservatory", "alchemist", "cabinet", "nursery", "manuscript"],
+    plates: ["anatomy", "conservatory", "alchemist", "alchemist-far", "cabinet", "nursery", "manuscript"],
     choice: { id: "ledger", label: "THE LEDGER", title: "Sign the ledger", prompt: "An open ledger offers to buy your next seal for 400 lore.", taken: "The ledger takes its price. The next seal will simply open.", spent: "The ledger has already had its entry from this room.", cost: 400 },
   },
   {
     id: "unwritten", level: 4, name: "The Unwritten Keep", rank: "Master",
     tone: "These rooms were not finished. They are being written while you stand in them.",
-    plates: ["royal", "astronomer", "glossary", "anatomy", "clock", "astrolabe"],
+    plates: ["royal", "astronomer", "astronomer-far", "glossary", "anatomy", "clock", "astrolabe"],
     choice: { id: "unwritten", label: "THE UNWRITTEN PAGE", title: "Read the unwritten page", prompt: "A page is filling with ink as you watch. It is describing your next question.", taken: "The page keeps one wrong answer for itself. The next seal opens already narrowed.", spent: "The page has gone blank again." },
   },
 ];
@@ -353,8 +358,29 @@ function takeRoomChoice() {
   playCue("match"); persist(); renderRoom();
   status.textContent = choice.taken;
 }
+// Every plate is 640x480 and is drawn with object-fit: cover, so a rectangle measured on
+// the painting has to be mapped through that fit before it can be a hotspot. Doing it in
+// pixels rather than percentages keeps the door on the door at any window size.
+const PLATE_WIDTH = 640, PLATE_HEIGHT = 480, PLATE_FOCUS = 0.51;
+function placeFarDoor([x, y, width, height]) {
+  const box = roomScene.getBoundingClientRect();
+  if (!box.width || !box.height) return;
+  const scale = Math.max(box.width / PLATE_WIDTH, box.height / PLATE_HEIGHT);
+  const left = (box.width - PLATE_WIDTH * scale) / 2 + x * scale;
+  const top = (box.height - PLATE_HEIGHT * scale) * PLATE_FOCUS + y * scale;
+  // The plate is cropped to fill the chamber, so part of a door can fall outside it at
+  // some window shapes. Clamp the hotspot to what is actually on screen.
+  const clampedLeft = Math.max(0, left), clampedTop = Math.max(0, top);
+  const clampedRight = Math.min(box.width, left + width * scale);
+  const clampedBottom = Math.min(box.height, top + height * scale);
+  roomScene.style.setProperty("--forward-left", `${clampedLeft}px`);
+  roomScene.style.setProperty("--forward-top", `${clampedTop}px`);
+  roomScene.style.setProperty("--forward-width", `${Math.max(0, clampedRight - clampedLeft)}px`);
+  roomScene.style.setProperty("--forward-height", `${Math.max(0, clampedBottom - clampedTop)}px`);
+  return clampedRight - clampedLeft >= 10 && clampedBottom - clampedTop >= 16;
+}
 function roomStatus(plate) { return plate.character ? `${CHARACTERS[plate.character].name} is here. Choose a passage to continue.` : `No inhabitant waits here. ${plate.topic} can be examined.`; }
-function relativeDirection(relative) { return positiveMod(state.facing + ({ left: -1, right: 1 }[relative]), 4); }
+function relativeDirection(relative) { return positiveMod(state.facing + ({ left: -1, right: 1, forward: 0 }[relative]), 4); }
 function positiveMod(value, divisor) { return ((value % divisor) + divisor) % divisor; }
 function facingShowingADoor(index) {
   const exits = [...rooms[index].exits];
@@ -381,8 +407,13 @@ function renderRoom() {
   // The plates paint doors on the side walls only, so a passage is shown when it lies to
   // the left or the right. The others are reached by turning to face their wall, which
   // is why turning is by a quarter and not a half.
+  // A chamber whose far window has been boarded into a door can offer a way straight on.
+  // The hotspot is placed on the painted door and shown only when a passage lies there.
+  const forwardButton = document.querySelector("#exit-forward");
+  const farDoorUsable = plate.forward ? placeFarDoor(plate.forward) : false;
   const passages = [];
-  for (const [relative, selector] of [["left", "#exit-left"], ["right", "#exit-right"]]) {
+  for (const [relative, selector] of [["left", "#exit-left"], ["right", "#exit-right"], ["forward", "#exit-forward"]]) {
+    if (relative === "forward" && !farDoorUsable) { forwardButton.hidden = true; continue; }
     const button = document.querySelector(selector), direction = relativeDirection(relative), open = room.exits.has(direction);
     button.hidden = !open;
     if (!open) continue;
@@ -816,13 +847,14 @@ document.querySelector("#identity-button").addEventListener("click", () => docum
 document.querySelector("#settings-form").addEventListener("submit", (event) => { event.preventDefault(); localStorage.setItem("wikimaze-settings", JSON.stringify(settings())); document.querySelector("#player-display").textContent = settings().name; joinKeep(); document.querySelector("#settings-dialog").close(); });
 addEventListener("keydown", (event) => { if (document.querySelector("dialog[open], .in-scene-window:not([hidden])")) return; if (event.key === "ArrowLeft") document.querySelector("#exit-left:not([hidden])")?.click(); if (event.key === "ArrowRight") document.querySelector("#exit-right:not([hidden])")?.click(); if (event.key.toLowerCase() === "b") returnToPrevious(); if (event.key.toLowerCase() === "m") revealRoute(); });
 
+addEventListener("resize", () => { if (rooms) renderRoom(); });
 buildKeep();
 if (new URLSearchParams(location.search).has("new")) {
   const address = new URL(location.href); address.searchParams.delete("new"); history.replaceState({}, "", address);
   resetClassicGame();
 }
 renderRoom(); connect(); updateSoundButton();
-window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, roomExits: rooms[state.current].exits.size, roomExitDirections: [...rooms[state.current].exits].map(String), navigableRooms: navigableRooms(), strandedRooms: rooms.filter((room) => isStranded(room.exits)).length, forkEntries: rooms.reduce((total, room) => total + [...room.exits].filter((entry) => [...room.exits].filter((direction) => direction === positiveMod(opposite(entry) - 1, 4) || direction === positiveMod(opposite(entry) + 1, 4)).length >= 2).length, 0), openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(WINGS.flatMap((wing) => wing.plates)).size, wingRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, wings: WINGS.length, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, mappedOpenings: document.querySelectorAll(".maze-cell.open-n, .maze-cell.open-e, .maze-cell.open-s, .maze-cell.open-w").length, trail: state.trail.length, wing: wingFor(state.level).id, wingName: wingFor(state.level).name, wingPlates: wingPlates(state.level).map((plate) => plate.id), wingInhabitants: [...new Set(wingPlates(state.level).map((plate) => plate.character).filter(Boolean))], roomChoice: roomOffersChoice() ? wingFor(state.level).choice.id : null, roomChoiceTaken: roomChoiceTaken(), roomChoiceVisible: !document.querySelector("#prop-hotspot").hidden, boon: state.boon, hintShown: !document.querySelector("#question-hint").hidden, hintText: document.querySelector("#question-hint").textContent, eliminatedAnswers: document.querySelectorAll("#question-answers button.eliminated").length, roomAffinity: roomPlate(rooms[state.current]).affinity || [], questionCategory: state.activeChallenge?.question.category || null, passages: [...document.querySelectorAll(".door-hotspot:not([hidden])")].map((button) => button.className.replace("painted-hotspot door-hotspot ", "")), remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
+window.__wikimazeClassicDebug = () => ({ currentRoom: state.current, facing: DIRECTIONS[state.facing], visitedRooms: state.visited.size, totalRooms: ROOM_COUNT, reachableRooms: roomDepths.filter(Number.isFinite).length, visibleExits: [...document.querySelectorAll(".door-hotspot:not([hidden])")].length, roomExits: rooms[state.current].exits.size, roomExitDirections: [...rooms[state.current].exits].map(String), plateHasFarDoor: Boolean(roomPlate(rooms[state.current]).forward), farDoorPlates: ROOM_PLATES.filter((plate) => plate.forward).length, farDoorShown: !document.querySelector("#exit-forward").hidden, navigableRooms: navigableRooms(), strandedRooms: rooms.filter((room) => isStranded(room.exits)).length, forkEntries: rooms.reduce((total, room) => total + [...room.exits].filter((entry) => [...room.exits].filter((direction) => direction === positiveMod(opposite(entry) - 1, 4) || direction === positiveMod(opposite(entry) + 1, 4)).length >= 2).length, 0), openExits: [...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].length, lockedExits: [...document.querySelectorAll(".door-hotspot:not([hidden]).locked")].length, roomPlates: ROOM_PLATES.length, uniqueRoomPlates: new Set(WINGS.flatMap((wing) => wing.plates)).size, wingRoomPlates: new Set(rooms.map((room) => roomPlate(room).id)).size, wings: WINGS.length, inhabitedPlates: ROOM_PLATES.filter((plate) => plate.character).length, uninhabitedPlates: ROOM_PLATES.filter((plate) => !plate.character).length, closePlates: ROOM_PLATES.filter((plate) => plate.close).length, currentPlate: roomPlate(rooms[state.current]).id, hasInhabitant: Boolean(roomPlate(rooms[state.current]).character), roomImage: document.querySelector("#room-plate-image").getAttribute("src"), encounter: state.encounter, questionAttempts: Object.values(state.questionAttempts).reduce((sum, attempts) => sum + attempts, 0), recentQuestions: state.questionHistory.length, activeQuestion: state.activeChallenge?.question.prompt || null, questions: QUESTIONS.length, uniqueQuestions: new Set(QUESTIONS.map((question) => question.prompt)).size, questionsByLevel: [1, 2, 3, 4].map((level) => QUESTIONS.filter((question) => question.difficulty === level).length), characters: Object.keys(CHARACTERS).length, dialogueRepeats: Object.values(state.dialogueCounts).reduce((sum, count) => sum + Math.max(0, count - 1), 0), dialogueIrritation: Number(document.querySelector("#character-dialog").dataset.irritation || 0), soundEnabled: ambienceOn, soundSupported: Boolean(window.AudioContext || window.webkitAudioContext), audioState: audioContext?.state || "uninitialized", audioMasterLevel: audioMasterGain?.gain.value || 0, ambienceLevel: ambienceGain?.gain.value || 0, soundCues: soundCueCount, score: state.score, flames: state.flames, solved: state.solved, unlockedEdges: state.unlocked.size, routeGridCells: document.querySelectorAll(".maze-cell").length, revealedRouteCells: document.querySelectorAll(".maze-cell.remembered, .maze-cell.hinted").length, mappedOpenings: document.querySelectorAll(".maze-cell.open-n, .maze-cell.open-e, .maze-cell.open-s, .maze-cell.open-w").length, trail: state.trail.length, wing: wingFor(state.level).id, wingName: wingFor(state.level).name, wingPlates: wingPlates(state.level).map((plate) => plate.id), wingInhabitants: [...new Set(wingPlates(state.level).map((plate) => plate.character).filter(Boolean))], roomChoice: roomOffersChoice() ? wingFor(state.level).choice.id : null, roomChoiceTaken: roomChoiceTaken(), roomChoiceVisible: !document.querySelector("#prop-hotspot").hidden, boon: state.boon, hintShown: !document.querySelector("#question-hint").hidden, hintText: document.querySelector("#question-hint").textContent, eliminatedAnswers: document.querySelectorAll("#question-answers button.eliminated").length, roomAffinity: roomPlate(rooms[state.current]).affinity || [], questionCategory: state.activeChallenge?.question.category || null, passages: [...document.querySelectorAll(".door-hotspot:not([hidden])")].map((button) => button.className.replace("painted-hotspot door-hotspot ", "")), remotePlayers: [...remotePlayers.values()].filter((player) => player.id !== playerId).length, roomScholars: [...remotePlayers.values()].filter((player) => player.id !== playerId && playerRoomIndex(player) === state.current).length });
 if (new URLSearchParams(location.search).has("debug")) {
   window.__wikimazeClassicTest = {
     openLockedChallenge() {

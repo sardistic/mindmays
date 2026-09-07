@@ -53,6 +53,7 @@ try {
   if (keep.navigableRooms !== keep.totalRooms) throw new Error(`The keep needs turning: only ${keep.navigableRooms} of ${keep.totalRooms} chambers can be reached through the painted doors`);
   if (keep.strandedRooms !== 0) throw new Error(`${keep.strandedRooms} chambers would be entered facing two blank walls`);
   if (!await evaluate("document.querySelectorAll('#turn-left, #turn-right, #turn-around').length === 0")) throw new Error("A turn control survived");
+
   if (keep.forkEntries < 100) throw new Error(`The keep barely forks: only ${keep.forkEntries} entries show two doors`);
 
   // Nothing may sit on top of a door, and a real pointer must open its seal. A synthetic
@@ -84,7 +85,8 @@ try {
   peer = new WebSocket("ws://localhost:4173/multiplayer");
   await new Promise((resolve, reject) => { peer.once("open", resolve); peer.once("error", reject); });
   peer.send(JSON.stringify({ type: "join", room: `classic-${keepName}`, name: "Visiting Antiquarian", color: "#78a8a2" }));
-  peer.send(JSON.stringify({ type: "state", x: start.currentRoom % 10 + .5, y: Math.floor(start.currentRoom / 10) + .5, angle: 0, score: 640 }));
+  const here = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())")).currentRoom;
+  peer.send(JSON.stringify({ type: "state", x: here % 10 + .5, y: Math.floor(here / 10) + .5, angle: 0, score: 640 }));
   await delay(450);
   const company = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (company.roomScholars < 1) throw new Error("A multiplayer scholar did not appear in the same classic chamber");
@@ -220,6 +222,34 @@ try {
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
   await delay(1300);
 
+
+  // The far-wall doors: a chamber whose window has been boarded into a door can offer a
+  // way straight on, and the hotspot must land on the painted door rather than beside it.
+  if (keep.farDoorPlates < 5) throw new Error(`Expected five chambers with a far door, found ${keep.farDoorPlates}`);
+  for (const plate of ["library-far", "music-far", "maproom-far", "astronomer-far", "alchemist-far"]) {
+    if (!await evaluate(`window.__wikimazeClassicTest.visitPlate(${JSON.stringify(plate)})`)) throw new Error(`Could not reach ${plate}`);
+    await delay(220);
+    const far = JSON.parse(await evaluate(`JSON.stringify((()=>{
+      const debug = window.__wikimazeClassicDebug();
+      const button = document.querySelector('#exit-forward');
+      const wasHidden = button.hidden;
+      button.hidden = false;
+      const box = button.getBoundingClientRect();
+      const scene = document.querySelector('#room-scene').getBoundingClientRect();
+      const top = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+      button.hidden = wasHidden;
+      return { plate: debug.currentPlate, hasFar: debug.plateHasFarDoor, w: Math.round(box.width), h: Math.round(box.height),
+               insideScene: box.left >= scene.left - 1 && box.right <= scene.right + 1 && box.top >= scene.top - 1 && box.bottom <= scene.bottom + 1,
+               reached: Boolean(top) && (top === button || button.contains(top)) };
+    })())`));
+    if (!far.hasFar) throw new Error(`${plate} lost its far door`);
+    if (far.w < 12 || far.h < 20) throw new Error(`The far door on ${plate} is too small to click: ${JSON.stringify(far)}`);
+    if (!far.insideScene) throw new Error(`The far door on ${plate} is not clamped into the chamber: ${JSON.stringify(far)}`);
+    if (!far.reached) throw new Error(`The far door on ${plate} is covered by another hotspot`);
+  }
+  await evaluate("window.__wikimazeClassicTest.setLevel(1)");
+  await delay(200);
+
   // Opening a fourth seal relights a match, so a long run can recover.
   await evaluate("window.__wikimazeClassicTest.setFlames(2)");
   let relit = null;
@@ -247,7 +277,9 @@ try {
   const cleared = JSON.parse(await evaluate(CLEARED_PROBE));
   if (cleared.visited !== "[0]" || cleared.score !== "0" || cleared.unlocked !== "[]" || cleared.trail !== "[]" || cleared.flames !== "5") throw new Error(`The lost run did not clear the record: ${JSON.stringify(cleared)}`);
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok no-turning-needed=ok wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+
+
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok no-turning-needed=ok far-doors=${start.farDoorPlates} wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

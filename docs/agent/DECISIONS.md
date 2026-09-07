@@ -120,3 +120,12 @@
 - The generator opens a perpendicular wall wherever that shape appears, repeating because opening a wall changes the neighbour too, and the seed is chosen so the result reaches all one hundred chambers through painted doors alone. The keep that ships has no dead ends, twenty-eight corners, fifty-six tees and sixteen crossroads, and two doors are offered on 42% of entries.
 - A chamber may still hold an exit that is not a door on this particular approach; it becomes one when the chamber is approached from another side, and the route board shows it meanwhile. What is guaranteed is that no approach ever faces two blank walls and that every chamber is reachable without turning, both asserted by the smoke test.
 - This replaces the quarter-turn decision taken earlier the same week, which solved the same mismatch by asking the player to turn rather than by building a keep that does not need it.
+
+## 2026-09-07 — Doors in the far wall
+
+- Five chambers now offer a way straight on, so a fork can be three ways rather than two.
+- The art was made by boarding up a window rather than inventing a doorway. Five plates already carried a face-on gothic window in the far wall, so the glazing is replaced with a planked leaf and the original stone arch is kept. Its scale, perspective, place in the wall and the light falling on it are the original painting; only the opening changes. The leaf's planks, iron bands and ring are lifted from a door elsewhere in the keep, so every pixel of the graft is paint that already existed here.
+- `scripts/build-far-doors.mjs` is the authoring step. It finds the opening by its blue cast, fills each row between the outer edges so the leaded bars belong to the opening, then boards it. Output is 640x480 quantised to 256 colours with dithering, which is the standing art contract.
+- The hotspot is stored as a rectangle on the painting and mapped through `object-fit: cover` when the chamber is drawn, because the plate is cropped to fill the frame and a percentage would drift with the window. Where the crop puts part of a door off screen the hotspot is clamped, and a door left too small to click is not offered.
+- Far doors are a bonus, not a dependency. The keep is still generated so that the two side doors alone reach all one hundred chambers, so a far door only ever adds a route. Which chambers have one depends on the wing, since the plate does.
+

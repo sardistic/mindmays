@@ -28,6 +28,7 @@ button { cursor: pointer; }
 .painted-hotspot > span { position: absolute; left: 50%; bottom: 4px; padding: 2px 5px; opacity: 0; transform: translateX(-50%); color: #fff; background: #000080; border: 1px solid #fff; font-size: clamp(7px, .75vw, 10px); white-space: nowrap; pointer-events: none; }
 .painted-hotspot:hover, .painted-hotspot:focus-visible { outline: 2px dotted #ffff9a; outline-offset: -2px; filter: brightness(1.08); }.painted-hotspot:hover > span, .painted-hotspot:focus-visible > span { opacity: 1; }
 .door-hotspot { top: 20%; width: 16%; height: 66%; }.door-left { left: 0; }.door-right { right: 0; }
+.door-forward { left: var(--forward-left); top: var(--forward-top); width: var(--forward-width); height: var(--forward-height); z-index: 6; }.door-forward.locked::after { transform: translate(-50%, -50%) scale(.7); }
 .room-choice { left: 78%; top: 60%; width: 15%; height: 26%; }.room-choice.spent { opacity: .55; cursor: default; }.room-choice > span { background: #6b4a12; border-color: #f0d489; }
 .door-hotspot.locked::after { content: "?"; position: absolute; left: 50%; top: 48%; width: 24px; height: 24px; display: grid; place-items: center; transform: translate(-50%, -50%); color: #ffe59a; background: #23238c; border: 2px outset #ddd; font: bold 17px Georgia, serif; box-shadow: 1px 2px 0 #0008; }
 .character-area { left: var(--char-left); top: var(--char-top); width: var(--char-width); height: var(--char-height); }
