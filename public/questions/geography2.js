@@ -61,15 +61,6 @@ const SEAS_AND_GULFS = [
   ["The Persian Gulf", "Persian Gulf", "Between Iran and Arabia"], ["The Gulf of Bothnia", "Gulf of Bothnia", "Between Sweden and Finland"],
 ];
 
-const STATE_NICKNAMES = [
-  ["California", "California", "The Golden State"], ["Texas", "Texas", "The Lone Star State"], ["Florida", "Florida", "The Sunshine State"],
-  ["New York", "New York (state)", "The Empire State"], ["Alaska", "Alaska", "The Last Frontier"], ["Louisiana", "Louisiana", "The Pelican State"],
-  ["Michigan", "Michigan", "The Great Lakes State"], ["Kansas", "Kansas", "The Sunflower State"], ["Delaware", "Delaware", "The First State"],
-  ["Missouri", "Missouri", "The Show Me State"], ["Illinois", "Illinois", "The Prairie State"], ["Oklahoma", "Oklahoma", "The Sooner State"],
-  ["North Carolina", "North Carolina", "The Tar Heel State"], ["Indiana", "Indiana", "The Hoosier State"], ["Wisconsin", "Wisconsin", "The Badger State"],
-  ["Nevada", "Nevada", "The Silver State"],
-];
-
 const TIME_AND_LINES = [
   ["The prime meridian", "Prime meridian", "Greenwich"], ["The equator", "Equator", "Zero degrees latitude"],
   ["The Tropic of Cancer", "Tropic of Cancer", "The northern tropic"], ["The Tropic of Capricorn", "Tropic of Capricorn", "The southern tropic"],
@@ -113,13 +104,6 @@ export const GEOGRAPHY2_FAMILIES = [
     category: "Geography", levels: [2, 4], facts: SEAS_AND_GULFS,
     forms: [
       { prompt: (sea) => `Where does ${sea.replace("The ", "the ")} lie?`, explain: (sea, place) => `${sea} lies ${soft(place)}.` },
-    ],
-  },
-  {
-    category: "Geography", levels: [2, 4], facts: STATE_NICKNAMES,
-    forms: [
-      { prompt: (state) => `By which nickname is the US state of ${state.replace(" (state)", "")} known?`, explain: (state, nickname) => `${state.replace(" (state)", "")} is known as ${nickname}.` },
-      { reverse: true, prompt: (state, nickname) => `Which US state is known as ${nickname}?`, explain: (state, nickname) => `${state} is known as ${nickname}.` },
     ],
   },
   {

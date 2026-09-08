@@ -17,13 +17,6 @@ const CALENDARS = [
   ["The day when day and night are of equal length", "Equinox", "An equinox"],
 ];
 
-const ZODIAC = [
-  ["Aries", "Aries (astrology)", "The ram"], ["Taurus", "Taurus (astrology)", "The bull"], ["Gemini", "Gemini (astrology)", "The twins"],
-  ["Cancer", "Cancer (astrology)", "The crab"], ["Leo", "Leo (astrology)", "The lion"], ["Virgo", "Virgo (astrology)", "The maiden"],
-  ["Libra", "Libra (astrology)", "The scales"], ["Scorpio", "Scorpio (astrology)", "The scorpion"], ["Sagittarius", "Sagittarius (astrology)", "The archer"],
-  ["Capricorn", "Capricorn (astrology)", "The goat"], ["Aquarius", "Aquarius (astrology)", "The water-bearer"], ["Pisces", "Pisces (astrology)", "The fish"],
-];
-
 const GEMSTONES = [
   ["Ruby", "Ruby", "Red"], ["Emerald", "Emerald", "Green"], ["Sapphire", "Sapphire", "Blue"], ["Amethyst", "Amethyst", "Purple"],
   ["Topaz", "Topaz", "Yellow"], ["Turquoise", "Turquoise", "Blue-green"], ["Garnet", "Garnet", "Deep red"], ["Peridot", "Peridot", "Olive green"],
@@ -89,13 +82,6 @@ export const EVERYDAY_FAMILIES = [
     category: "History", levels: [1, 3], facts: CALENDARS, describe: true,
     forms: [
       { prompt: (definition) => `What is ${soft(definition)} called?`, explain: (definition, term) => `That is ${soft(term)}.` },
-    ],
-  },
-  {
-    category: "Astronomy", levels: [1, 2], facts: ZODIAC,
-    forms: [
-      { prompt: (sign) => `Which figure represents the sign of ${sign}?`, explain: (sign, figure) => `${sign} is ${soft(figure)}.` },
-      { reverse: true, prompt: (sign, figure) => `Which zodiac sign is represented by ${soft(figure)}?`, explain: (sign, figure) => `That is ${sign}.` },
     ],
   },
   {

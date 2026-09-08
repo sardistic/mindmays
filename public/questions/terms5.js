@@ -59,19 +59,6 @@ const MINE_AND_QUARRY = [
   ["The bird once carried underground as a warning", "Sentinel species", "A canary"],
 ];
 
-const KITCHEN_AND_TABLE = [
-  ["A shallow dish for serving soup", "Bowl", "A bowl"],
-  ["A vessel for pouring liquid at table", "Jug", "A jug"],
-  ["The board on which food is cut", "Cutting board", "A chopping board"],
-  ["A tool for grating cheese and vegetables", "Grater", "A grater"],
-  ["A perforated bowl for draining", "Colander", "A colander"],
-  ["A tool for removing corks", "Corkscrew", "A corkscrew"],
-  ["A vessel for grinding with a pestle", "Mortar and pestle", "A mortar"],
-  ["A pan with a heavy base for slow cooking", "Dutch oven", "A casserole"],
-  ["A tool for pressing garlic", "Garlic press", "A garlic press"],
-  ["The cloth spread over a dining table", "Tablecloth", "A tablecloth"],
-];
-
 const STARGAZING = [
   ["A telescope that gathers light with lenses", "Refracting telescope", "A refractor"],
   ["A telescope that gathers light with mirrors", "Reflecting telescope", "A reflector"],
@@ -146,10 +133,6 @@ export const TERMS5_FAMILIES = [
   {
     category: "Earth Science", levels: [3, 4], facts: MINE_AND_QUARRY, describe: true,
     forms: [{ prompt: (definition) => `In mining, what is ${soft(definition)} called?`, explain: (definition, term) => `That is ${soft(term)}.` }],
-  },
-  {
-    category: "Technology", levels: [1, 2], facts: KITCHEN_AND_TABLE, describe: true,
-    forms: [{ prompt: (definition) => `What is ${soft(definition)} called?`, explain: (definition, term) => `That is ${soft(term)}.` }],
   },
   {
     category: "Astronomy", levels: [2, 4], facts: STARGAZING, describe: true,

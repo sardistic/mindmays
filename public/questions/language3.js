@@ -65,12 +65,6 @@ const LANGUAGE_FACTS = [
   ["The tonal language of Vietnam", "Vietnamese language", "Vietnamese"], ["The language written in Hangul", "Korean language", "Korean"],
 ];
 
-const COLLECTIVE_NOUNS = [
-  ["Geese in flight", "Goose", "A skein"], ["Owls", "Owl", "A parliament"], ["Larks", "Lark", "An exaltation"],
-  ["Ravens", "Raven", "An unkindness"], ["Rhinoceroses", "Rhinoceros", "A crash"], ["Jellyfish", "Jellyfish", "A smack"],
-  ["Kangaroos", "Kangaroo", "A mob"], ["Ferrets", "Ferret", "A business"], ["Leopards", "Leopard", "A leap"], ["Hyenas", "Hyena", "A cackle"],
-];
-
 export const LANGUAGE3_FAMILIES = [
   {
     category: "Language", levels: [2, 3], facts: GREEK_ROOTS,
@@ -112,12 +106,6 @@ export const LANGUAGE3_FAMILIES = [
     category: "Language", levels: [2, 4], facts: LANGUAGE_FACTS, describe: true,
     forms: [
       { prompt: (description) => `Which language is ${soft(description)}?`, explain: (description, language) => `That is ${language}.` },
-    ],
-  },
-  {
-    category: "Language", levels: [3, 4], facts: COLLECTIVE_NOUNS,
-    forms: [
-      { prompt: (animal) => `What is the traditional collective noun for ${soft(animal)}?`, explain: (animal, term) => `${animal}: ${soft(term)}.` },
     ],
   },
 ];

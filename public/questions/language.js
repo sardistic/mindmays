@@ -37,16 +37,6 @@ const GREEK_LETTERS = [
   ["Phi", "Phi", "Ph"], ["Chi", "Chi (letter)", "Ch"], ["Psi", "Psi (Greek)", "Ps"], ["Omega", "Omega", "O"],
 ];
 
-const NATO_ALPHABET = [
-  ["A", "NATO phonetic alphabet", "Alfa"], ["B", "NATO phonetic alphabet", "Bravo"], ["C", "NATO phonetic alphabet", "Charlie"], ["D", "NATO phonetic alphabet", "Delta"],
-  ["E", "NATO phonetic alphabet", "Echo"], ["F", "NATO phonetic alphabet", "Foxtrot"], ["G", "NATO phonetic alphabet", "Golf"], ["H", "NATO phonetic alphabet", "Hotel"],
-  ["I", "NATO phonetic alphabet", "India"], ["J", "NATO phonetic alphabet", "Juliett"], ["K", "NATO phonetic alphabet", "Kilo"], ["L", "NATO phonetic alphabet", "Lima"],
-  ["M", "NATO phonetic alphabet", "Mike"], ["N", "NATO phonetic alphabet", "November"], ["O", "NATO phonetic alphabet", "Oscar"], ["P", "NATO phonetic alphabet", "Papa"],
-  ["Q", "NATO phonetic alphabet", "Quebec"], ["R", "NATO phonetic alphabet", "Romeo"], ["S", "NATO phonetic alphabet", "Sierra"], ["T", "NATO phonetic alphabet", "Tango"],
-  ["U", "NATO phonetic alphabet", "Uniform"], ["V", "NATO phonetic alphabet", "Victor"], ["W", "NATO phonetic alphabet", "Whiskey"], ["X", "NATO phonetic alphabet", "X-ray"],
-  ["Y", "NATO phonetic alphabet", "Yankee"], ["Z", "NATO phonetic alphabet", "Zulu"],
-];
-
 const LATIN_PHRASES = [
   ["Carpe diem", "Carpe diem", "Seize the day"], ["Cogito, ergo sum", "Cogito, ergo sum", "I think, therefore I am"], ["Veni, vidi, vici", "Veni, vidi, vici", "I came, I saw, I conquered"],
   ["E pluribus unum", "E pluribus unum", "Out of many, one"], ["Ad hoc", "Ad hoc", "For this purpose"], ["Ad infinitum", "Ad infinitum", "To infinity"],
@@ -107,13 +97,6 @@ export const LANGUAGE_FAMILIES = [
     category: "Language", levels: [2, 3], facts: GREEK_LETTERS,
     forms: [
       { prompt: (letter) => `Which Roman letter does the Greek letter ${soft(letter)} correspond to?`, explain: (letter, roman) => `Greek ${soft(letter)} corresponds to ${roman}.` },
-    ],
-  },
-  {
-    category: "Language", levels: [1, 2], facts: NATO_ALPHABET,
-    forms: [
-      { prompt: (letter) => `In the NATO phonetic alphabet, which word stands for the letter ${letter}?`, explain: (letter, word) => `${word} stands for ${letter}.` },
-      { reverse: true, prompt: (letter, word) => `In the NATO phonetic alphabet, ${word} stands for which letter?`, explain: (letter, word) => `${word} stands for ${letter}.` },
     ],
   },
   {

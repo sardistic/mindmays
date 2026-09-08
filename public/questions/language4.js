@@ -20,17 +20,6 @@ const ITALIAN_AND_GERMAN = [
   ["Angst", "Angst", "A deep, undirected anxiety"], ["Kitsch", "Kitsch", "Art considered gaudy or sentimental"],
 ];
 
-const PROVERBS = [
-  ["A stitch in time", "List of proverbial phrases", "Saves nine"],
-  ["Too many cooks", "List of proverbial phrases", "Spoil the broth"],
-  ["When in Rome", "When in Rome, do as the Romans do", "Do as the Romans do"],
-  ["The early bird", "List of proverbial phrases", "Catches the worm"],
-  ["Don't count your chickens", "Don't count your chickens before they hatch", "Before they hatch"],
-  ["People in glass houses", "List of proverbial phrases", "Should not throw stones"],
-  ["Every cloud", "Every cloud has a silver lining", "Has a silver lining"],
-  ["Actions speak", "Actions speak louder than words", "Louder than words"],
-];
-
 const WORD_MEANINGS = [
   ["A word with the same meaning as another", "Synonym", "A synonym"],
   ["A word with the opposite meaning", "Opposite (semantics)", "An antonym"],
@@ -47,19 +36,6 @@ const WORD_MEANINGS = [
   ["A word or phrase used in a particular region", "Regionalism (politics)", "A regionalism"],
   ["A mixed language that becomes a mother tongue", "Creole language", "A creole"],
   ["A simplified language used between groups", "Pidgin", "A pidgin"],
-];
-
-const NAMES_OF_THINGS = [
-  ["The dot over a lowercase i or j", "Tittle", "A tittle"],
-  ["The plastic tip of a shoelace", "Aglet", "An aglet"],
-  ["The groove between the nose and upper lip", "Philtrum", "The philtrum"],
-  ["The small piece of skin at the base of a nail", "Cuticle", "The cuticle"],
-  ["The metal band on a pencil holding the eraser", "Ferrule", "A ferrule"],
-  ["The hole punched in a belt", "Belt (clothing)", "An eyelet"],
-  ["The paper band around a cigar", "Cigar band", "A cigar band"],
-  ["The wire cage over a champagne cork", "Muselet", "A muselet"],
-  ["The raised seam on the back of a book", "Bookbinding", "A band"],
-  ["The white crescent at the base of a fingernail", "Lunula (anatomy)", "The lunula"],
 ];
 
 const SPEECH_SOUNDS = [
@@ -102,17 +78,7 @@ export const LANGUAGE4_FAMILIES = [
     ],
   },
   {
-    category: "Language", levels: [1, 2], facts: PROVERBS,
-    forms: [
-      { prompt: (opening) => `How does the proverb continue: "${opening}…"?`, explain: (opening, ending) => `${opening} ${soft(ending)}.` },
-    ],
-  },
-  {
     category: "Language", levels: [1, 3], facts: WORD_MEANINGS, describe: true,
-    forms: [{ prompt: (definition) => `What is ${soft(definition)} called?`, explain: (definition, term) => `That is ${soft(term)}.` }],
-  },
-  {
-    category: "Language", levels: [3, 4], facts: NAMES_OF_THINGS, describe: true,
     forms: [{ prompt: (definition) => `What is ${soft(definition)} called?`, explain: (definition, term) => `That is ${soft(term)}.` }],
   },
   {

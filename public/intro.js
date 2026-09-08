@@ -15,7 +15,7 @@ function readNumber(key) { return Number(localStorage.getItem(key)) || 0; }
 function readList(key) { try { const value = JSON.parse(localStorage.getItem(key) || "[]"); return Array.isArray(value) ? value : []; } catch { return []; } }
 function record() {
   const visited = readList("wikimaze-classic-visited");
-  return { score: readNumber("wikimaze-score"), chambers: Math.max(1, visited.length), seals: readNumber("wikimaze-classic-solved"), articles: readList("wikimaze-classic-articles"), flames: localStorage.getItem("wikimaze-classic-flames") === null ? 5 : readNumber("wikimaze-classic-flames"), floor: readNumber("wikimaze-floor") || 1, started: visited.length > 1 || readNumber("wikimaze-score") > 0 };
+  return { score: readNumber("wikimaze-score"), best: Math.max(readNumber("wikimaze-classic-best"), readNumber("wikimaze-score")), chambers: Math.max(1, visited.length), seals: readNumber("wikimaze-classic-solved"), articles: readList("wikimaze-classic-articles"), flames: localStorage.getItem("wikimaze-classic-flames") === null ? 5 : readNumber("wikimaze-classic-flames"), floor: readNumber("wikimaze-floor") || 1, started: visited.length > 1 || readNumber("wikimaze-score") > 0 };
 }
 function rankOf(score) { return RANKS.filter(([threshold]) => score >= threshold).pop()[1]; }
 function scholarSettings() { try { return JSON.parse(localStorage.getItem("wikimaze-settings") || "{}"); } catch { return {}; } }
@@ -133,12 +133,12 @@ function openFame() {
   const state = record();
   showPanel("WikiMaze Score Card", () => {
     const definitions = element("dl");
-    for (const [caption, value] of [["Lore recovered", `${state.score.toLocaleString()} / ${LORE_GOAL.toLocaleString()}`], ["Chambers found", `${state.chambers} / ${CLASSIC_ROOMS}`], ["Seals answered", String(state.seals)], ["Articles opened", String(state.articles.length)], ["Matches remaining", `${state.flames} / 5`], ["Castle floor reached", String(state.floor)]]) {
+    for (const [caption, value] of [["Lore recovered", `${state.score.toLocaleString()} / ${LORE_GOAL.toLocaleString()}`], ["Best run", `${state.best.toLocaleString()} lore`], ["Chambers found", `${state.chambers} / ${CLASSIC_ROOMS}`], ["Seals answered", String(state.seals)], ["Articles opened", String(state.articles.length)], ["Matches remaining", `${state.flames} / 5`], ["Castle floor reached", String(state.floor)]]) {
       const row = element("div");
       row.append(element("dt", caption), element("dd", value));
       definitions.append(row);
     }
-    const rank = element("p", rankOf(state.score));
+    const rank = element("p", rankOf(state.best));
     rank.className = "record-rank";
     const recent = state.articles.slice(-6).reverse();
     return [element("h3", scholarSettings().name || "Scholar"), definitions, rank, element("h4", "Latest articles opened"), recent.length ? list(recent) : paragraph("No article has been opened yet.")];
@@ -278,7 +278,10 @@ renderMenu();
 updateSoundButton();
 if (new URLSearchParams(location.search).has("lost")) {
   const address = new URL(location.href); address.searchParams.delete("lost"); history.replaceState({}, "", address);
-  noticeText.textContent = "Your fifth match went out. The keep took back your score, its opened seals, the route you had walked, and everything you had found. You are returned to the gate.";
+  const best = readNumber("wikimaze-classic-best");
+  noticeText.textContent = best
+    ? `Your fifth match went out. The keep took back this run's score, its opened seals, the route you had walked and everything you had found. Your best stands at ${best.toLocaleString()} lore — ${rankOf(best)}.`
+    : "Your fifth match went out. The keep took back this run's score, its opened seals, the route you had walked and everything you had found. You are returned to the gate.";
   document.querySelector("#notice-cancel").hidden = true;
   noticeConfirm = null;
   noticeWindow.hidden = false;
@@ -297,6 +300,7 @@ window.__wikimazeIntroDebug = () => ({
   panelText: panel.hidden ? "" : panelBody.textContent,
   noticeOpen: !noticeWindow.hidden,
   noticeText: noticeText.textContent,
+  best: record().best,
   plateLoaded: document.querySelector(".stage-plate")?.complete === true && document.querySelector(".stage-plate").naturalWidth > 0,
   titleText: document.querySelector(".title-lockup h1").textContent,
   started: record().started,

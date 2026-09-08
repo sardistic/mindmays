@@ -34,6 +34,15 @@ try {
     socket.on("message", onMessage); socket.send(JSON.stringify({ id, method, params }));
   });
   const evaluate = async (expression) => { const result = await command("Runtime.evaluate", { expression, returnByValue: true }); return result.result.value; };
+  // The seal's result waits for the reader now, so answering means pressing Continue.
+  const carryOn = async () => {
+    const ready = await evaluate("(()=>{const b=document.querySelector('#continue-question');return b && !b.hidden;})()");
+    if (!ready) throw new Error("No Continue button appeared after answering");
+    const box = JSON.parse(await evaluate("JSON.stringify((()=>{const r=document.querySelector('#continue-question').getBoundingClientRect();return{x:r.left+r.width/2,y:r.top+r.height/2};})())"));
+    await command("Input.dispatchMouseEvent", { type: "mousePressed", x: box.x, y: box.y, button: "left", clickCount: 1 });
+    await command("Input.dispatchMouseEvent", { type: "mouseReleased", x: box.x, y: box.y, button: "left", clickCount: 1 });
+    await delay(600);
+  };
   const MAP_PROBE = `JSON.stringify((()=>{const debug=window.__wikimazeClassicDebug();const cell=[...document.querySelectorAll(".maze-cell")][debug.currentRoom];const drawn=["n","e","s","w"].filter((side)=>cell.classList.contains("open-"+side));const doors=[...document.querySelectorAll(".door-hotspot:not([hidden]):not(.locked)")].map((button)=>["north","east","south","west"][Number(button.dataset.direction)][0]);return{drawn,doors,current:cell.classList.contains("current")};})())`;
   const CLEARED_PROBE = `JSON.stringify({visited:localStorage.getItem("wikimaze-classic-visited"),score:localStorage.getItem("wikimaze-score"),unlocked:localStorage.getItem("wikimaze-classic-unlocked"),trail:localStorage.getItem("wikimaze-classic-trail"),flames:localStorage.getItem("wikimaze-classic-flames")})`;
   for (let attempt = 0; attempt < 60 && !await evaluate("typeof window.__wikimazeClassicDebug === 'function'"); attempt++) await delay(100);
@@ -108,11 +117,15 @@ try {
   const questionBeforeFailure = sampledQuestions.at(-1);
   const flamesBeforeFailure = Number(await evaluate("window.__wikimazeClassicDebug().flames"));
   await evaluate("window.__wikimazeClassicTest.answerWrong()");
-  await delay(1350);
+  await delay(300);
+  const resultVisible = await evaluate("document.querySelector('#question-result').textContent");
+  if (!resultVisible || resultVisible.length < 20) throw new Error("A wrong answer did not explain itself before moving on");
+  await carryOn();
   const failedAnswer = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (!failedAnswer.activeQuestion || failedAnswer.activeQuestion === questionBeforeFailure || failedAnswer.questionAttempts < 1 || failedAnswer.recentQuestions < sampledQuestions.length + 1 || failedAnswer.flames !== flamesBeforeFailure - 1) throw new Error(`A failed seal did not replace its question and extinguish exactly one flame: ${JSON.stringify(failedAnswer)}`);
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
-  await delay(1700);
+  await delay(260);
+  await carryOn();
   const moved = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (moved.currentRoom === start.currentRoom || moved.visitedRooms < 2 || moved.score <= start.score) throw new Error("Question-gated click-through room navigation failed");
   await evaluate("document.querySelector('#previous-room').click()");
@@ -173,7 +186,8 @@ try {
   await writeFile(new URL("../artifacts/classic-question.png", import.meta.url), Buffer.from(questionScreenshot.data, "base64"));
   const scoreBeforeAnswer = Number(await evaluate("window.__wikimazeClassicDebug().score"));
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
-  await delay(1700);
+  await delay(260);
+  await carryOn();
   const afterAnswer = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
   if (afterAnswer.score <= scoreBeforeAnswer || afterAnswer.currentRoom !== sealed.next) throw new Error("Correct trivia answer did not award lore and open the sealed passage");
   if (afterAnswer.soundCues < 8) throw new Error(`Expected interaction sound cues throughout the run, found ${afterAnswer.soundCues}`);
@@ -220,7 +234,8 @@ try {
   if (!hinted.hintShown || hinted.eliminatedAnswers !== 1) throw new Error(`Asking the room must strike out exactly one wrong answer: ${JSON.stringify({ shown: hinted.hintShown, struck: hinted.eliminatedAnswers })}`);
   if (!hinted.hintText.includes("It is not")) throw new Error(`The room's hint does not name what it rules out: ${hinted.hintText}`);
   await evaluate("window.__wikimazeClassicTest.answerCorrect()");
-  await delay(1300);
+  await delay(260);
+  await carryOn();
 
 
   // The far-wall doors: a chamber whose window has been boarded into a door can offer a
@@ -258,7 +273,8 @@ try {
     await delay(220);
     const before = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
     await evaluate("window.__wikimazeClassicTest.answerCorrect()");
-    await delay(1300);
+    await delay(260);
+    await carryOn();
     const after = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeClassicDebug())"));
     if (after.flames > before.flames) relit = after.solved;
   }
@@ -267,19 +283,23 @@ try {
   const fatalSeal = await evaluate("window.__wikimazeClassicTest.openLockedChallenge()");
   if (!fatalSeal) throw new Error("No locked passage remained for the final-flame test");
   await evaluate("window.__wikimazeClassicTest.setFlames(1); window.__wikimazeClassicTest.answerWrong()");
-  await delay(2800);
+  await delay(300);
+  await carryOn();
+  await delay(900);
   const landed = await evaluate("location.pathname");
   if (landed !== "/") throw new Error(`Losing the final match must return the player to the main menu, landed on ${landed}`);
   for (let attempt = 0; attempt < 60 && !await evaluate("typeof window.__wikimazeIntroDebug === 'function'"); attempt++) await delay(100);
   const menu = JSON.parse(await evaluate("JSON.stringify(window.__wikimazeIntroDebug())"));
   if (!menu.noticeOpen || !menu.noticeText.includes("fifth match")) throw new Error(`The main menu did not report the lost run: ${JSON.stringify({ open: menu.noticeOpen, text: menu.noticeText })}`);
+  if (!menu.noticeText.includes("best stands at")) throw new Error(`The losing screen did not report the best score: ${menu.noticeText}`);
+  if (!(menu.best > 0)) throw new Error("The record did not survive the run being cleared");
   if (menu.started) throw new Error("A lost run must leave no quest to continue");
   const cleared = JSON.parse(await evaluate(CLEARED_PROBE));
   if (cleared.visited !== "[0]" || cleared.score !== "0" || cleared.unlocked !== "[]" || cleared.trail !== "[]" || cleared.flames !== "5") throw new Error(`The lost run did not clear the record: ${JSON.stringify(cleared)}`);
 
 
 
-  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok no-turning-needed=ok far-doors=${start.farDoorPlates} wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
+  console.log(`classic=ok rooms=${start.totalRooms} plates=${start.roomPlates} empty-plates=${start.uninhabitedPlates} closeups=${start.closePlates} route-grid=${start.routeGridCells} questions=${start.questions} inhabitants=${start.characters} every-door-sealed=ok failed-question-replaced=ok wrong-answer-flame-loss=ok fifth-flame-reset=ok click-through=ok return=ok route-map=ok no-turning-needed=ok far-doors=${start.farDoorPlates} wings=4 room-choice=ok room-hint=ok relit-match=ok returns-to-menu=ok answer-waits-for-reader=ok high-score-kept=ok empty-object-room=ok object-push=ok wikipedia=ok audio-running=ok mobile-sound-control=ok sound-cues=ok character-closeup=ok anatomy-closeup=ok glossator-closeup=ok dialogue-irritation=ok sealed-trivia=ok multiplayer-room-presence=ok`);
 } finally {
   peer?.close(); socket?.close(); browser.kill();
   await new Promise((resolve) => { browser.once("exit", resolve); setTimeout(resolve, 1000); });

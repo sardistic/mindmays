@@ -40,17 +40,6 @@ const SPORT_ORIGINS = [
   ["Capoeira", "Capoeira", "Brazil"], ["Muay Thai", "Muay Thai", "Thailand"], ["Pelota", "Basque pelota", "The Basque Country"], ["Hurling", "Hurling", "Ireland"],
 ];
 
-const SPORT_TERMS = [
-  ["Three strikes in a row in bowling", "Turkey (bowling)", "A turkey"], ["A score of one under par in golf", "Birdie (golf)", "A birdie"],
-  ["A score of two under par in golf", "Eagle (golf)", "An eagle"], ["A score of one over par in golf", "Bogey (golf)", "A bogey"],
-  ["Three goals by one player in football", "Hat-trick", "A hat-trick"], ["A zero score in tennis", "Tennis scoring system", "Love"],
-  ["A tie at 40-40 in tennis", "Tennis scoring system", "Deuce"], ["A serve the receiver cannot touch in tennis", "Ace", "An ace"],
-  ["A dismissal of three batters on consecutive balls in cricket", "Hat-trick", "A hat-trick"], ["The 26.2-mile race", "Marathon", "The marathon"],
-  ["A race combining swimming, cycling and running", "Triathlon", "The triathlon"], ["The ten-event athletics contest", "Decathlon", "The decathlon"],
-  ["The seven-event athletics contest for women", "Heptathlon", "The heptathlon"], ["A checkmate in two moves in chess", "Fool's mate", "Fool's mate"],
-  ["The opening move privilege in chess", "White and Black in chess", "White moves first"], ["A draw by repeated position in chess", "Threefold repetition", "Threefold repetition"],
-];
-
 const SPORT_VENUES = [
   ["Wimbledon", "Wimbledon Championships", "Tennis"], ["The Tour de France", "Tour de France", "Cycling"], ["The Masters", "Masters Tournament", "Golf"],
   ["The Ryder Cup", "Ryder Cup", "Golf"], ["The Ashes", "The Ashes", "Cricket"], ["The Six Nations", "Six Nations Championship", "Rugby union"],
@@ -91,12 +80,6 @@ export const SPORTS_FAMILIES = [
     category: "History", levels: [1, 3], facts: SPORT_ORIGINS,
     forms: [
       { prompt: (sport) => `Where did ${soft(sport)} originate?`, explain: (sport, place) => `${sport} originated in ${place}.` },
-    ],
-  },
-  {
-    category: "History", levels: [2, 4], facts: SPORT_TERMS, describe: true,
-    forms: [
-      { prompt: (definition) => `What is the term for ${soft(definition)}?`, explain: (definition, term) => `That is ${soft(term)}.` },
     ],
   },
   {

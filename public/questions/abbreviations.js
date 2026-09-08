@@ -32,13 +32,6 @@ const SCIENCE_ABBREVIATIONS = [
   ["CNS", "Central nervous system", "Central nervous system"], ["REM sleep", "Rapid eye movement sleep", "Rapid eye movement sleep"],
 ];
 
-const MEASUREMENT_ABBREVIATIONS = [
-  ["km", "Kilometre", "Kilometre"], ["kg", "Kilogram", "Kilogram"], ["mL", "Litre", "Millilitre"], ["Hz", "Hertz", "Hertz"],
-  ["kWh", "Kilowatt-hour", "Kilowatt-hour"], ["mph", "Miles per hour", "Miles per hour"], ["rpm", "Revolutions per minute", "Revolutions per minute"],
-  ["psi", "Pounds per square inch", "Pounds per square inch"], ["dB", "Decibel", "Decibel"], ["AU", "Astronomical unit", "Astronomical unit"],
-  ["ly", "Light-year", "Light-year"], ["nm", "Nanometre", "Nanometre"],
-];
-
 const SI_PREFIXES = [
   ["Kilo", "Metric prefix", "One thousand"], ["Mega", "Metric prefix", "One million"], ["Giga", "Metric prefix", "One billion"], ["Tera", "Metric prefix", "One trillion"],
   ["Milli", "Metric prefix", "One thousandth"], ["Micro", "Metric prefix", "One millionth"], ["Nano", "Metric prefix", "One billionth"], ["Pico", "Metric prefix", "One trillionth"],
@@ -98,15 +91,6 @@ const OLOGIES = [
   ["The study of bells", "Campanology", "Campanology"], ["The study of dreams", "Oneirology", "Oneirology"],
 ];
 
-const PHOBIAS = [
-  ["Fear of spiders", "Arachnophobia", "Arachnophobia"], ["Fear of enclosed spaces", "Claustrophobia", "Claustrophobia"],
-  ["Fear of open or crowded spaces", "Agoraphobia", "Agoraphobia"], ["Fear of heights", "Acrophobia", "Acrophobia"],
-  ["Fear of water", "Aquaphobia", "Aquaphobia"], ["Fear of the number thirteen", "Triskaidekaphobia", "Triskaidekaphobia"],
-  ["Fear of foreigners or strangers", "Xenophobia", "Xenophobia"], ["Fear of blood", "Blood-injection-injury type phobia", "Haemophobia"],
-  ["Fear of fire", "Pyrophobia", "Pyrophobia"], ["Fear of animals", "Zoophobia", "Zoophobia"],
-  ["Fear of night or darkness", "Nyctophobia", "Nyctophobia"], ["Fear of public speaking", "Glossophobia", "Glossophobia"],
-];
-
 export const ABBREVIATION_FAMILIES = [
   {
     category: "History", levels: [1, 3], facts: ORGANISATIONS,
@@ -120,12 +104,6 @@ export const ABBREVIATION_FAMILIES = [
     forms: [
       { prompt: (abbreviation) => `In science, what does ${abbreviation} stand for?`, explain: (abbreviation, meaning) => `${abbreviation} stands for ${meaning}.` },
       { reverse: true, prompt: (abbreviation, meaning) => `Which abbreviation stands for "${meaning}" in science?`, explain: (abbreviation, meaning) => `That is ${abbreviation}.` },
-    ],
-  },
-  {
-    category: "Physics", levels: [1, 2], facts: MEASUREMENT_ABBREVIATIONS,
-    forms: [
-      { prompt: (abbreviation) => `Which unit is written ${abbreviation}?`, explain: (abbreviation, unit) => `${abbreviation} is the ${soft(unit)}.` },
     ],
   },
   {
@@ -166,13 +144,6 @@ export const ABBREVIATION_FAMILIES = [
     forms: [
       { prompt: (definition) => `What is the name for ${soft(definition)}?`, explain: (definition, term) => `That is ${soft(term)}.` },
       { reverse: true, prompt: (definition, term) => `${term} is the study of what?`, explain: (definition, term) => `${term} is ${soft(definition)}.` },
-    ],
-  },
-  {
-    category: "Language", levels: [1, 3], facts: PHOBIAS,
-    forms: [
-      { prompt: (definition) => `What is the name for the ${soft(definition)}?`, explain: (definition, term) => `That is ${soft(term)}.` },
-      { reverse: true, prompt: (definition, term) => `${term} is the fear of what?`, explain: (definition, term) => `${term} is the ${soft(definition)}.` },
     ],
   },
 ];

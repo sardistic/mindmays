@@ -62,13 +62,6 @@ const BRIDGES_AND_TUNNELS = [
   ["The Gotthard Base Tunnel", "Gotthard Base Tunnel", "Switzerland"], ["The Seikan Tunnel", "Seikan Tunnel", "Japan"],
 ];
 
-const CITY_NICKNAMES = [
-  ["New York City", "New York City", "The Big Apple"], ["Paris", "Paris", "The City of Light"], ["Venice", "Venice", "The Floating City"],
-  ["Rome", "Rome", "The Eternal City"], ["Amsterdam", "Amsterdam", "The Venice of the North"], ["Chicago", "Chicago", "The Windy City"],
-  ["Las Vegas", "Las Vegas", "Sin City"], ["New Orleans", "New Orleans", "The Big Easy"], ["Detroit", "Detroit", "Motor City"],
-  ["Edinburgh", "Edinburgh", "The Athens of the North"], ["Istanbul", "Istanbul", "The city on two continents"], ["Jerusalem", "Jerusalem", "The Holy City"],
-];
-
 export const RECORDS_FAMILIES = [
   {
     category: "Astronomy", levels: [3, 4], facts: BRIGHTEST_STARS,
@@ -105,13 +98,6 @@ export const RECORDS_FAMILIES = [
     category: "Technology", levels: [1, 3], facts: BRIDGES_AND_TUNNELS,
     forms: [
       { prompt: (structure) => `Where is ${structure.replace("The ", "the ")}?`, explain: (structure, place) => `${structure} is in ${place}.` },
-    ],
-  },
-  {
-    category: "Geography", levels: [1, 3], facts: CITY_NICKNAMES,
-    forms: [
-      { prompt: (city) => `By which nickname is ${city} known?`, explain: (city, nickname) => `${city} is known as ${nickname}.` },
-      { reverse: true, prompt: (city, nickname) => `Which city is known as ${nickname}?`, explain: (city, nickname) => `${city} is known as ${nickname}.` },
     ],
   },
 ];

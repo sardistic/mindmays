@@ -1,11 +1,5 @@
 // The living world: what animals are called, where they live and what they do.
 import { soft } from "./case.js";
-const ANIMAL_YOUNG = [
-  ["A cat", "Kitten", "Kitten"], ["A dog", "Puppy", "Puppy"], ["A horse", "Foal", "Foal"], ["A cow", "Calf", "Calf"],
-  ["A sheep", "Lamb", "Lamb"], ["A goat", "Goat", "Kid"], ["A pig", "Piglet", "Piglet"], ["A deer", "Fawn", "Fawn"],
-  ["A swan", "Cygnet", "Cygnet"], ["A goose", "Gosling", "Gosling"], ["A duck", "Duckling", "Duckling"], ["An eagle", "Eaglet", "Eaglet"],
-  ["A frog", "Tadpole", "Tadpole"], ["A butterfly", "Caterpillar", "Caterpillar"], ["A kangaroo", "Kangaroo", "Joey"], ["A seal", "Pinniped", "Pup"],
-];
 
 const ANIMAL_HABITATS = [
   ["The polar bear", "Polar bear", "The Arctic"], ["The penguin", "Penguin", "The Southern Hemisphere"], ["The camel", "Camel", "Deserts"],
@@ -25,12 +19,6 @@ const ANIMAL_TRAITS = [
   ["The honey badger", "Honey badger", "Noted for its ferocity and thick skin"], ["The mantis shrimp", "Mantis shrimp", "Striking with extraordinary speed and force"],
   ["The archerfish", "Archerfish", "Shooting jets of water to knock down prey"], ["The electric eel", "Electric eel", "Generating strong electric discharges"],
   ["The pistol shrimp", "Alpheidae", "Snapping a claw loudly enough to stun prey"], ["The bowerbird", "Bowerbird", "Building decorated structures to attract mates"],
-];
-
-const ANIMAL_SOUNDS = [
-  ["A wolf", "Wolf", "Howl"], ["A lion", "Lion", "Roar"], ["A horse", "Horse", "Neigh"], ["A donkey", "Donkey", "Bray"],
-  ["A frog", "Frog", "Croak"], ["A crow", "Crow", "Caw"], ["A duck", "Duck", "Quack"], ["A snake", "Snake", "Hiss"],
-  ["A bee", "Bee", "Buzz"], ["A cricket", "Cricket (insect)", "Chirp"],
 ];
 
 const MIGRATIONS = [
@@ -75,12 +63,6 @@ const MARINE = [
 
 export const NATURE_FAMILIES = [
   {
-    category: "Biology", levels: [1, 2], facts: ANIMAL_YOUNG,
-    forms: [
-      { prompt: (animal) => `What is the young of ${soft(animal)} called?`, explain: (animal, young) => `${animal}'s young is a ${soft(young)}.` },
-    ],
-  },
-  {
     category: "Biology", levels: [1, 3], facts: ANIMAL_HABITATS,
     forms: [
       { prompt: (animal) => `Where does ${soft(animal)} live?`, explain: (animal, place) => `${animal} lives in ${soft(place)}.` },
@@ -91,12 +73,6 @@ export const NATURE_FAMILIES = [
     forms: [
       { prompt: (animal) => `What distinguishes ${soft(animal)}?`, explain: (animal, trait) => `${animal}: ${soft(trait)}.` },
       { reverse: true, prompt: (animal, trait) => `Which animal is described as ${soft(trait)}?`, explain: (animal, trait) => `That is ${soft(animal)}.` },
-    ],
-  },
-  {
-    category: "Biology", levels: [1, 2], facts: ANIMAL_SOUNDS,
-    forms: [
-      { prompt: (animal) => `What sound does ${soft(animal)} make?`, explain: (animal, sound) => `${animal} will ${soft(sound)}.` },
     ],
   },
   {
