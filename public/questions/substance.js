@@ -114,7 +114,7 @@ const ENGINEERING_FEATS = [
   ["The sea defences shielding the south-west Netherlands", "Delta Works", "The Delta Works"],
   ["The observatory that first detected gravitational waves", "LIGO", "LIGO"],
   ["The accelerator that found the Higgs boson", "Large Hadron Collider", "The Large Hadron Collider"],
-  ["The bridge that spans the Bosporus at Istanbul", "15 July Martyrs Bridge", "The Bosporus Bridge"],
+  ["The first bridge built across the Bosporus at Istanbul, renamed in 2016", "15 July Martyrs Bridge", "The 15 July Martyrs Bridge"],
   ["The tunnel bored beneath the Alps between Erstfeld and Bodio", "Gotthard Base Tunnel", "The Gotthard Base Tunnel"],
   ["The aqueduct at Nîmes built by Rome", "Pont du Gard", "The Pont du Gard"],
   ["The lighthouse rebuilt four times on the Eddystone Rocks", "Eddystone Lighthouse", "The Eddystone Lighthouse"],

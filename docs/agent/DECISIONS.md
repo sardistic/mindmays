@@ -129,3 +129,20 @@
 - The hotspot is stored as a rectangle on the painting and mapped through `object-fit: cover` when the chamber is drawn, because the plate is cropped to fill the frame and a percentage would drift with the window. Where the crop puts part of a door off screen the hotspot is clamped, and a door left too small to click is not offered.
 - Far doors are a bonus, not a dependency. The keep is still generated so that the two side doors alone reach all one hundred chambers, so a far door only ever adds a route. Which chambers have one depends on the wing, since the plate does.
 
+
+## 2026-09-07 — The seal waits for the reader
+
+- Answers no longer advance on a timer. The seal shows what was right and why, and a single Continue button carries the player on; Enter and Space do the same, and the hint and encyclopedia controls are disabled while it stands so the only thing to do is read and go.
+- The button says what it does rather than "Continue": "Walk through" when the door opens, "Try again" when a match is lost but the run goes on, "Leave the keep" when the last one is out. A player who looks up mid-sentence can still tell what happened from the button alone.
+- The timer was there so the game kept moving. Nothing moves without the player now, which is the right default for a game whose whole content is text worth reading.
+
+## 2026-09-07 — Keeping the record
+
+- The best run is persisted in `wikimaze-classic-best` and is deliberately not cleared by the reset that follows a lost run. Everything else — score, opened seals, route, discoveries, dialogue memory, position — is.
+- Losing the last match now reports the record and the rank it earned on the menu's notice, so the run ends with something kept rather than only with what was taken. The score card shows it beside the current run, and the menu's rank is read from the record rather than the run in progress.
+
+## 2026-09-07 — What the bank is for
+
+- Thirteen families were removed: the NATO alphabet, animal noises and animal young, collective nouns, proverbs, the names of small things, city and state nicknames, sport slang, star signs, phobias, unit abbreviations and kitchen items. They were rote lookup or playground trivia — the answer is a convention to be memorised, not a fact an encyclopedia establishes — and they made the keep feel like a quiz book rather than a library.
+- The bank was backfilled to the same size with `public/questions/substance.js`: scientific works and who wrote them, what Nobel laureates were recognised for, what treaties settled, the rivers cities stand on, medical advances, the ideas philosophers are known for, engineering feats and archaeological finds. Every fact still cites a Wikipedia article and is still checked by the audit.
+- The test is whether an educated reader would be glad to learn the answer. A convention with no reason behind it fails it however well-cited it is.
