@@ -1,5 +1,12 @@
 # Architecture Decisions
 
+## 2026-09-14 — Crawlable player guide and launch identity
+
+- Keep the game-first title screen, but make the homepage title, description, and visible supporting line explicitly identify Entries as a Wikipedia-powered knowledge game.
+- Publish the rules, mode comparison, strategy, FAQ, project background, and launch note as ordinary crawlable HTML routes rather than leaving that information only inside JavaScript dialogs.
+- Use one purpose-built 1200×630 social image across the site so shared links have a consistent identity and do not crop a 4:3 gameplay plate unpredictably.
+- Link the guide routes with ordinary anchors from the homepage and from one another; the title-screen dialogs remain for players who want help without leaving the game.
+
 ## 2026-09-14 — Entries domain and canonical identity
 
 - Rename the public game from WikiMaze to Entries and make `https://entries.page/` its sole canonical origin.

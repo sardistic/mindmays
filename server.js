@@ -102,7 +102,15 @@ const server = createServer(async (request, response) => {
     const normalized = normalize(requested).replace(/^(\.\.(\/|\\|$))+/, "");
     let filePath = join(root, normalized);
     let info = await stat(filePath).catch(() => null);
-    if (info?.isDirectory()) filePath = join(filePath, "index.html");
+    if (info?.isDirectory()) {
+      if (!url.pathname.endsWith("/")) {
+        response.writeHead(301, { Location: `${url.pathname}/${url.search}`, "Cache-Control": "public, max-age=3600" });
+        response.end();
+        return;
+      }
+      filePath = join(filePath, "index.html");
+      info = await stat(filePath).catch(() => null);
+    }
     if (!info) {
       response.writeHead(404, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
       response.end('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Not found — Entries</title></head><body><main><h1>That entry was not found.</h1><p><a href="/">Return to Entries</a></p></main></body></html>');
