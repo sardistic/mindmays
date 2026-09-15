@@ -1,13 +1,13 @@
 {
-  "name": "wikimaze",
+  "name": "entries-game",
   "version": "0.1.0",
   "private": true,
-  "description": "A multiplayer, Wikipedia-powered retro maze game.",
+  "description": "Entries is a multiplayer, Wikipedia-powered retro encyclopedia adventure.",
   "type": "module",
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "check": "node --check server.js && node --check public/intro.js && node --check public/game.js && node --check public/classic.js && node --check public/sudden-questions.js && node --check public/sudden.js && node scripts/question-bank-check.mjs && node scripts/analytics-check.mjs && node --check scripts/audit-question-sources.mjs && node --check scripts/intro-smoke.mjs && node --check scripts/browser-smoke.mjs && node --check scripts/classic-smoke.mjs && node --check scripts/sudden-smoke.mjs && node --check scripts/multiplayer-smoke.mjs",
+    "check": "node --check server.js && node --check public/intro.js && node --check public/game.js && node --check public/classic.js && node --check public/sudden-questions.js && node --check public/sudden.js && node scripts/question-bank-check.mjs && node scripts/analytics-check.mjs && node scripts/seo-check.mjs && node --check scripts/audit-question-sources.mjs && node --check scripts/intro-smoke.mjs && node --check scripts/browser-smoke.mjs && node --check scripts/classic-smoke.mjs && node --check scripts/sudden-smoke.mjs && node --check scripts/multiplayer-smoke.mjs",
     "audit:questions": "node scripts/audit-question-sources.mjs",
     "smoke": "node scripts/browser-smoke.mjs",
     "smoke:intro": "node scripts/intro-smoke.mjs",

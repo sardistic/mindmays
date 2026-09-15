@@ -25,7 +25,7 @@ try{
 
   const initial=await state();
   if(initial.options!==8)throw new Error(`Expected eight menu options, found ${initial.options}`);
-  if(!initial.titleText.includes("WikiMaze"))throw new Error(`The title lockup is missing: ${initial.titleText}`);
+  if(!initial.titleText.includes("Entries"))throw new Error(`The title lockup is missing: ${initial.titleText}`);
   if(!initial.plateLoaded)throw new Error("The title backdrop plate did not load");
   if(initial.selected!==0||!initial.selectedLabel.includes("Begin the Quest"))throw new Error(`A fresh menu must open on Begin the Quest: ${JSON.stringify(initial)}`);
   for(const destination of ["/classic.html","/walk.html","/sudden.html"])if(!initial.destinations.includes(destination))throw new Error(`The menu does not reach ${destination}`);
@@ -49,7 +49,7 @@ try{
 
   await key("f","KeyF",70);
   const fame=await state();
-  if(!fame.panelOpen||fame.panelTitle!=="WikiMaze Score Card"||!fame.panelText.includes("Chambers found"))throw new Error(`The Hall of Fame did not report the record: ${JSON.stringify({title:fame.panelTitle,text:fame.panelText.slice(0,120)})}`);
+  if(!fame.panelOpen||fame.panelTitle!=="Entries Score Card"||!fame.panelText.includes("Chambers found"))throw new Error(`The Hall of Fame did not report the record: ${JSON.stringify({title:fame.panelTitle,text:fame.panelText.slice(0,120)})}`);
   await clickSelector("#panel header button");
 
   await key("s","KeyS",83);

@@ -14,6 +14,8 @@ const mimeTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".xml": "application/xml; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
   ".svg": "image/svg+xml",
   ".png": "image/png",
 };
@@ -37,7 +39,7 @@ async function wikipediaSummary(title) {
     titles: title,
   });
   const response = await fetch(`https://en.wikipedia.org/w/api.php?${params}`, {
-    headers: { "User-Agent": "WikiMaze/0.1 (educational browser game)" },
+    headers: { "User-Agent": "Entries/1.0 (educational browser game; https://entries.page/)" },
     signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) throw new Error(`Wikipedia returned ${response.status}`);
@@ -75,6 +77,14 @@ async function stampAssets(html) {
 const server = createServer(async (request, response) => {
   try {
     const url = new URL(request.url, `http://${request.headers.host}`);
+    if (["maze.sardistic.com", "www.entries.page"].includes(url.hostname.toLowerCase())) {
+      response.writeHead(301, {
+        Location: `https://entries.page${url.pathname}${url.search}`,
+        "Cache-Control": "public, max-age=3600",
+      });
+      response.end();
+      return;
+    }
     if (url.pathname === "/health") {
       response.writeHead(200, { "Content-Type": mimeTypes[".json"], "Cache-Control": "no-store" });
       response.end(JSON.stringify({ status: "ok" }));
@@ -93,7 +103,11 @@ const server = createServer(async (request, response) => {
     let filePath = join(root, normalized);
     let info = await stat(filePath).catch(() => null);
     if (info?.isDirectory()) filePath = join(filePath, "index.html");
-    if (!info) filePath = join(root, "index.html");
+    if (!info) {
+      response.writeHead(404, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" });
+      response.end('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>Not found — Entries</title></head><body><main><h1>That entry was not found.</h1><p><a href="/">Return to Entries</a></p></main></body></html>');
+      return;
+    }
     const content = await readFile(filePath);
     const extension = extname(filePath);
     // Without an explicit policy the edge applies its own four-hour default to scripts
@@ -197,5 +211,5 @@ wss.on("connection", (socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`WikiMaze is running at http://localhost:${port}`);
+  console.log(`Entries is running at http://localhost:${port}`);
 });

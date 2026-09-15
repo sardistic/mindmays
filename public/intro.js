@@ -28,7 +28,7 @@ const MENU = [
   { id: "scholar", key: "S", label: () => "Choose Your Scholar", note: () => scholarSettings().name || "Unnamed", status: () => "Set the name, marker colour, and shared keep that other competitors will see." },
   { id: "help", key: "H", label: () => "How to Play", note: () => "Instructions", status: () => "Doors, knowledge seals, matches, areas of interest, and the four levels of difficulty." },
   { id: "fame", key: "F", label: () => "Hall of Fame", note: () => `${record().score.toLocaleString()} lore`, status: () => "Your recovered lore, chambers found, seals answered, and the articles you have opened." },
-  { id: "about", key: "A", label: () => "About WikiMaze", note: () => "Credits", status: () => "Credits, the encyclopedia behind every question, and what this keep is not." },
+  { id: "about", key: "A", label: () => "About Entries", note: () => "Credits", status: () => "Credits, the encyclopedia behind every question, and what this keep is not." },
 ];
 
 let selected = 0;
@@ -131,7 +131,7 @@ function openHelp() {
 }
 function openFame() {
   const state = record();
-  showPanel("WikiMaze Score Card", () => {
+  showPanel("Entries Score Card", () => {
     const definitions = element("dl");
     for (const [caption, value] of [["Lore recovered", `${state.score.toLocaleString()} / ${LORE_GOAL.toLocaleString()}`], ["Best run", `${state.best.toLocaleString()} lore`], ["Chambers found", `${state.chambers} / ${CLASSIC_ROOMS}`], ["Seals answered", String(state.seals)], ["Articles opened", String(state.articles.length)], ["Matches remaining", `${state.flames} / 5`], ["Castle floor reached", String(state.floor)]]) {
       const row = element("div");
@@ -145,8 +145,8 @@ function openFame() {
   });
 }
 function openAbout() {
-  showPanel("About WikiMaze", () => [
-    element("h3", "WikiMaze · The Unwritten Keep"),
+  showPanel("About Entries", () => [
+    element("h3", "Entries · The Unwritten Keep"),
     paragraph("A browser knowledge maze in the spirit of the encyclopedia adventure games that shipped on CD-ROM in the 1990s: a fixed-view castle, painted doors, inhabitants who remember you, and questions that send you to a real article."),
     element("h4", "Where the questions come from"),
     paragraph("Every one of the 458 prompts across Classic and Sudden Death cites a Wikipedia article, and an audit re-reads those articles to confirm each answer is still supported by the current text."),

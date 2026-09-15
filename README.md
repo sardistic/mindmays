@@ -1,6 +1,6 @@
-# WikiMaze
+# Entries
 
-A browser-based, multiplayer knowledge maze inspired by the atmosphere and discovery loop of classic encyclopedia games. WikiMaze uses an original retro archive aesthetic, free movement, live Wikipedia summaries, and shared expeditions.
+A browser-based, multiplayer knowledge maze inspired by the atmosphere and discovery loop of classic encyclopedia games. Entries uses an original retro archive aesthetic, free movement, live Wikipedia summaries, and shared expeditions at [entries.page](https://entries.page/).
 
 ## Run locally
 

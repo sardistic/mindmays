@@ -7,8 +7,8 @@ for (const file of ["index.html", "walk.html", "classic.html", "sudden.html"]) {
   if (trackers.length !== 1) throw new Error(`${file} must contain exactly one Umami tracker, found ${trackers.length}`);
   const tracker = trackers[0][0];
   if (!tracker.includes(`data-website-id="${websiteId}"`)) throw new Error(`${file} has the wrong Umami website ID`);
-  if (!tracker.includes('data-domains="maze.sardistic.com"')) throw new Error(`${file} must reject non-production analytics traffic`);
+  if (!tracker.includes('data-domains="entries.page"')) throw new Error(`${file} must reject non-production analytics traffic`);
   if (!tracker.includes('data-cfasync="false"') || !tracker.includes("defer") || !tracker.includes("async")) throw new Error(`${file} must load Umami safely and without blocking gameplay behind Cloudflare`);
 }
 
-console.log("analytics=ok pages=4 domain=maze.sardistic.com");
+console.log("analytics=ok pages=4 domain=entries.page");

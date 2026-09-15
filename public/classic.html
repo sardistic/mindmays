@@ -4,15 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#1d4e75" />
+    <meta name="description" content="Explore 100 fixed-view chambers, open Wikipedia-powered knowledge seals, and chart the Unwritten Keep in Entries Classic." />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://entries.page/classic.html" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script async defer data-cfasync="false" src="https://analytics.sardistic.com/script.js" data-website-id="362a86f4-7b10-4455-a860-3164746e841f" data-domains="maze.sardistic.com"></script>
-    <title>WikiMaze Classic</title>
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Entries" />
+    <meta property="og:title" content="Entries Classic — The Unwritten Keep" />
+    <meta property="og:description" content="Open knowledge seals and chart 100 chambers in a 1990s-style encyclopedia adventure." />
+    <meta property="og:url" content="https://entries.page/classic.html" />
+    <meta property="og:image" content="https://entries.page/assets/classic/royal.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script async defer data-cfasync="false" src="https://analytics.sardistic.com/script.js" data-website-id="362a86f4-7b10-4455-a860-3164746e841f" data-domains="entries.page"></script>
+    <title>Entries Classic — The Unwritten Keep</title>
     <link rel="stylesheet" href="/classic.css" />
   </head>
   <body>
     <main class="desktop">
-      <section class="game-window" aria-label="WikiMaze classic point-and-click game">
-        <header class="os-titlebar"><span class="app-icon">W</span><strong>WIKIMAZE · THE UNWRITTEN KEEP</strong><div class="window-buttons" aria-hidden="true"><i>_</i><i>□</i><i>×</i></div></header>
+      <section class="game-window" aria-label="Entries classic point-and-click game">
+        <header class="os-titlebar"><span class="app-icon">E</span><strong>ENTRIES · THE UNWRITTEN KEEP</strong><div class="window-buttons" aria-hidden="true"><i>_</i><i>□</i><i>×</i></div></header>
         <nav class="menu-strip">
           <button id="new-game-button"><u>G</u>ame</button><button id="scorecard-button"><u>S</u>core Card</button><button id="identity-button"><u>C</u>ompetitors</button><a href="/">Main Menu</a><a href="/walk.html">Walkable 3D</a><a class="sudden-link" href="/sudden.html">Sudden Death</a>
           <span id="classic-network-dot"></span><small id="classic-network-label">SOLO ARCHIVE</small>
@@ -64,7 +74,7 @@
     </main>
 
     <dialog id="settings-dialog" class="system-dialog"><div class="system-title">Competitors</div><form id="settings-form"><label>Scholar name <input id="player-name" maxlength="20" /></label><label>Shared keep <input id="shared-keep" maxlength="40" /></label><label>Marker color <input id="player-color" type="color" /></label><ul id="company-list"><li>No other competitors connected.</li></ul><div><button type="submit">Join</button><button type="button" data-close>Cancel</button></div></form></dialog>
-    <dialog id="scorecard-dialog" class="system-dialog scorecard-dialog"><div class="system-title">WikiMaze Score Card</div><dl><div><dt>Rooms found</dt><dd id="journal-rooms">1 / 100</dd></div><div><dt>Seals answered</dt><dd id="journal-seals">0</dd></div><div><dt>Wikipedia articles</dt><dd id="journal-articles">0</dd></div></dl><ol id="article-log"><li>No articles opened yet.</li></ol><button data-close>OK</button></dialog>
+    <dialog id="scorecard-dialog" class="system-dialog scorecard-dialog"><div class="system-title">Entries Score Card</div><dl><div><dt>Rooms found</dt><dd id="journal-rooms">1 / 100</dd></div><div><dt>Seals answered</dt><dd id="journal-seals">0</dd></div><div><dt>Wikipedia articles</dt><dd id="journal-articles">0</dd></div></dl><ol id="article-log"><li>No articles opened yet.</li></ol><button data-close>OK</button></dialog>
     <script type="module" src="/classic.js"></script>
   </body>
 </html>

@@ -1,5 +1,12 @@
 # Architecture Decisions
 
+## 2026-09-14 — Entries domain and canonical identity
+
+- Rename the public game from WikiMaze to Entries and make `https://entries.page/` its sole canonical origin.
+- Permanently redirect every path and query on `maze.sardistic.com` to the equivalent location on `entries.page`; redirect `www.entries.page` to the apex as well.
+- Keep the existing `wikimaze-*` local-storage keys and JavaScript debug hooks as implementation identifiers so the rebrand does not introduce an unnecessary state migration or test rewrite.
+- Publish explicit canonical, description, Open Graph, Twitter, VideoGame structured data, robots, and sitemap metadata. Unknown paths return a real 404 instead of the title screen to avoid soft-404 indexing.
+
 ## 2026-08-31 — Production container
 
 - Package the browser game and its WebSocket/Wikipedia proxy as one Node.js container.
